@@ -52,14 +52,24 @@ const getUserById = async (id) => {
 
 // Update a user by ID
 const updateUserById = async (id, user) => {
-  const { first_name, last_name, email, password } = user;
-  const query = `
-    UPDATE users
-    SET first_name = $1, last_name = $2, email = $3, password = $4
-    WHERE id = $5
-    RETURNING *;
-  `;
-  const values = [first_name, last_name, email, password, id];
+  const fields = [];
+  const values = [];
+  let query = 'UPDATE users SET ';
+
+  Object.entries(user).forEach(([key, value], index) => {
+    if (value !== undefined && value !== null) {
+      fields.push(`${key} = $${index + 1}`);
+      values.push(value);
+    }
+  });
+
+  if (fields.length === 0) {
+    throw new Error('No fields to update');
+  }
+
+  query += fields.join(', ');
+  query += ' WHERE id = $' + (values.length + 1) + ' RETURNING *;';
+  values.push(id);
 
   try {
     const result = await pool.query(query, values);
@@ -68,6 +78,7 @@ const updateUserById = async (id, user) => {
     throw new Error('Error updating user: ' + err.message);
   }
 };
+
 
 // Delete a user by ID
 const deleteUserById = async (id) => {
@@ -84,6 +95,7 @@ const deleteUserById = async (id) => {
 
 // Get a user by email
 const getUserByEmail = async (email) => {
+  console.log("email",email)
   const query = 'SELECT * FROM users WHERE email = $1;';
   const values = [email];
 

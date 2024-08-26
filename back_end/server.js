@@ -1,11 +1,15 @@
-// server.js
 const express = require("express");
 require("dotenv").config();
 const { createDatabase } = require("./config/database");
 const { createUserTable } = require("./models/users");
+const cors = require('cors');
+
+
 const userRoutes = require("./routes/userRoutes");
 
+
 const app = express();
+app.use(cors());
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
@@ -15,7 +19,8 @@ createDatabase()
   .then(() => {
     return createUserTable();
   })
-  .then(() => {})
+  .then(() => {
+  })
   .catch((err) => {
     console.error("Error setting up database or user table:", err);
   });
@@ -23,6 +28,7 @@ createDatabase()
 // Use the user routes
 app.use("/api/users", userRoutes);
 
-app.listen(PORT, () => {
+// Bind the server to 0.0.0.0 to accept connections from any network interface
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on port ${PORT}`);
 });
