@@ -76,10 +76,23 @@ const deleteUserById = async (id) => {
   }
 };
 
+const getUserByEmail = async (email) => {
+  const query = 'SELECT * FROM users WHERE email = $1;';
+  const values = [email];
+
+  try {
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  } catch (err) {
+    throw new Error('Error retrieving user by email: ' + err.message);
+  }
+};
+
 module.exports = {
   createUser,
   getAllUsers,
   getUserById,
   updateUserById,
   deleteUserById,
+  getUserByEmail
 };
