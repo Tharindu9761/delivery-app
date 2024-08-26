@@ -8,9 +8,9 @@
 /* Global Colors */
 :root {
   --background-color: #ffffff;
-  --default-color: #444444;
-  --heading-color: #040677;
-  --accent-color: #FFC533;
+  --default-color: #000000;
+  --heading-color: #0d6efd;
+  --accent-color: #20c997;
   --surface-color: #ffffff;
   --contrast-color: #ffffff;
 }
@@ -18,8 +18,11 @@
 /* Nav Menu Colors */
 :root {
   --nav-color: #ffffff;
-  --nav-hover-color: #FFC533;
+  --nav-hover-color: #1acc8d;
   --nav-mobile-background-color: #ffffff;
+  --nav-dropdown-background-color: #ffffff; 
+  --nav-dropdown-color: #000000; 
+  --nav-dropdown-hover-color: #1acc8d;
 }
 
 /* Color Presets */

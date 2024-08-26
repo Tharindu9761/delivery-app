@@ -1,4 +1,4 @@
-@import url('main.css');
+@import url("main.css");
 
 /* Navigation & Header Styles */
 .header {
@@ -53,12 +53,12 @@
   position: relative;
 }
 
-.navmenu>ul>li {
+.navmenu > ul > li {
   white-space: nowrap;
   padding: 15px 14px;
 }
 
-.navmenu>ul>li:last-child {
+.navmenu > ul > li:last-child {
   padding-right: 0;
 }
 
@@ -85,7 +85,7 @@
   transition: 0.3s;
 }
 
-.navmenu>ul>li>a:before {
+.navmenu > ul > li > a:before {
   content: "";
   position: absolute;
   height: 2px;
@@ -98,7 +98,7 @@
 }
 
 .navmenu a:hover:before,
-.navmenu li:hover>a:before,
+.navmenu li:hover > a:before,
 .navmenu .active:before {
   visibility: visible;
   width: 100%;
@@ -106,7 +106,7 @@
   right: 0;
 }
 
-.navmenu li:hover>a,
+.navmenu li:hover > a,
 .navmenu .active,
 .navmenu .active:focus {
   color: var(--nav-color);
@@ -145,11 +145,11 @@
 
 .navmenu .dropdown ul a:hover,
 .navmenu .dropdown ul .active:hover,
-.navmenu .dropdown ul li:hover>a {
+.navmenu .dropdown ul li:hover > a {
   color: var(--nav-dropdown-hover-color);
 }
 
-.navmenu .dropdown:hover>ul {
+.navmenu .dropdown:hover > ul {
   opacity: 1;
   top: 100%;
   visibility: visible;
@@ -161,7 +161,7 @@
   visibility: hidden;
 }
 
-.navmenu .dropdown .dropdown:hover>ul {
+.navmenu .dropdown .dropdown:hover > ul {
   opacity: 1;
   top: 0;
   left: -100%;
@@ -231,20 +231,20 @@
 
   .navmenu a i:hover,
   .navmenu a:focus i:hover {
+    color: black !important;
     background-color: var(--accent-color);
-    color: var(--contrast-color);
   }
 
   .navmenu a:hover,
   .navmenu .active,
   .navmenu .active:focus {
-    color: var(--nav-dropdown-hover-color);
+    color: black !important;
   }
 
   .navmenu .active i,
   .navmenu .active:focus i {
+    color: black !important;
     background-color: var(--accent-color);
-    color: var(--contrast-color);
     transform: rotate(180deg);
   }
 
@@ -262,7 +262,7 @@
     background-color: rgba(33, 37, 41, 0.1);
   }
 
-  .navmenu .dropdown>.dropdown-active {
+  .navmenu .dropdown > .dropdown-active {
     display: block;
     background-color: rgba(33, 37, 41, 0.03);
   }
@@ -289,7 +289,7 @@
     transition: 0.3s;
   }
 
-  .mobile-nav-active .navmenu>ul {
+  .mobile-nav-active .navmenu > ul {
     display: block;
   }
 }

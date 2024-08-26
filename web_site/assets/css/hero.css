@@ -29,6 +29,7 @@
 }
 
 .hero .container {
+  padding-top: 50px;
   position: relative;
   z-index: 3;
 }
@@ -53,25 +54,6 @@
   font-weight: 400;
 }
 
-.hero .btn-get-started {
-  color: var(--contrast-color);
-  background: var(--accent-color);
-  font-family: var(--heading-font);
-  font-weight: 400;
-  font-size: 15px;
-  letter-spacing: 1px;
-  display: inline-block;
-  padding: 10px 28px 12px 28px;
-  border-radius: 50px;
-  transition: 0.5s;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
-}
-
-.hero .btn-get-started:hover {
-  color: var(--contrast-color);
-  background: color-mix(in srgb, var(--accent-color), transparent 15%);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
-}
 
 .hero .btn-watch-video {
   font-size: 16px;
@@ -98,6 +80,9 @@
 }
 
 .hero .animated {
+  border-radius: 15px;
+  height: 80%;
+  width: auto;
   animation: up-down 2s ease-in-out infinite alternate-reverse both;
 }
 
@@ -122,10 +107,6 @@
     margin-bottom: 30px;
   }
 
-  .hero .btn-get-started,
-  .hero .btn-watch-video {
-    font-size: 13px;
-  }
 }
 
 .hero .hero-waves {

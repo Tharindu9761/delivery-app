@@ -10,6 +10,9 @@
     />
     <meta name="keywords" content="Quick Drop, retail deliveries, logistics" />
 
+    <!-- Favicons -->
+    <link href="assets/img/fav.png" rel="icon" />
+
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
@@ -39,12 +42,14 @@
       href="https://cdn.jsdelivr.net/npm/swiper@9.0.0/swiper-bundle.min.css"
       rel="stylesheet"
     />
+    <link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet" />
 
     <!-- Custom CSS -->
     <link href="assets/css/main.css" rel="stylesheet" />
     <link href="assets/css/navigation.css" rel="stylesheet" />
     <link href="assets/css/footer.css" rel="stylesheet" />
     <link href="assets/css/hero.css" rel="stylesheet" />
+    <link href="assets/css/about.css" rel="stylesheet" />
   </head>
 
   <body class="index-page">
@@ -138,6 +143,81 @@
       </svg>
     </section>
 
+    <!-- About Section -->
+    <section id="about" class="about section">
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row align-items-xl-start gy-5">
+          <div class="col-xl-5 content">
+            <h3>About Us</h3>
+            <h2>Revolutionizing Retail Deliveries with Quick Drop</h2>
+            <p>
+              Quick Drop is dedicated to transforming the retail delivery
+              industry with our innovative platform. We streamline logistics,
+              optimize delivery routes, and ensure transparency for both
+              businesses and customers. Our goal is to make every delivery fast,
+              reliable, and secure, enhancing the overall customer experience.
+            </p>
+            <a href="#" class="read-more"
+              ><span>Read More</span><i class="bi bi-arrow-right"></i
+            ></a>
+          </div>
+
+          <div class="col-xl-7">
+            <div class="row gy-4 icon-boxes">
+              <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="icon-box">
+                  <i class="bi bi-building"></i>
+                  <h3>Streamlined Logistics</h3>
+                  <p>
+                    Our platform automates route optimization and vehicle
+                    selection, reducing delivery times and costs.
+                  </p>
+                </div>
+              </div>
+              <!-- End Icon Box -->
+
+              <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="icon-box">
+                  <i class="bi bi-clock"></i>
+                  <h3>Real-Time Tracking</h3>
+                  <p>
+                    Both customers and businesses can track deliveries in
+                    real-time, ensuring transparency and reliability.
+                  </p>
+                </div>
+              </div>
+              <!-- End Icon Box -->
+
+              <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="icon-box">
+                  <i class="bi bi-shield-check"></i>
+                  <h3>Secure Deliveries</h3>
+                  <p>
+                    We prioritize security at every step, ensuring that your
+                    deliveries are handled with care and precision.
+                  </p>
+                </div>
+              </div>
+              <!-- End Icon Box -->
+
+              <div class="col-md-6" data-aos="fade-up" data-aos-delay="500">
+                <div class="icon-box">
+                  <i class="bi bi-star"></i>
+                  <h3>Customer Satisfaction</h3>
+                  <p>
+                    By optimizing delivery processes and ensuring reliability,
+                    we help businesses enhance their customer satisfaction and
+                    loyalty.
+                  </p>
+                </div>
+              </div>
+              <!-- End Icon Box -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Footer -->
     <footer id="footer" class="footer dark-background">
       <div class="container footer-top">
@@ -188,7 +268,15 @@
     <script src="https://cdn.jsdelivr.net/npm/purecounter@1.1.0/purecounter_vanilla.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@9.0.0/swiper-bundle.min.js"></script>
 
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <!-- Custom JS -->
     <script src="assets/js/main.js"></script>
+
+    <script>
+      AOS.init({
+        duration: 1000, // Animation duration in milliseconds
+        once: true, // Whether animation should happen only once - while scrolling down
+      });
+    </script>
   </body>
 </html>
