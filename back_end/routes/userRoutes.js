@@ -1,4 +1,3 @@
-// routes/userRoutes.js
 const express = require("express");
 const userService = require("../services/userService");
 
@@ -8,7 +7,6 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   try {
     const newUser = await userService.createUser(req.body);
-    console.log("aaaaaaa");
     res.status(201).json(newUser);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -21,7 +19,7 @@ router.get("/", async (req, res) => {
     const users = await userService.getAllUsers();
     res.status(200).json(users);
   } catch (err) {
-    res.status500().json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -70,8 +68,8 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Login route
-router.post("/login", async (req, res) => {
+// Mobile Login route for Driver and Customer
+router.post("/mobile_login", async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -87,7 +85,45 @@ router.post("/login", async (req, res) => {
 
     // In a real application, you'd compare the hashed password with the stored hash
     if (user.password !== password) {
+      return res.status(401).json({ error: "Invalid password" });
+    }
+
+    // Check if the user is a Driver or Customer
+    if (user.user_type !== "Driver" && user.user_type !== "Customer") {
+      return res.status(403).json({ error: "Only Drivers or Customers can log in" });
+    }
+
+    // Exclude the password from the response
+    const { password: _, ...userWithoutPassword } = user;
+    res.status(200).json(userWithoutPassword);
+  } catch (err) {
+    res.status(500).json({ error: "An error occurred during login" });
+  }
+});
+
+// Admin and Merchant Login route
+router.post("/web_login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+
+  try {
+    const user = await userService.getUserByEmail(email);
+
+    if (!user) {
       return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    // In a real application, you'd compare the hashed password with the stored hash
+    if (user.password !== password) {
+      return res.status(401).json({ error: "Invalid password" });
+    }
+
+    // Check if the user is an Admin or Merchant
+    if (user.user_type !== "Admin" && user.user_type !== "Merchant") {
+      return res.status(403).json({ error: "Only Admins or Merchants can log in" });
     }
 
     // Exclude the password from the response

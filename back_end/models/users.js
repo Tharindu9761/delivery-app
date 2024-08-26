@@ -15,6 +15,7 @@ const createUserTable = async () => {
         last_name VARCHAR(100),
         email VARCHAR(100) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
+        user_type VARCHAR(20) NOT NULL CHECK (user_type IN ('Admin', 'Customer', 'Driver', 'Merchant')),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
   `;
