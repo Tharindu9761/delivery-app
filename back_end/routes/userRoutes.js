@@ -40,10 +40,7 @@ router.get("/:id", async (req, res) => {
 // Update a user by ID
 router.put("/:id", async (req, res) => {
   try {
-    const updatedUser = await userService.updateUserById(
-      req.params.id,
-      req.body
-    );
+    const updatedUser = await userService.updateUserById(req.params.id, req.body);
     if (updatedUser) {
       res.status(200).json(updatedUser);
     } else {
