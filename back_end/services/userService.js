@@ -95,7 +95,6 @@ const deleteUserById = async (id) => {
 
 // Get a user by email
 const getUserByEmail = async (email) => {
-  console.log("email",email)
   const query = 'SELECT * FROM users WHERE email = $1;';
   const values = [email];
 
