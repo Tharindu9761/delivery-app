@@ -1,0 +1,26 @@
+/* General App Layout and Styling */
+.app {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.side-nav {
+  flex-shrink: 0;
+}
+
+.mainBody {
+  margin-left: 250px;
+  margin-top: 70px;
+  margin-bottom: 70px; 
+  padding: 20px;
+  overflow-y: auto; 
+}
+
+/* Responsive Design Adjustments */
+@media screen and (max-width: 768px) {
+  .mainBody {
+    margin-left: 0;
+  }
+
+}

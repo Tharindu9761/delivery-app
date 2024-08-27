@@ -1,0 +1,13 @@
+.home-content {
+    padding: 20px;
+    background-color: #f4f4f4;
+    min-height: 75vh;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .home-content {
+      margin-left: 0;
+      padding-top: 60px; 
+    }
+  }
+  
