@@ -26,6 +26,10 @@ const SideNavBar = () => {
         <MenuIcon />
       </div>
       <nav className={`side-nav ${isOpen ? "open" : ""}`}>
+        <div className="side-nav-header">
+          <img src="/assets/logo.png" alt="Logo" className="side-nav-logo" />
+          <h1 className="side-nav-title">Quick Drop</h1>
+        </div>
         <ul>
           <li
             className={activeIndex === 0 ? "active" : ""}

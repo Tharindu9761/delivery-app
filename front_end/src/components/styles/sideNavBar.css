@@ -1,15 +1,33 @@
-/* General Styles for Side Navigation */
+/* Side Navigation Styles */
 .side-nav {
   width: 250px;
   background: linear-gradient(to bottom right, #5a9efb, #a1c4fd);
   position: fixed;
-  height: 85.15vh;
-  top: 70px; /* Fixed top to align with the header */
+  height: 93vh;
+  top: 0;
   left: 0;
   overflow-x: hidden;
   box-sizing: border-box;
   z-index: 1000;
   transition: width 0.3s ease, left 0.3s ease;
+}
+
+.side-nav-header {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+}
+
+.side-nav-logo {
+  width: 40px;
+  height: auto;
+  margin-right: 10px;
+}
+
+.side-nav-title {
+  color: white;
+  font-size: 20px;
+  margin: 0;
 }
 
 .side-nav ul {
@@ -19,13 +37,9 @@
 }
 
 .side-nav ul li {
-  padding: 15px 30px;
+  padding: 15px 15px;
   text-align: left;
   cursor: pointer;
-}
-
-.side-nav ul li:first-child {
-  margin-top: 20px;
 }
 
 .side-nav ul li a {
@@ -35,6 +49,8 @@
   align-items: center;
   font-size: 18px;
   transition: background-color 0.3s ease, padding-left 0.3s ease;
+  padding: 10px 15px;
+  border-radius: 4px;
 }
 
 .side-nav ul li a .icon {
@@ -50,6 +66,7 @@
 }
 
 .side-nav ul li a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
   padding-left: 30px;
 }
 
@@ -58,11 +75,14 @@
 }
 
 .side-nav ul li.active a {
+  background-color: #fff;
+  color: #000;
   padding-left: 30px;
 }
 
 .side-nav ul li.active .icon {
   transform: scale(1.1);
+  color: #000;
 }
 
 /* Menu Toggle Button for Small Screens */
@@ -86,6 +106,8 @@
     position: fixed;
     padding-top: 20px;
     z-index: 1000;
+    height: 95vh;
+    top: 70px !important;
   }
 
   .side-nav.open {
@@ -115,7 +137,7 @@
   }
 
   .side-nav ul li a {
-    text-align: center;
+    /* text-align: center; */
     padding-left: 0; /* Reset padding */
   }
 

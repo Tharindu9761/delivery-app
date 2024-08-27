@@ -83,10 +83,6 @@ const TopHeader = ({ onSignOut }) => {
 
   return (
     <header className="header">
-      <div className="header-left">
-        <img src="/assets/logo.png" alt="Logo" className="logo" />
-        <h1 className="header-title">Quick Drop</h1>
-      </div>
       <div className="header-right">
         <div className="header-notification" onClick={handleNotificationClick}>
           <NotificationsIcon className="notification-icon" />
