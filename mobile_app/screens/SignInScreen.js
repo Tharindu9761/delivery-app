@@ -11,10 +11,11 @@ import {
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
-import { AuthContext } from '../components/context';
+import {AuthContext} from '../components/context';
 import styles from '../styles/signinStyles';
+import {mobile_login} from '../service/userService';
 
-const SignInScreen = ({ navigation }) => {
+const SignInScreen = ({navigation}) => {
   const [data, setData] = React.useState({
     username: '',
     password: '',
@@ -24,9 +25,15 @@ const SignInScreen = ({ navigation }) => {
     isValidPassword: true,
   });
 
-  const { signIn } = React.useContext(AuthContext);
+  const {signIn} = React.useContext(AuthContext);
+  const loginImage = require('../assets/login.png');
 
-  const textInputChange = (val) => {
+  // Reusable alert function
+  const showAlert = (title, message) => {
+    Alert.alert(title, message, [{text: 'OK'}], {cancelable: true});
+  };
+
+  const textInputChange = val => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (reg.test(val)) {
       setData({
@@ -45,7 +52,7 @@ const SignInScreen = ({ navigation }) => {
     }
   };
 
-  const handlePasswordChange = (val) => {
+  const handlePasswordChange = val => {
     if (val.trim().length >= 6) {
       setData({
         ...data,
@@ -68,7 +75,7 @@ const SignInScreen = ({ navigation }) => {
     });
   };
 
-  const handleValidUser = (val) => {
+  const handleValidUser = val => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (reg.test(val)) {
       setData({
@@ -83,17 +90,36 @@ const SignInScreen = ({ navigation }) => {
     }
   };
 
-  const handleSignIn = () => {
-    // Add your authentication logic here
-    signIn();  // Assuming you are using the context to manage sign-in state
-    navigation.replace('MainScreen'); // Navigate to MainScreen and replace SignInScreen
+  const handleSignIn = async () => {
+    if (!data.isValidUser) {
+      showAlert('Invalid Email', 'Please enter a valid email address.');
+      return;
+    }
+
+    if (!data.isValidPassword) {
+      showAlert(
+        'Invalid Password',
+        'Password must be at least 8 characters long.',
+      );
+      return;
+    }
+
+    try {
+      const result = await mobile_login(data.username, data.password);
+      if (result.success) {
+        signIn(result.token, result.key);
+      } else {
+        showAlert('Login Failed', result.message);
+      }
+    } catch (error) {
+      console.error(error);
+      showAlert('Login Failed', 'An error occurred during login.');
+    }
   };
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }} scrollEnabled>
-      <ImageBackground
-        source={require('../assets/login.png')}
-        style={styles.image}>
+    <ScrollView contentContainerStyle={{flexGrow: 1}} scrollEnabled>
+      <ImageBackground source={loginImage} style={styles.image}>
         <StatusBar backgroundColor="#FF6B46" barStyle="dark-content" />
 
         <View style={styles.container}>
@@ -110,14 +136,14 @@ const SignInScreen = ({ navigation }) => {
                 placeholder="Your email"
                 keyboardType="email-address"
                 placeholderTextColor="#666666"
-                style={[styles.textInput, { color: 'gray' }]}
+                style={[styles.textInput, {color: 'gray'}]}
                 autoCapitalize="none"
                 onChangeText={textInputChange}
-                onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
+                onEndEditing={e => handleValidUser(e.nativeEvent.text)}
               />
               {data.check_textInputChange ? (
                 <Animatable.View animation="bounceIn">
-                  <Text style={{ marginRight: 10, color: 'green' }}>✔</Text>
+                  <Text style={{marginRight: 10, color: 'green'}}>✔</Text>
                 </Animatable.View>
               ) : null}
             </View>
@@ -127,18 +153,18 @@ const SignInScreen = ({ navigation }) => {
               </Animatable.View>
             )}
 
-            <Text style={[styles.text_footer, { marginTop: 20 }]}>Password</Text>
+            <Text style={[styles.text_footer, {marginTop: 20}]}>Password</Text>
             <View style={styles.action}>
               <TextInput
                 placeholder="Your Password"
                 placeholderTextColor="#666666"
                 secureTextEntry={data.secureTextEntry}
-                style={[styles.textInput, { color: 'gray' }]}
+                style={[styles.textInput, {color: 'gray'}]}
                 autoCapitalize="none"
                 onChangeText={handlePasswordChange}
               />
               <TouchableOpacity onPress={updateSecureTextEntry}>
-                <Text style={{ marginRight: 10, color: 'gray', fontSize: 20 }}>
+                <Text style={{marginRight: 10, color: 'gray', fontSize: 20}}>
                   {data.secureTextEntry ? '🙈' : '👀'}
                 </Text>
               </TouchableOpacity>
@@ -146,20 +172,17 @@ const SignInScreen = ({ navigation }) => {
             {!data.isValidPassword && (
               <Animatable.View animation="fadeInLeft" duration={500}>
                 <Text style={styles.errorMsg}>
-                  Password must be 8 characters long.
+                  Password must be at least 8 characters long.
                 </Text>
               </Animatable.View>
             )}
 
             <View style={styles.button}>
-              <TouchableOpacity
-                style={styles.signIn}
-                onPress={() => navigation.navigate('MainScreen')}
-                >
+              <TouchableOpacity style={styles.signIn} onPress={handleSignIn}>
                 <LinearGradient
                   colors={['#FFC533', '#FFC533']}
                   style={styles.signIn}>
-                  <Text style={[styles.textSign, { color: '#fff' }]}>
+                  <Text style={[styles.textSign, {color: '#fff'}]}>
                     Sign In
                   </Text>
                 </LinearGradient>
@@ -167,16 +190,16 @@ const SignInScreen = ({ navigation }) => {
 
               <TouchableOpacity
                 onPress={() => navigation.navigate('ForgotPasswordScreen')}
-                style={{ marginTop: 15 }}>
-                <Text style={{ color: '#FF6B46', fontSize: 16 }}>
+                style={{marginTop: 15}}>
+                <Text style={{color: '#FF6B46', fontSize: 16}}>
                   Forgot Password?
                 </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 onPress={() => navigation.navigate('SignUpScreen')}
-                style={{ marginTop: 15 }}>
-                <Text style={{ color: '#1E90FF', fontSize: 16 }}>
+                style={{marginTop: 15}}>
+                <Text style={{color: '#1E90FF', fontSize: 16}}>
                   Don't have an account? Sign Up
                 </Text>
               </TouchableOpacity>

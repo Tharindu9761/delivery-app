@@ -1,15 +1,18 @@
 import 'react-native-gesture-handler';
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {Provider as PaperProvider} from 'react-native-paper';
-import {DrawerContent} from './screens/DrawerContent';
 import {AuthContext} from './components/context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, ActivityIndicator, ImageBackground,StyleSheet } from 'react-native';
+import {
+  View,
+  ActivityIndicator,
+  ImageBackground,
+  StyleSheet,
+} from 'react-native';
 
-import HomeScreen from './screens/HomeScreen';
-import ProfileScreen from './screens/ProfileScreen';
+import MainScreen from './screens/MainScreen';
 import RootStackScreen from './screens/RootStackScreen';
 
 const Drawer = createDrawerNavigator();
@@ -55,8 +58,8 @@ const App = () => {
     () => ({
       signIn: async (token, key) => {
         try {
-          // await AsyncStorage.setItem('Token', token);
-          // await AsyncStorage.setItem('Key', key);
+          await AsyncStorage.setItem('Token', token);
+          await AsyncStorage.setItem('Key', key);
         } catch (error) {
           console.error(error);
         }
@@ -65,8 +68,8 @@ const App = () => {
 
       signOut: async () => {
         try {
-          // await AsyncStorage.removeItem('Token');
-          // await AsyncStorage.removeItem('Key');
+          await AsyncStorage.removeItem('Token');
+          await AsyncStorage.removeItem('Key');
         } catch (e) {
           console.error(e);
         }
@@ -103,25 +106,19 @@ const App = () => {
     <PaperProvider>
       <AuthContext.Provider value={authContext}>
         <NavigationContainer>
-          {/* <Drawer.Navigator>
-            <Drawer.Screen name="Home" component={HomeScreen} />
-            <Drawer.Screen name="Profile" component={ProfileScreen} />
-          </Drawer.Navigator> */}
-
-          <RootStackScreen />
+          {loginState.userToken !== null ? <MainScreen /> : <RootStackScreen />}
         </NavigationContainer>
       </AuthContext.Provider>
     </PaperProvider>
   );
-}
-
+};
 
 export default App;
 
 const styles = StyleSheet.create({
   image: {
     flex: 1,
-    resizeMode: "cover",
-    justifyContent: "center",
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
-})
+});

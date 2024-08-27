@@ -5,25 +5,26 @@ import {
   ImageBackground,
   Image,
   TouchableOpacity,
-  StyleSheet,
-  Switch,
 } from 'react-native';
 import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
 import LinearGradient from 'react-native-linear-gradient';
+import {AuthContext} from '../components/context';
+
 import styles from '../styles/drawerContentStyles';
 
 const CustomDrawer = props => {
   const {navigation} = props;
 
+  const {signOut} = React.useContext(AuthContext);
+
   const handleSignOut = () => {
-    // Handle your sign-out logic here
+    signOut();
     alert('Signing out...');
 
-    // Navigate to the Sign-In screen
-    navigation.replace('SignInScreen'); // Use 'replace' to avoid going back to the drawer
+    // navigation.replace('SignInScreen');
   };
 
   return (
