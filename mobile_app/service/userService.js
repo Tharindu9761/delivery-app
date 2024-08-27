@@ -17,7 +17,7 @@ export async function mobile_login(email, password) {
     });
 
     const res = await response.json();
-
+    console.log("AAAAAAAAAA",res);
     if (response.ok && res) {
       if (res.token) {
         return {
@@ -50,8 +50,23 @@ export async function get_email() {
   try {
     const userToken = await AsyncStorage.getItem('Token');
     if (userToken) {
-      const user = JwtDecode(userToken);
+      const user = jwtDecode(userToken);
       return user.email;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching email:', error);
+    return null;
+  }
+}
+
+export async function get_name() {
+  try {
+    const userToken = await AsyncStorage.getItem('Token');
+    if (userToken) {
+      const user = jwtDecode(userToken);
+      const name = user.first_name + ' ' + user.last_name;
+      return name;
     }
     return null;
   } catch (error) {
@@ -64,7 +79,7 @@ export async function get_user_id() {
   try {
     const userToken = await AsyncStorage.getItem('Token');
     if (userToken) {
-      const user = JwtDecode(userToken);
+      const user = jwtDecode(userToken);
       return user._id;
     }
     return null;
@@ -77,9 +92,11 @@ export async function get_user_id() {
 export async function get_user_role() {
   try {
     const userToken = await AsyncStorage.getItem('Token');
+
     if (userToken) {
-      const user = JwtDecode(userToken);
-      return user.role;
+      const user = jwtDecode(userToken);
+      console.log(user);
+      return user.user_type;
     }
     return null;
   } catch (error) {
@@ -112,6 +129,26 @@ export async function get_user_details() {
     }
   } catch (error) {
     console.error('Error fetching user details:', error);
+    return null;
+  }
+}
+
+export async function get_pic(type) {
+  try {
+    const userToken = await AsyncStorage.getItem('Token');
+    if (userToken) {
+      const user = jwtDecode(userToken);
+
+      const url =
+        type === 'thumb'
+          ? AppConst.PIC_THUMB(user.id)
+          : AppConst.PIC_FULL(user.id);
+
+      return url;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching user ID:', error);
     return null;
   }
 }
