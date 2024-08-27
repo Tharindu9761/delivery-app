@@ -17,8 +17,6 @@ export async function web_login(email, password) {
     });
 
     const res = await response.json();
-
-    console.log(res)
     if (response.ok && res) {
       if (res.token) {
         return {
@@ -66,8 +64,7 @@ export async function get_name() {
     const userToken = await AsyncStorage.getItem('Token');
     if (userToken) {
       const user = jwtDecode(userToken);
-      const name = user.first_name + ' ' + user.last_name;
-      return name;
+      return user.first_name;
     }
     return null;
   } catch (error) {

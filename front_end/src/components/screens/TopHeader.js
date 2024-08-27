@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import Avatar from "@mui/material/Avatar";
+
+import { get_name, get_pic } from "../../services/userService";
 
 import "../styles/topHeader.css";
 
@@ -13,6 +15,26 @@ const TopHeader = ({ onSignOut }) => {
     message: "",
     severity: "success",
   });
+
+  const [userName, setUserName] = useState("");
+  const [userAvatar, setUserAvatar] = useState(""); // State to hold the avatar URL
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const name = await get_name();
+      const avatarUrl = await get_pic('thumb'); // Fetch the thumbnail picture
+
+      if (name) {
+        setUserName(name);
+      }
+
+      if (avatarUrl) {
+        setUserAvatar(avatarUrl);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -70,8 +92,8 @@ const TopHeader = ({ onSignOut }) => {
           <NotificationsIcon className="notification-icon" />
         </div>
         <div className="header-profile" onClick={handleProfileClick}>
-          <span className="header-name">John Doe</span>
-          <AccountCircleIcon className="profile-icon" />
+          <span className="header-name">Hi {userName} !</span>
+          <Avatar src={userAvatar} className="profile-avatar" />
           {showDropdown && (
             <div className="dropdown-menu">
               <div className="dropdown-item" onClick={handleProfile}>
