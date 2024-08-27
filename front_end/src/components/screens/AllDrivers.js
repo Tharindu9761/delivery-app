@@ -5,20 +5,39 @@ const AllDrivers = () => {
   return (
     <div className="all-drivers">
       <h1>All Drivers</h1>
-      <div className="card-container">
-        <div className="card">
-          <h3>Driver 1</h3>
-          <p>Location: New York</p>
-        </div>
-        <div className="card">
-          <h3>Driver 2</h3>
-          <p>Location: Los Angeles</p>
-        </div>
-        <div className="card">
-          <h3>Driver 3</h3>
-          <p>Location: Chicago</p>
-        </div>
-        {/* Add more driver cards as needed */}
+      <div className="table-container">
+        <table className="modern-table">
+          <thead>
+            <tr>
+              <th>Driver Name</th>
+              <th>Location</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>John Doe</td>
+              <td>New York</td>
+              <td>Available</td>
+            </tr>
+            <tr>
+              <td>Jane Smith</td>
+              <td>Los Angeles</td>
+              <td>On Delivery</td>
+            </tr>
+            <tr>
+              <td>Michael Johnson</td>
+              <td>Chicago</td>
+              <td>Available</td>
+            </tr>
+            <tr>
+              <td>Emily Davis</td>
+              <td>San Francisco</td>
+              <td>Unavailable</td>
+            </tr>
+            {/* Add more rows as needed */}
+          </tbody>
+        </table>
       </div>
     </div>
   );

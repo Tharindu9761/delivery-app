@@ -82,7 +82,7 @@ router.post("/mobile_login", async (req, res) => {
     const user = await userService.getUserByEmail(email);
 
     if (!user) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({ error: "Invalid email" });
     }
 
     if (user.password !== password) {
@@ -116,7 +116,7 @@ router.post("/web_login", async (req, res) => {
     const user = await userService.getUserByEmail(email);
 
     if (!user) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({ error: "Invalid email" });
     }
 
     if (user.password !== password) {
@@ -141,7 +141,7 @@ router.post("/web_login", async (req, res) => {
 // Serve profile picture thumbnails
 router.get("/thumb/:id", async (req, res) => {
   const id = req.params.id;
- 
+
   let imagePath = path.resolve(
     path.join(constants.UPLOAD_PROFILE_PIC_THUMB, `${id}.png`)
   );

@@ -1,6 +1,6 @@
 .header {
-  background-color: #5a9efb;
-  color: white;
+  background: linear-gradient(to bottom right, #5a9efb, #a1c4fd);
+  color: #ffff;
   padding: 10px 20px;
   display: flex;
   justify-content: space-between;
@@ -11,6 +11,7 @@
   left: 0;
   right: 0;
   z-index: 1000;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .header-left {
@@ -39,6 +40,8 @@
 }
 
 .header-notification {
+  display: flex;
+  flex-direction: column;
   margin-right: 20px;
   cursor: pointer;
 }
@@ -53,6 +56,7 @@
   align-items: center;
   cursor: pointer;
   position: relative;
+  margin-right: 20px;
 }
 
 .header-name {

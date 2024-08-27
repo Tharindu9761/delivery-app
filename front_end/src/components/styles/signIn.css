@@ -1,0 +1,120 @@
+/* General Styling */
+.signin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.signin-box {
+  width: 100%;
+  text-align: center;
+}
+
+.signin-box h2 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  color: #333;
+}
+
+.input-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.input-wrapper .icon {
+  margin-right: 10px;
+  color: #5a9efb;
+}
+
+.input-wrapper input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 14px;
+  padding: 0;
+}
+
+.toggle-icon {
+  cursor: pointer;
+  color: #5a9efb;
+}
+
+.signin-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #5a9efb;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.signin-button:hover {
+  background-color: #4a8ae6;
+}
+
+.signup-link {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #333;
+}
+
+.signup-link a {
+  color: #5a9efb;
+  text-decoration: none;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 480px) {
+  .signin-container {
+    padding: 20px;
+    margin: 0 10px; /* Add margin to avoid horizontal scroll */
+    max-width: 100%; /* Ensure the container doesn't exceed screen width */
+  }
+
+  .signin-box h2 {
+    font-size: 24px;
+  }
+
+  .input-wrapper {
+    padding: 8px;
+  }
+
+  .input-group input {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .signin-button {
+    font-size: 16px;
+    padding: 8px;
+  }
+}

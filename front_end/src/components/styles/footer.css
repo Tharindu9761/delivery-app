@@ -1,6 +1,7 @@
 .footer {
-  background-color: #5a9efb;
-  color: white;
+  background: linear-gradient(to bottom right, #5a9efb, #a1c4fd);
+  box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.1); /* Adjusted to add shadow on top */
+  color: #ffff;
   text-align: center;
   padding: 10px 20px; /* Adjusted for consistent padding */
   position: fixed;
@@ -9,7 +10,7 @@
   right: 0;
   height: 50px;
   display: flex;
-  align-items: center; 
+  align-items: center;
   justify-content: center;
   z-index: 1000; /* Ensures the footer stays above other content */
 }

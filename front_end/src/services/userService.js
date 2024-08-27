@@ -2,9 +2,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as AppConst from '../const/const';
 const {jwtDecode} = require('jwt-decode');
 
-export async function mobile_login(email, password) {
+export async function web_login(email, password) {
   try {
-    const response = await fetch(AppConst.LOGIN_MOBILE, {
+    const response = await fetch(AppConst.LOGIN_WEB, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -17,6 +17,8 @@ export async function mobile_login(email, password) {
     });
 
     const res = await response.json();
+
+    console.log(res)
     if (response.ok && res) {
       if (res.token) {
         return {
@@ -33,7 +35,7 @@ export async function mobile_login(email, password) {
     } else {
       return {
         success: false,
-        message: res.message || 'Invalid email or password',
+        message: res.error || 'Invalid email or password',
       };
     }
   } catch (error) {
