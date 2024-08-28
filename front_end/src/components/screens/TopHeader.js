@@ -275,7 +275,7 @@ const TopHeader = ({ onSignOut }) => {
             </Button>
             <Button
               variant="outlined"
-              color="secondary"
+              color="error"
               onClick={() => setShowPasswordModal(false)}
               className="modal-button"
             >

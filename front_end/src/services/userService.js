@@ -196,3 +196,49 @@ export async function resetPassword(newPassword) {
     };
   }
 }
+
+export async function resetPasswordByEmail(newPassword) {
+  try {
+    const userToken = await AsyncStorage.getItem("Token");
+    if (!userToken) {
+      return {
+        success: false,
+        message: "User not authenticated",
+      };
+    }
+
+    const user = jwtDecode(userToken);
+    const email = user.email;
+
+    const response = await fetch(AppConst.RESET_PASSWORD_BY_EMAIL(email), {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        newPassword: newPassword,
+      }),
+    });
+
+    const res = await response.json();
+
+    if (response.ok && res.message) {
+      return {
+        success: true,
+        message: res.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: res.error || "Password reset failed",
+      };
+    }
+  } catch (error) {
+    console.error("Password reset error:", error);
+    return {
+      success: false,
+      message: "An error occurred during password reset",
+    };
+  }
+}

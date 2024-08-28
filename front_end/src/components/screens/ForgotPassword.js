@@ -5,8 +5,9 @@ import Alert from "@mui/material/Alert";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/frogotPassword.css";
+import { resetPasswordByEmail } from "../../services/userService";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -23,6 +24,8 @@ const ForgotPassword = () => {
     severity: "success",
   });
 
+  const navigate = useNavigate();
+
   const handleEmailChange = (val) => {
     const reg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
     setEmail(val);
@@ -31,7 +34,7 @@ const ForgotPassword = () => {
 
   const handleNewPasswordChange = (val) => {
     setNewPassword(val);
-    setIsPasswordValid(val.length >= 6); // Check if password is at least 6 characters long
+    setIsPasswordValid(val.length >= 6);
     setPasswordMatch(val === confirmPassword);
   };
 
@@ -74,8 +77,28 @@ const ForgotPassword = () => {
       return;
     }
 
-    // Perform the password reset logic here
-    // ...
+    const response = await resetPasswordByEmail(newPassword);
+
+    setSnackbar({
+      open: true,
+      message: response.message,
+      severity: response.success ? "success" : "error",
+    });
+
+    if (response.success) {
+      // Reset the form fields
+      setEmail("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setIsValidUser(false);
+      setPasswordMatch(true);
+      setIsPasswordValid(true);
+      setShowPassword(false);
+
+      setTimeout(() => {
+        navigate("/signin");
+      }, 2500);
+    }
   };
 
   const handleClose = (event, reason) => {
