@@ -183,4 +183,26 @@ router.get("/full/:id", async (req, res) => {
   });
 });
 
+// Reset a user's password by ID
+router.put("/reset_password_id/:id", async (req, res) => {
+  const { id } = req.params;
+  const { newPassword } = req.body;
+
+  if (!newPassword || newPassword.length < 6) {
+    return res.status(400).json({ error: "Password must be at least 6 characters long" });
+  }
+
+  try {
+    const updatedUser = await userService.resetPasswordById(id, newPassword);
+    if (updatedUser) {
+      res.status(200).json({ message: "Password reset successfully" });
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Error resetting password: " + err.message });
+  }
+});
+
+
 module.exports = router;

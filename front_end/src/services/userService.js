@@ -1,14 +1,14 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as AppConst from '../const/const';
-const {jwtDecode} = require('jwt-decode');
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as AppConst from "../const/const";
+const { jwtDecode } = require("jwt-decode");
 
 export async function web_login(email, password) {
   try {
     const response = await fetch(AppConst.LOGIN_WEB, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         email: email,
@@ -27,69 +27,69 @@ export async function web_login(email, password) {
       } else {
         return {
           success: false,
-          message: res.message || 'Login failed',
+          message: res.message || "Login failed",
         };
       }
     } else {
       return {
         success: false,
-        message: res.error || 'Invalid email or password',
+        message: res.error || "Invalid email or password",
       };
     }
   } catch (error) {
-    console.error('Login error:', error);
+    console.error("Login error:", error);
     return {
       success: false,
-      message: 'An error occurred during login',
+      message: "An error occurred during login",
     };
   }
 }
 
 export async function get_email() {
   try {
-    const userToken = await AsyncStorage.getItem('Token');
+    const userToken = await AsyncStorage.getItem("Token");
     if (userToken) {
       const user = jwtDecode(userToken);
       return user.email;
     }
     return null;
   } catch (error) {
-    console.error('Error fetching email:', error);
+    console.error("Error fetching email:", error);
     return null;
   }
 }
 
 export async function get_name() {
   try {
-    const userToken = await AsyncStorage.getItem('Token');
+    const userToken = await AsyncStorage.getItem("Token");
     if (userToken) {
       const user = jwtDecode(userToken);
       return user.first_name;
     }
     return null;
   } catch (error) {
-    console.error('Error fetching email:', error);
+    console.error("Error fetching email:", error);
     return null;
   }
 }
 
 export async function get_user_id() {
   try {
-    const userToken = await AsyncStorage.getItem('Token');
+    const userToken = await AsyncStorage.getItem("Token");
     if (userToken) {
       const user = jwtDecode(userToken);
       return user._id;
     }
     return null;
   } catch (error) {
-    console.error('Error fetching user ID:', error);
+    console.error("Error fetching user ID:", error);
     return null;
   }
 }
 
 export async function get_user_role() {
   try {
-    const userToken = await AsyncStorage.getItem('Token');
+    const userToken = await AsyncStorage.getItem("Token");
 
     if (userToken) {
       const user = jwtDecode(userToken);
@@ -98,20 +98,20 @@ export async function get_user_role() {
     }
     return null;
   } catch (error) {
-    console.error('Error fetching user role:', error);
+    console.error("Error fetching user role:", error);
     return null;
   }
 }
 
 export async function get_user_details() {
   try {
-    const userToken = await AsyncStorage.getItem('Token');
+    const userToken = await AsyncStorage.getItem("Token");
     if (userToken) {
       const response = await fetch(AppConst.FIND_USER, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          Authorization: 'Bearer ' + userToken,
-          'Content-Type': 'application/json',
+          Authorization: "Bearer " + userToken,
+          "Content-Type": "application/json",
         },
       });
 
@@ -119,26 +119,26 @@ export async function get_user_details() {
       if (response.ok && res.success) {
         return res.data;
       } else {
-        console.error('Failed to fetch user details:', res.message);
+        console.error("Failed to fetch user details:", res.message);
         return null;
       }
     } else {
       return null;
     }
   } catch (error) {
-    console.error('Error fetching user details:', error);
+    console.error("Error fetching user details:", error);
     return null;
   }
 }
 
 export async function get_pic(type) {
   try {
-    const userToken = await AsyncStorage.getItem('Token');
+    const userToken = await AsyncStorage.getItem("Token");
     if (userToken) {
       const user = jwtDecode(userToken);
 
       const url =
-        type === 'thumb'
+        type === "thumb"
           ? AppConst.PIC_THUMB(user.id)
           : AppConst.PIC_FULL(user.id);
 
@@ -146,7 +146,53 @@ export async function get_pic(type) {
     }
     return null;
   } catch (error) {
-    console.error('Error fetching user ID:', error);
+    console.error("Error fetching user ID:", error);
     return null;
+  }
+}
+
+export async function resetPassword(newPassword) {
+  try {
+    const userToken = await AsyncStorage.getItem("Token");
+    if (!userToken) {
+      return {
+        success: false,
+        message: "User not authenticated",
+      };
+    }
+
+    const user = jwtDecode(userToken);
+    const userId = user.id;
+
+    const response = await fetch(AppConst.RESET_PASSWORD_BY_ID(userId), {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        newPassword: newPassword,
+      }),
+    });
+
+    const res = await response.json();
+
+    if (response.ok && res.message) {
+      return {
+        success: true,
+        message: res.message,
+      };
+    } else {
+      return {
+        success: false,
+        message: res.error || "Password reset failed",
+      };
+    }
+  } catch (error) {
+    console.error("Password reset error:", error);
+    return {
+      success: false,
+      message: "An error occurred during password reset",
+    };
   }
 }

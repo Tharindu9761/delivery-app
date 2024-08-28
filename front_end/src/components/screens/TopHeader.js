@@ -12,7 +12,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import Modal from "@mui/material/Modal";
 import { TextField, Button, IconButton, InputAdornment } from "@mui/material";
 
-import { get_name, get_pic } from "../../services/userService";
+import { get_name, get_pic, resetPassword } from "../../services/userService";
 
 import "../styles/topHeader.css";
 
@@ -24,7 +24,7 @@ const TopHeader = ({ onSignOut }) => {
   });
 
   const [userName, setUserName] = useState("");
-  const [userAvatar, setUserAvatar] = useState(""); 
+  const [userAvatar, setUserAvatar] = useState("");
   const [showDropdown, setShowDropdown] = useState(true);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +35,7 @@ const TopHeader = ({ onSignOut }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       const name = await get_name();
-      const avatarUrl = await get_pic("thumb"); 
+      const avatarUrl = await get_pic("thumb");
 
       if (name) {
         setUserName(name);
@@ -114,7 +114,7 @@ const TopHeader = ({ onSignOut }) => {
     setShowPassword(!showPassword);
   };
 
-  const handlePasswordReset = () => {
+  const handlePasswordReset = async () => {
     if (newPassword !== confirmPassword) {
       setSnackbar({
         open: true,
@@ -128,12 +128,32 @@ const TopHeader = ({ onSignOut }) => {
         severity: "error",
       });
     } else {
-      setSnackbar({
-        open: true,
-        message: "Password successfully reset!",
-        severity: "error",
-      });
-      setShowPasswordModal(false);
+      try {
+        const result = await resetPassword(newPassword);
+        if (result.success) {
+          setSnackbar({
+            open: true,
+            message: "Password successfully reset!",
+            severity: "success",
+          });
+          setShowPasswordModal(false);
+          setTimeout(() => {
+            handleLogout();
+          }, 2500);
+        } else {
+          setSnackbar({
+            open: true,
+            message: result.message || "Failed to reset password",
+            severity: "error",
+          });
+        }
+      } catch (error) {
+        setSnackbar({
+          open: true,
+          message: "An error occurred during password reset.",
+          severity: "error",
+        });
+      }
     }
   };
 
