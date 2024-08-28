@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
 
 import { web_login } from "../../services/userService";
 import "../styles/signIn.css";
@@ -99,7 +101,7 @@ const SignIn = ({ onSignIn }) => {
 
         setSnackbar({
           open: true,
-          message: "Login successful ! Welcome back.",
+          message: "Login successful! Welcome back.",
           severity: "success",
         });
 
@@ -137,21 +139,31 @@ const SignIn = ({ onSignIn }) => {
       <div className="signin-box">
         <h2>Sign In</h2>
         <form onSubmit={handleSignIn}>
-          <div className="input-group">
-            <label>Email</label>
-            <div className="input-wrapper">
-              <FaEnvelope className="icon" />
-              <input
-                type="email"
-                placeholder="Enter your email"
-                onChange={(e) => handleEmailChange(e.target.value)}
-                onBlur={(e) => handleEmailChange(e.target.value)}
-                required
-              />
-              {data.check_textInputChange && (
-                <span style={{ color: "green" }}>✔</span>
-              )}
-            </div>
+          <div className="input-container">
+            <TextField
+              label="Email"
+              type="email"
+              fullWidth
+              value={data.email}
+              onChange={(e) => handleEmailChange(e.target.value)}
+              required
+              margin="normal"
+              variant="outlined"
+              className="custom-textfield"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <FaEnvelope />
+                  </InputAdornment>
+                ),
+                endAdornment: data.check_textInputChange ? (
+                  <InputAdornment position="end">
+                    <span style={{ color: "green" }}>✔</span>
+                  </InputAdornment>
+                ) : null,
+              }}
+            />
+
             {!data.isValidUser && (
               <div style={{ color: "red", fontSize: "12px" }}>
                 Invalid email address.
@@ -159,20 +171,32 @@ const SignIn = ({ onSignIn }) => {
             )}
           </div>
 
-          <div className="input-group">
-            <label>Password</label>
-            <div className="input-wrapper">
-              <FaLock className="icon" />
-              <input
-                type={data.secureTextEntry ? "password" : "text"}
-                placeholder="Enter your password"
-                onChange={(e) => handlePasswordChange(e.target.value)}
-                required
-              />
-              <span className="toggle-icon" onClick={togglePasswordVisibility}>
-                {data.secureTextEntry ? <FaEyeSlash /> : <FaEye />}
-              </span>
-            </div>
+          <div className="input-container">
+            <TextField
+              label="Password"
+              type={data.secureTextEntry ? "password" : "text"}
+              fullWidth
+              value={data.password}
+              onChange={(e) => handlePasswordChange(e.target.value)}
+              required
+              margin="normal"
+              variant="outlined"
+              className="custom-textfield"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <FaLock />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={togglePasswordVisibility}>
+                      {data.secureTextEntry ? <FaEyeSlash /> : <FaEye />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
             {!data.isValidPassword && (
               <div style={{ color: "red", fontSize: "12px" }}>
                 Password must be at least 6 characters long.

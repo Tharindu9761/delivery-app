@@ -10,6 +10,7 @@
   border-radius: 10px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+  margin: auto;
 }
 
 .signin-box {
@@ -21,6 +22,7 @@
   margin-bottom: 20px;
   font-size: 28px;
   color: #333;
+  font-weight: bold;
 }
 
 .input-group {
@@ -41,11 +43,19 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.input-wrapper:hover {
+  border-color: #5a9efb;
 }
 
 .input-wrapper .icon {
   margin-right: 10px;
   color: #5a9efb;
+  font-size: 18px;
 }
 
 .input-wrapper input {
@@ -54,27 +64,36 @@
   flex: 1;
   font-size: 14px;
   padding: 0;
+  background: transparent;
 }
 
 .toggle-icon {
   cursor: pointer;
   color: #5a9efb;
+  font-size: 18px;
 }
 
 .signin-button {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background-color: #5a9efb;
   color: white;
   font-size: 18px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-sizing: border-box;
 }
 
 .signin-button:hover {
   background-color: #4a8ae6;
+  transform: translateY(-2px);
+}
+
+.signin-button:active {
+  background-color: #4a8ae6;
+  transform: translateY(0);
 }
 
 .signup-link {
@@ -115,6 +134,6 @@
 
   .signin-button {
     font-size: 16px;
-    padding: 8px;
+    padding: 10px; /* Adjust padding for smaller screens */
   }
 }
