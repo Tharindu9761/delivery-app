@@ -13,6 +13,8 @@ import Dashboard from "./components/screens/Dashboard";
 import AllDrivers from "./components/screens/AllDrivers";
 import AllMerchants from "./components/screens/AllMerchants";
 import SignIn from "./components/screens/SignIn";
+import ForgotPassword from "./components/screens/ForgotPassword";
+
 import "./App.css";
 
 const App = () => {
@@ -33,15 +35,20 @@ const App = () => {
       <div className={isSignedIn ? "mainBody signedIn" : "mainBody"}>
         <Routes>
           <Route path="/signin" element={<SignIn onSignIn={handleSignIn} />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           {isSignedIn ? (
             <>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Navigate to="/home" />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/home" element={<Home />} />
               <Route path="/drivers" element={<AllDrivers />} />
               <Route path="/merchants" element={<AllMerchants />} />
             </>
           ) : (
-            <Route path="*" element={<Navigate to="/signin" />} />
+            <>
+              <Route path="*" element={<Navigate to="/signin" />} />
+              <Route path="/" element={<Navigate to="/signin" />} />
+            </>
           )}
         </Routes>
       </div>

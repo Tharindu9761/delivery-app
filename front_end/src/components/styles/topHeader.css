@@ -137,7 +137,7 @@
 
 /* Ensure proper styling of buttons */
 .input-container .MuiInputBase-root {
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 /* Media Query for Smaller Screens */

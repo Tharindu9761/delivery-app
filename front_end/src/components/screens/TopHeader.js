@@ -7,13 +7,11 @@ import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LockResetIcon from "@mui/icons-material/LockReset";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import Modal from "@mui/material/Modal";
 import { TextField, Button, IconButton, InputAdornment } from "@mui/material";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import { get_name, get_pic, resetPassword } from "../../services/userService";
-
 import "../styles/topHeader.css";
 
 const TopHeader = ({ onSignOut }) => {
@@ -25,25 +23,21 @@ const TopHeader = ({ onSignOut }) => {
 
   const [userName, setUserName] = useState("");
   const [userAvatar, setUserAvatar] = useState("");
-  const [showDropdown, setShowDropdown] = useState(true);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isValidPassword, setIsValidPassword] = useState(true);
+  const [passwordMatch, setPasswordMatch] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
       const name = await get_name();
       const avatarUrl = await get_pic("thumb");
 
-      if (name) {
-        setUserName(name);
-      }
-
-      if (avatarUrl) {
-        setUserAvatar(avatarUrl);
-      }
+      setUserName(name || "User");
+      setUserAvatar(avatarUrl || "");
     };
 
     fetchUserData();
@@ -73,7 +67,7 @@ const TopHeader = ({ onSignOut }) => {
     }
   };
 
-  const handleClose = (event, reason) => {
+  const handleCloseSnackbar = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
@@ -95,6 +89,7 @@ const TopHeader = ({ onSignOut }) => {
   const handlePassword = () => {
     setShowPassword(false);
     setIsValidPassword(true);
+    setPasswordMatch(true);
     setNewPassword("");
     setConfirmPassword("");
     setShowPasswordModal(true);
@@ -104,10 +99,13 @@ const TopHeader = ({ onSignOut }) => {
     const password = event.target.value;
     setNewPassword(password);
     setIsValidPassword(password.length >= 6);
+    setPasswordMatch(password === confirmPassword);
   };
 
   const handleConfirmPasswordChange = (event) => {
-    setConfirmPassword(event.target.value);
+    const confirmPassword = event.target.value;
+    setConfirmPassword(confirmPassword);
+    setPasswordMatch(confirmPassword === newPassword);
   };
 
   const toggleShowPassword = () => {
@@ -115,13 +113,13 @@ const TopHeader = ({ onSignOut }) => {
   };
 
   const handlePasswordReset = async () => {
-    if (newPassword !== confirmPassword) {
+    if (!passwordMatch) {
       setSnackbar({
         open: true,
         message: "Passwords do not match!",
         severity: "error",
       });
-    } else if (newPassword.length < 6) {
+    } else if (!isValidPassword) {
       setSnackbar({
         open: true,
         message: "Password must be at least 6 characters long.",
@@ -143,7 +141,7 @@ const TopHeader = ({ onSignOut }) => {
         } else {
           setSnackbar({
             open: true,
-            message: result.message || "Failed to reset password",
+            message: result.message || "Failed to reset password.",
             severity: "error",
           });
         }
@@ -168,7 +166,7 @@ const TopHeader = ({ onSignOut }) => {
             <NotificationsIcon className="notification-icon" />
           </div>
           <div className="header-profile" onClick={handleProfileClick}>
-            <span className="header-name">Hi {userName} !</span>
+            <span className="header-name">Hi {userName}!</span>
             <Avatar src={userAvatar} className="profile-avatar" />
             {showDropdown && (
               <div className="dropdown-menu">
@@ -192,9 +190,9 @@ const TopHeader = ({ onSignOut }) => {
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
           open={snackbar.open}
           autoHideDuration={2500}
-          onClose={handleClose}
+          onClose={handleCloseSnackbar}
         >
-          <Alert onClose={handleClose} severity={snackbar.severity}>
+          <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
             {snackbar.message}
           </Alert>
         </Snackbar>
@@ -225,11 +223,7 @@ const TopHeader = ({ onSignOut }) => {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton onClick={toggleShowPassword}>
-                      {showPassword ? (
-                        <VisibilityOffIcon />
-                      ) : (
-                        <VisibilityIcon />
-                      )}
+                      {showPassword ? <FaEye /> : <FaEyeSlash />}
                     </IconButton>
                   </InputAdornment>
                 ),
@@ -245,9 +239,9 @@ const TopHeader = ({ onSignOut }) => {
             <TextField
               label="Confirm Password"
               type={showPassword ? "text" : "password"}
+              fullWidth
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
-              fullWidth
               margin="normal"
               variant="outlined"
               InputProps={{
@@ -256,19 +250,19 @@ const TopHeader = ({ onSignOut }) => {
                     <LockResetIcon />
                   </InputAdornment>
                 ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={toggleShowPassword}>
-                      {showPassword ? (
-                        <VisibilityOffIcon />
-                      ) : (
-                        <VisibilityIcon />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
+                endAdornment:
+                  passwordMatch && confirmPassword ? (
+                    <InputAdornment position="end">
+                      <span style={{ color: "green" }}>✔</span>
+                    </InputAdornment>
+                  ) : null,
               }}
             />
+            {!passwordMatch && confirmPassword && (
+              <div style={{ color: "red", fontSize: "12px" }}>
+                Passwords do not match.
+              </div>
+            )}
           </div>
           <div className="button-group">
             <Button

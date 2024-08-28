@@ -119,6 +119,18 @@ const resetPasswordById = async (id, newPassword) => {
   }
 };
 
+// Reset a user's password by Email
+const resetPasswordByEmail = async (email, newPassword) => {
+  const query = 'UPDATE users SET password = $1 WHERE email = $2 RETURNING *;';
+  const values = [newPassword, email];
+
+  try {
+    const result = await pool.query(query, values);
+    return excludePassword(result.rows[0]);
+  } catch (err) {
+    throw new Error('Error resetting password: ' + err.message);
+  }
+};
 
 module.exports = {
   createUser,
@@ -127,5 +139,6 @@ module.exports = {
   updateUserById,
   deleteUserById,
   getUserByEmail,
-  resetPasswordById
+  resetPasswordById,
+  resetPasswordByEmail
 };
