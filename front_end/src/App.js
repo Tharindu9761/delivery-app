@@ -14,6 +14,8 @@ import AllDrivers from "./components/screens/AllDrivers";
 import AllMerchants from "./components/screens/AllMerchants";
 import SignIn from "./components/screens/SignIn";
 import ForgotPassword from "./components/screens/ForgotPassword";
+import AllMessages from "./components/screens/AllMessages";
+
 
 import "./App.css";
 
@@ -43,6 +45,8 @@ const App = () => {
               <Route path="/home" element={<Home />} />
               <Route path="/drivers" element={<AllDrivers />} />
               <Route path="/merchants" element={<AllMerchants />} />
+              <Route path="/messages" element={<AllMessages />} />
+              
             </>
           ) : (
             <>

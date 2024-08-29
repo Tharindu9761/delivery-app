@@ -55,10 +55,29 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Mark a message as read
+router.put("/read/:id", async (req, res) => {
+  try {
+    const updatedMessage = await messageService.markMessageAsRead(req.params.id);
+
+    if (updatedMessage) {
+      res
+        .status(200)
+        .json({ message: "Message marked as read", updatedMessage });
+    } else {
+      res.status(404).json({ error: "Message not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Delete a message by ID
 router.delete("/:id", async (req, res) => {
   try {
-    const deletedMessage = await messageService.deleteMessageById(req.params.id);
+    const deletedMessage = await messageService.deleteMessageById(
+      req.params.id
+    );
     if (deletedMessage) {
       res.status(200).json(deletedMessage);
     } else {

@@ -20,24 +20,41 @@ const createMessage = async (messageData) => {
 const getMessages = async ({ page, limit, type }) => {
   const offset = (page - 1) * limit;
   let query = `
-    SELECT * FROM messages
-  `;
+      SELECT * FROM messages
+    `;
+
+  let countQuery = `
+      SELECT COUNT(*) FROM messages
+    `;
 
   const values = [];
 
   if (type) {
     query += ` WHERE type = $1`;
+    countQuery += ` WHERE type = $1`;
     values.push(type);
   }
 
-  query += ` ORDER BY created_at DESC LIMIT $${values.length + 1} OFFSET $${
+  query += ` ORDER BY created_at ASC LIMIT $${values.length + 1} OFFSET $${
     values.length + 2
   }`;
 
   values.push(limit, offset);
 
-  const res = await pool.query(query, values);
-  return res.rows;
+  try {
+    const [messageResult, countResult] = await Promise.all([
+      pool.query(query, values),
+      pool.query(countQuery, values.slice(0, 1)),
+    ]);
+
+    const data = messageResult.rows;
+    const total = parseInt(countResult.rows[0].count, 10);
+
+    return { data, total };
+  } catch (err) {
+    console.error("Error fetching messages:", err);
+    return { data: [], total: 0 };
+  }
 };
 
 // Get a message by ID
@@ -82,10 +99,29 @@ const deleteMessageById = async (id) => {
   return res.rows[0];
 };
 
+// Update a message's status to "Read" by ID
+const markMessageAsRead = async (id) => {
+  const query = `
+      UPDATE messages
+      SET type = 'Read'
+      WHERE id = $1
+      RETURNING *;
+    `;
+
+  try {
+    const res = await pool.query(query, [id]);
+    return res.rows[0];
+  } catch (err) {
+    console.error("Error marking message as read:", err);
+    throw new Error("Unable to mark message as read");
+  }
+};
+
 module.exports = {
   createMessage,
   getMessages,
   getMessageById,
   updateMessageById,
   deleteMessageById,
+  markMessageAsRead,
 };

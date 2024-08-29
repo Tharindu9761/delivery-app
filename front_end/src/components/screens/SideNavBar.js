@@ -6,6 +6,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import StoreIcon from "@mui/icons-material/Store";
 import MenuIcon from "@mui/icons-material/Menu";
+import MailIcon from "@mui/icons-material/Mail";
 
 const SideNavBar = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -65,6 +66,15 @@ const SideNavBar = () => {
             <Link to="/merchants">
               <StoreIcon className="icon" />
               <span>All Merchants</span>
+            </Link>
+          </li>
+          <li
+            className={activeIndex === 4 ? "active" : ""}
+            onClick={() => handleClick(4)}
+          >
+            <Link to="/messages">
+              <MailIcon className="icon" />
+              <span>All Messages</span>
             </Link>
           </li>
         </ul>

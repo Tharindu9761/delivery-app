@@ -197,19 +197,8 @@ export async function resetPassword(newPassword) {
   }
 }
 
-export async function resetPasswordByEmail(newPassword) {
+export async function resetPasswordByEmail(email, newPassword) {
   try {
-    const userToken = await AsyncStorage.getItem("Token");
-    if (!userToken) {
-      return {
-        success: false,
-        message: "User not authenticated",
-      };
-    }
-
-    const user = jwtDecode(userToken);
-    const email = user.email;
-
     const response = await fetch(AppConst.RESET_PASSWORD_BY_EMAIL(email), {
       method: "PUT",
       headers: {

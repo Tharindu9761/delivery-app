@@ -77,7 +77,7 @@ const ForgotPassword = () => {
       return;
     }
 
-    const response = await resetPasswordByEmail(newPassword);
+    const response = await resetPasswordByEmail(email, newPassword);
 
     setSnackbar({
       open: true,
