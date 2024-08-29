@@ -1,6 +1,8 @@
 /* Fonts */
 :root {
-  --default-font: "Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --default-font: "Roboto", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --heading-font: "Raleway", sans-serif;
   --nav-font: "Poppins", sans-serif;
 }
@@ -8,9 +10,9 @@
 /* Global Colors */
 :root {
   --background-color: #ffffff;
-  --default-color: #000000;
+  --default-color: #444444;
   --heading-color: #0d6efd;
-  --accent-color: #20c997;
+  --accent-color: #ffc533;
   --surface-color: #ffffff;
   --contrast-color: #ffffff;
 }
@@ -18,10 +20,10 @@
 /* Nav Menu Colors */
 :root {
   --nav-color: #ffffff;
-  --nav-hover-color: #1acc8d;
+  --nav-hover-color: #ffc533;
   --nav-mobile-background-color: #ffffff;
-  --nav-dropdown-background-color: #ffffff; 
-  --nav-dropdown-color: #000000; 
+  --nav-dropdown-background-color: #ffffff;
+  --nav-dropdown-color: #444444;
   --nav-dropdown-hover-color: #1acc8d;
 }
 
@@ -169,7 +171,8 @@ h6 {
 
 .page-title .heading {
   padding: 160px 0 80px 0;
-  border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+  border-top: 1px solid
+    color-mix(in srgb, var(--default-color), transparent 90%);
 }
 
 .page-title .heading h1 {
@@ -191,11 +194,11 @@ h6 {
   font-weight: 600;
 }
 
-.page-title nav ol li+li {
+.page-title nav ol li + li {
   padding-left: 10px;
 }
 
-.page-title nav ol li+li::before {
+.page-title nav ol li + li::before {
   content: "/";
   display: inline-block;
   padding-right: 10px;
@@ -253,4 +256,28 @@ section,
   font-weight: 700;
   text-transform: uppercase;
   font-family: var(--heading-font);
+}
+
+#form-status {
+  position: fixed;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1050;
+  width: auto;
+  max-width: 90%;
+  padding: 1rem;
+}
+
+.alert-success,
+.alert-danger {
+  color: white !important;
+}
+
+.alert-success {
+  background-color: #20c997 !important;
+}
+
+.alert-danger {
+  background-color: #dc3545 !important;
 }

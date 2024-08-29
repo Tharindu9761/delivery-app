@@ -5,7 +5,7 @@
   width: 100%;
   min-height: 70vh;
   position: relative;
-  padding: 120px 0 120px 0;
+  padding: 120px 0 120px 0 !important;
   display: flex;
   align-items: center;
 }
@@ -29,7 +29,6 @@
 }
 
 .hero .container {
-  padding-top: 50px;
   position: relative;
   z-index: 3;
 }

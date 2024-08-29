@@ -50,9 +50,43 @@
     <link href="assets/css/footer.css" rel="stylesheet" />
     <link href="assets/css/hero.css" rel="stylesheet" />
     <link href="assets/css/about.css" rel="stylesheet" />
+    <link href="assets/css/stats.css" rel="stylesheet" />
+    <link href="assets/css/contact.css" rel="stylesheet" />
   </head>
 
   <body class="index-page">
+    <!-- Define SVG Icons -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none">
+      <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path
+          d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM7.84 10.634 4.736 7.529a.75.75 0 0 0-1.06 1.06l3.5 3.5a.75.75 0 0 0 1.06 0l6-6a.75.75 0 0 0-1.06-1.06L7.84 10.634z"
+        />
+      </symbol>
+      <symbol
+        id="exclamation-triangle-fill"
+        fill="currentColor"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M8 0c-.176 0-.348.03-.516.087a1.007 1.007 0 0 0-.474.43L.165 13.222a1 1 0 0 0 .866 1.512h14.137a1 1 0 0 0 .866-1.512L8.99.517a1.007 1.007 0 0 0-.474-.43A1.007 1.007 0 0 0 8 0zM8 4.5a.75.75 0 0 1 .75.75v4a.75.75 0 0 1-1.5 0v-4A.75.75 0 0 1 8 4.5zm.007 7.4a.933.933 0 1 1 0 1.866.933.933 0 0 1 0-1.866z"
+        />
+      </symbol>
+    </svg>
+
+    <!-- Alert Placeholder -->
+    <div id="form-status" class="alert d-none" role="alert">
+      <svg
+        class="bi flex-shrink-0 me-2"
+        width="24"
+        height="24"
+        role="img"
+        aria-label="Alert Icon"
+      >
+        <use id="alert_icon" xlink:href="#"></use>
+      </svg>
+      <span id="alert-message"></span>
+    </div>
+
     <!-- Navigation -->
     <header id="header" class="header d-flex align-items-center fixed-top">
       <div
@@ -66,12 +100,11 @@
           <ul>
             <li><a href="#hero" class="active">Home</a></li>
             <li><a href="#about">About</a></li>
+            <li><a href="#stats">Stats</a></li>
+            <li><a href="#contact">Contact</a></li>
             <li>
               <a href="http://localhost:4200/signin" target="_blank">Sign In</a>
             </li>
-            <!-- <li><a href="#features">Features</a></li>
-            <li><a href="#team">Team</a></li> -->
-            <!-- <li><a href="#contact">Contact</a></li> -->
           </ul>
           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
@@ -221,6 +254,196 @@
       </div>
     </section>
 
+    <!-- Stats Section -->
+    <section id="stats" class="stats section light-background">
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row gy-4">
+          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+            <i class="bi bi-emoji-smile"></i>
+            <div class="stats-item">
+              <span
+                data-purecounter-start="0"
+                data-purecounter-end="1763"
+                data-purecounter-duration="1"
+                class="purecounter"
+              ></span>
+              <p>Satisfied Customers</p>
+            </div>
+          </div>
+          <!-- End Stats Item -->
+
+          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+            <i class="bi bi-box-seam"></i>
+            <div class="stats-item">
+              <span
+                data-purecounter-start="0"
+                data-purecounter-end="3248"
+                data-purecounter-duration="1"
+                class="purecounter"
+              ></span>
+              <p>Deliveries Completed</p>
+            </div>
+          </div>
+          <!-- End Stats Item -->
+
+          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+            <i class="bi bi-clock-history"></i>
+            <div class="stats-item">
+              <span
+                data-purecounter-start="0"
+                data-purecounter-end="9261"
+                data-purecounter-duration="1"
+                class="purecounter"
+              ></span>
+              <p>Hours of Service</p>
+            </div>
+          </div>
+          <!-- End Stats Item -->
+
+          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
+            <i class="bi bi-truck"></i>
+            <div class="stats-item">
+              <span
+                data-purecounter-start="0"
+                data-purecounter-end="67"
+                data-purecounter-duration="1"
+                class="purecounter"
+              ></span>
+              <p>Active Delivery Partners</p>
+            </div>
+          </div>
+          <!-- End Stats Item -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact section">
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Contact</h2>
+        <div>
+          <span>Check Our</span>
+          <span class="description-title">Contact</span>
+        </div>
+      </div>
+      <!-- End Section Title -->
+
+      <div class="container" data-aos="fade" data-aos-delay="100">
+        <div class="row gy-4">
+          <div class="col-lg-4">
+            <div
+              class="info-item d-flex"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
+              <i class="bi bi-geo-alt flex-shrink-0"></i>
+              <div>
+                <h3>Address</h3>
+                <p>ATMC 470 Bourke St, Melbourne, VIC 3000</p>
+              </div>
+            </div>
+            <!-- End Info Item -->
+
+            <div
+              class="info-item d-flex"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
+              <i class="bi bi-telephone flex-shrink-0"></i>
+              <div>
+                <h3>Call Us</h3>
+                <p>(03) 8327 3100</p>
+              </div>
+            </div>
+            <!-- End Info Item -->
+
+            <div
+              class="info-item d-flex"
+              data-aos="fade-up"
+              data-aos-delay="400"
+            >
+              <i class="bi bi-envelope flex-shrink-0"></i>
+              <div>
+                <h3>Email Us</h3>
+                <p>info@atmc.com.au</p>
+              </div>
+            </div>
+            <!-- End Info Item -->
+          </div>
+
+          <div class="col-lg-8">
+            <form
+              id="contact-form"
+              class="email-form"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
+              <div class="row gy-4">
+                <div class="col-md-6">
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    class="form-control"
+                    placeholder="Your Name"
+                    required
+                  />
+                  <div class="invalid-feedback">Please enter your name.</div>
+                </div>
+
+                <div class="col-md-6">
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-control"
+                    placeholder="Your Email"
+                    required
+                  />
+                  <div class="invalid-feedback">
+                    Please enter a valid email address.
+                  </div>
+                </div>
+
+                <div class="col-md-12">
+                  <input
+                    type="text"
+                    id="subject"
+                    name="subject"
+                    class="form-control"
+                    placeholder="Subject"
+                    required
+                  />
+                  <div class="invalid-feedback">Please enter a subject.</div>
+                </div>
+
+                <div class="col-md-12">
+                  <textarea
+                    id="message"
+                    name="message"
+                    class="form-control"
+                    rows="6"
+                    placeholder="Message"
+                    required
+                  ></textarea>
+                  <div class="invalid-feedback">Please enter your message.</div>
+                </div>
+
+                <div class="col-md-12 text-center">
+                  <button type="submit" class="btn btn-primary">
+                    Send Message
+                  </button>
+                </div>
+              </div>
+            </form>
+            <p id="form-status"></p>
+          </div>
+          <!-- End Contact Form -->
+        </div>
+      </div>
+    </section>
+
     <!-- Footer -->
     <footer id="footer" class="footer dark-background">
       <div class="container footer-top">
@@ -270,16 +493,10 @@
     <script src="https://cdn.jsdelivr.net/npm/glightbox@3.1.0/dist/js/glightbox.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/purecounter@1.1.0/purecounter_vanilla.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@9.0.0/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@srexi/purecounterjs/dist/purecounter_vanilla.js"></script>
 
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <!-- Custom JS -->
     <script src="assets/js/main.js"></script>
-
-    <script>
-      AOS.init({
-        duration: 1000, // Animation duration in milliseconds
-        once: true, // Whether animation should happen only once - while scrolling down
-      });
-    </script>
   </body>
 </html>

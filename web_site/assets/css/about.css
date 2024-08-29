@@ -65,14 +65,14 @@
   }
   
   .about .icon-box i {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 24px;
-    font-size: 32px;
+    font-size: 26px;
     line-height: 0;
     transition: all 0.4s ease-out 0s;
     background-color: color-mix(in srgb, var(--accent-color), transparent 95%);
