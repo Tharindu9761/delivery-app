@@ -47,6 +47,7 @@ const TopHeader = ({ onSignOut }) => {
     try {
       await AsyncStorage.removeItem("Token");
       await AsyncStorage.removeItem("Key");
+      await AsyncStorage.removeItem("sessionTimestamp");
 
       setSnackbar({
         open: true,

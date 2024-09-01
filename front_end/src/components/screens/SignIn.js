@@ -95,9 +95,11 @@ const SignIn = ({ onSignIn }) => {
       const loginResponse = await web_login(data.email, data.password);
 
       if (loginResponse.success) {
-        // Store the token and key in AsyncStorage if needed
+        const currentTime = new Date().getTime();
+        // Store the token and key in AsyncStorage
         await AsyncStorage.setItem("Token", loginResponse.token);
         await AsyncStorage.setItem("Key", loginResponse.key);
+        await AsyncStorage.setItem("sessionTimestamp", currentTime.toString());
 
         setSnackbar({
           open: true,
