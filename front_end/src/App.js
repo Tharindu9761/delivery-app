@@ -20,7 +20,7 @@ import "./App.css";
 
 const App = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // New loading state
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkTokenExpiration = async () => {

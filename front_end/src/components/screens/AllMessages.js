@@ -1,5 +1,3 @@
-// src/components/AllMessages/AllMessages.jsx
-
 import React, { useState, useEffect } from "react";
 import {
   Tabs,
@@ -198,7 +196,7 @@ const AllMessages = () => {
         <Paper>
           <TableContainer>
             <Table>
-              <TableHead >
+              <TableHead>
                 <TableRow>
                   <TableCell>
                     <strong>Name</strong>
@@ -265,7 +263,7 @@ const AllMessages = () => {
         <Paper>
           <TableContainer>
             <Table>
-              <TableHead >
+              <TableHead>
                 <TableRow>
                   <TableCell>
                     <strong>Name</strong>

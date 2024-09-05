@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "../styles/sideNavBar.css";
 import HomeIcon from "@mui/icons-material/Home";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -9,13 +9,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import MailIcon from "@mui/icons-material/Mail";
 
 const SideNavBar = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
-
-  const handleClick = (index) => {
-    setActiveIndex(index);
-    setIsOpen(false); // Close the side nav when an item is clicked on smaller screens
-  };
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -33,8 +28,8 @@ const SideNavBar = () => {
         </div>
         <ul>
           <li
-            className={activeIndex === 0 ? "active" : ""}
-            onClick={() => handleClick(0)}
+            className={location.pathname === "/home" ? "active" : ""}
+            onClick={() => setIsOpen(false)}
           >
             <Link to="/">
               <HomeIcon className="icon" />
@@ -42,8 +37,8 @@ const SideNavBar = () => {
             </Link>
           </li>
           <li
-            className={activeIndex === 1 ? "active" : ""}
-            onClick={() => handleClick(1)}
+            className={location.pathname === "/dashboard" ? "active" : ""}
+            onClick={() => setIsOpen(false)}
           >
             <Link to="/dashboard">
               <DashboardIcon className="icon" />
@@ -51,8 +46,8 @@ const SideNavBar = () => {
             </Link>
           </li>
           <li
-            className={activeIndex === 2 ? "active" : ""}
-            onClick={() => handleClick(2)}
+            className={location.pathname === "/drivers" ? "active" : ""}
+            onClick={() => setIsOpen(false)}
           >
             <Link to="/drivers">
               <DirectionsCarIcon className="icon" />
@@ -60,8 +55,8 @@ const SideNavBar = () => {
             </Link>
           </li>
           <li
-            className={activeIndex === 3 ? "active" : ""}
-            onClick={() => handleClick(3)}
+            className={location.pathname === "/merchants" ? "active" : ""}
+            onClick={() => setIsOpen(false)}
           >
             <Link to="/merchants">
               <StoreIcon className="icon" />
@@ -69,8 +64,8 @@ const SideNavBar = () => {
             </Link>
           </li>
           <li
-            className={activeIndex === 4 ? "active" : ""}
-            onClick={() => handleClick(4)}
+            className={location.pathname === "/messages" ? "active" : ""}
+            onClick={() => setIsOpen(false)}
           >
             <Link to="/messages">
               <MailIcon className="icon" />
