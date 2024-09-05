@@ -16,7 +16,7 @@ const SignIn = ({ onSignIn }) => {
   const [data, setData] = useState({
     email: "",
     password: "",
-    check_textInputChange: false,
+    check_email_Change: false,
     secureTextEntry: true,
     isValidUser: true,
     isValidPassword: true,
@@ -29,22 +29,13 @@ const SignIn = ({ onSignIn }) => {
   });
 
   const handleEmailChange = (val) => {
-    let reg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-    if (reg.test(val)) {
-      setData({
-        ...data,
-        email: val,
-        check_textInputChange: true,
-        isValidUser: true,
-      });
-    } else {
-      setData({
-        ...data,
-        email: val,
-        check_textInputChange: false,
-        isValidUser: false,
-      });
-    }
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    setData({
+      ...data,
+      email: val,
+      check_email_Change: isValidEmail,
+      isValidUser: isValidEmail,
+    });
   };
 
   const handlePasswordChange = (val) => {
@@ -70,19 +61,39 @@ const SignIn = ({ onSignIn }) => {
     });
   };
 
-  const handleSignIn = async (event) => {
-    event.preventDefault();
+  const handleSignIn = async () => {
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email);
+    const isPasswordValid = data.password.length >= 6;
 
-    if (!data.isValidUser) {
+    // Update validation state
+    setData({
+      ...data,
+      isValidUser: isEmailValid,
+      isValidPassword: isPasswordValid,
+    });
+
+    if (!isEmailValid && !isPasswordValid) {
       setSnackbar({
         open: true,
-        message: "Please enter a valid email address.",
+        message: "Please enter a valid email address and password",
         severity: "error",
       });
       return;
     }
 
-    if (!data.isValidPassword) {
+    // Check if email is valid
+    if (!isEmailValid) {
+      setSnackbar({
+        open: true,
+        message:
+          "Please enter a valid email address in the format: example@domain.com",
+        severity: "error",
+      });
+      return;
+    }
+
+    // Check if password is valid
+    if (!isPasswordValid) {
       setSnackbar({
         open: true,
         message: "Password must be at least 6 characters long.",
@@ -91,11 +102,13 @@ const SignIn = ({ onSignIn }) => {
       return;
     }
 
+    // Proceed to login if both email and password are valid
     try {
       const loginResponse = await web_login(data.email, data.password);
 
       if (loginResponse.success) {
         const currentTime = new Date().getTime();
+
         // Store the token and key in AsyncStorage
         await AsyncStorage.setItem("Token", loginResponse.token);
         await AsyncStorage.setItem("Key", loginResponse.key);
@@ -107,22 +120,27 @@ const SignIn = ({ onSignIn }) => {
           severity: "success",
         });
 
-        // Call onSignIn to update the parent state
+        // Call onSignIn to update the parent state and navigate to home
         setTimeout(() => {
           onSignIn();
           navigate("/");
         }, 2500);
       } else {
+        // Handle unsuccessful login attempt
         setSnackbar({
           open: true,
-          message: loginResponse.message || "Login Failed",
+          message:
+            loginResponse.message ||
+            "Incorrect email or password. Please try again.",
           severity: "error",
         });
       }
     } catch (error) {
+      // Handle any errors during the login process
       setSnackbar({
         open: true,
-        message: "An error occurred during login. Please try again.",
+        message:
+          "An unexpected error occurred during login. Please try again later.",
         severity: "error",
       });
       console.error("Login error:", error);
@@ -140,82 +158,80 @@ const SignIn = ({ onSignIn }) => {
     <div className="signin-container">
       <div className="signin-box">
         <h2>Sign In</h2>
-        <form onSubmit={handleSignIn}>
-          <div className="input-container">
-            <TextField
-              label="Email"
-              type="email"
-              fullWidth
-              value={data.email}
-              onChange={(e) => handleEmailChange(e.target.value)}
-              required
-              margin="normal"
-              variant="outlined"
-              className="custom-textfield"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <FaEnvelope />
-                  </InputAdornment>
-                ),
-                endAdornment: data.check_textInputChange ? (
-                  <InputAdornment position="end">
-                    <span style={{ color: "green" }}>✔</span>
-                  </InputAdornment>
-                ) : null,
-              }}
-            />
+        <div className="input-container">
+          <TextField
+            label="Email"
+            type="email"
+            fullWidth
+            value={data.email}
+            onChange={(e) => handleEmailChange(e.target.value)}
+            required
+            margin="normal"
+            variant="outlined"
+            className="custom-textfield"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <FaEnvelope />
+                </InputAdornment>
+              ),
+              endAdornment: data.check_email_Change ? (
+                <InputAdornment position="end">
+                  <span style={{ color: "green" }}>✔</span>
+                </InputAdornment>
+              ) : null,
+            }}
+          />
 
-            {!data.isValidUser && (
-              <div style={{ color: "red", fontSize: "12px" }}>
-                Invalid email address.
-              </div>
-            )}
-          </div>
+          {!data.isValidUser && (
+            <div style={{ color: "red", fontSize: "12px" }}>
+              Invalid email address.
+            </div>
+          )}
+        </div>
 
-          <div className="input-container">
-            <TextField
-              label="Password"
-              type={data.secureTextEntry ? "password" : "text"}
-              fullWidth
-              value={data.password}
-              onChange={(e) => handlePasswordChange(e.target.value)}
-              required
-              margin="normal"
-              variant="outlined"
-              className="custom-textfield"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <FaLock />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={togglePasswordVisibility}>
-                      {data.secureTextEntry ? <FaEyeSlash /> : <FaEye />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            {!data.isValidPassword && (
-              <div style={{ color: "red", fontSize: "12px" }}>
-                Password must be at least 6 characters long.
-              </div>
-            )}
-          </div>
+        <div className="input-container">
+          <TextField
+            label="Password"
+            type={data.secureTextEntry ? "password" : "text"}
+            fullWidth
+            value={data.password}
+            onChange={(e) => handlePasswordChange(e.target.value)}
+            required
+            margin="normal"
+            variant="outlined"
+            className="custom-textfield"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <FaLock />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={togglePasswordVisibility}>
+                    {data.secureTextEntry ? <FaEyeSlash /> : <FaEye />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          {!data.isValidPassword && (
+            <div style={{ color: "red", fontSize: "12px" }}>
+              Password must be at least 6 characters long.
+            </div>
+          )}
+        </div>
 
-          <button type="submit" className="signin-button">
-            Sign In
-          </button>
-          <p className="forgot-password-link">
-            Forgot your password? <Link to="/forgot-password">Reset it</Link>
-          </p>
-          <p className="signup-link">
-            Don't have an account? <Link to="/signup">Sign Up</Link>
-          </p>
-        </form>
+        <button onClick={handleSignIn} className="signin-button">
+          Sign In
+        </button>
+        <p className="forgot-password-link">
+          Forgot your password? <Link to="/forgot-password">Reset it</Link>
+        </p>
+        <p className="signup-link">
+          Don't have an account? <Link to="/signup">Sign Up</Link>
+        </p>
       </div>
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
