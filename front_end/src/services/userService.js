@@ -231,3 +231,41 @@ export async function resetPasswordByEmail(email, newPassword) {
     };
   }
 }
+
+
+export async function sendResetLink(email) {
+  try {
+    const response = await fetch(AppConst.SEND_RESET_LINK, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        type: "App",
+      }),
+    });
+
+    const res = await response.json();
+
+    if (response.ok && res.success) {
+      return {
+        success: true,
+        message: res.message || "Password reset link sent successfully",
+      };
+    } else {
+      return {
+        success: false,
+        message: res.message || "Failed to send reset link",
+      };
+    }
+  } catch (error) {
+    console.error("Password reset error:", error);
+    return {
+      success: false,
+      message: "An unexpected error occurred during the password reset process.",
+    };
+  }
+}
+

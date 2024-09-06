@@ -16,6 +16,8 @@ export const RESET_PASSWORD_BY_EMAIL = (email) =>
 export const PIC_THUMB = (id) => generateUrl(`users/thumb/${id}`);
 export const PIC_FULL = (id) => generateUrl(`users/full/${id}`);
 
+export const SEND_RESET_LINK = generateUrl("users/send_reset_link");
+
 // Messages URL
 export const GET_MESSAGES = (page, limit, type) =>
   generateUrl(`messages?page=${page}&limit=${limit}&type=${type}`);

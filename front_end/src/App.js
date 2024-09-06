@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
-  Route, Routes,
+  Route,
+  Routes,
   Navigate,
 } from "react-router-dom";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -14,6 +15,7 @@ import AllDrivers from "./components/screens/AllDrivers";
 import AllMerchants from "./components/screens/AllMerchants";
 import SignIn from "./components/screens/SignIn";
 import ForgotPassword from "./components/screens/ForgotPassword";
+import ResetPassword from "./components/screens/ResetPassword";
 import AllMessages from "./components/screens/AllMessages";
 
 import "./App.css";
@@ -72,6 +74,7 @@ const App = () => {
         <Routes>
           <Route path="/signin" element={<SignIn onSignIn={handleSignIn} />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           {isSignedIn ? (
             <>
               <Route path="/" element={<Navigate to="/home" />} />

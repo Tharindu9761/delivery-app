@@ -231,4 +231,24 @@ router.put("/reset_password_email/:email", async (req, res) => {
   }
 });
 
+router.post("/send_reset_link", async (req, res) => {
+  const { email, type } = req.body;
+
+  try {
+    const result = await userService.sendPasswordResetLink(email, type);
+
+    if (result.success) {
+      res.status(200).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "An error occurred",
+      error: error.message,
+    });
+  }
+});
+
 module.exports = router;
