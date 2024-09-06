@@ -43,7 +43,7 @@ const App = () => {
           setIsSignedIn(true);
         }
       }
-      setIsLoading(false); // Set loading to false after the check is done
+      setIsLoading(false); 
     };
 
     checkTokenExpiration();
@@ -53,12 +53,25 @@ const App = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  useEffect(() => {
+    const handleStorageChange = (event) => {
+      if (event.key === "logout") {
+        window.location.reload(); 
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => window.removeEventListener("storage", handleStorageChange); 
+  }, []);
+
   const handleSignIn = async () => {
     setIsSignedIn(true);
   };
 
   const handleSignOut = async () => {
     setIsSignedIn(false);
+    localStorage.setItem("logout", Date.now());
   };
 
   // If still loading, show nothing or a loading spinner
