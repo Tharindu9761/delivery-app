@@ -26,14 +26,18 @@
 .mainBody.signedIn {
   margin-left: 250px;
   margin-top: 70px;
-  margin-bottom: 70px; 
+  margin-bottom: 70px;
   padding: 50px;
-  overflow-y: auto; 
+  overflow-y: auto;
   background: none; /* Remove gradient background */
   height: auto; /* Adjust height to fit content */
   display: block; /* Change display to block for content flow */
 }
 
+.helpertext {
+  display: flex;
+  margin-left: 5px;
+}
 /* Responsive Design Adjustments */
 @media screen and (max-width: 768px) {
   .mainBody {

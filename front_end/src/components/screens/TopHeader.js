@@ -437,7 +437,7 @@ const TopHeader = ({ onSignOut }) => {
               }}
             />
             {!resetData.isValidPassword && (
-              <div style={{ color: "red", fontSize: "12px" }}>
+              <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
                 Password must be at least 6 characters long.
               </div>
             )}
@@ -461,7 +461,7 @@ const TopHeader = ({ onSignOut }) => {
               }}
             />
             {!resetData.passwordMatch && (
-              <div style={{ color: "red", fontSize: "12px" }}>
+              <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
                 Passwords do not match.
               </div>
             )}
@@ -510,7 +510,7 @@ const TopHeader = ({ onSignOut }) => {
                 }}
               />
               {!adminData.isValidFirstName && (
-                <div style={{ color: "red", fontSize: "12px" }}>
+                <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
                   First name must contain only letters.
                 </div>
               )}
@@ -533,7 +533,7 @@ const TopHeader = ({ onSignOut }) => {
                 }}
               />
               {!adminData.isValidLastName && (
-                <div style={{ color: "red", fontSize: "12px" }}>
+                <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
                   Last name must contain only letters.
                 </div>
               )}
@@ -563,7 +563,7 @@ const TopHeader = ({ onSignOut }) => {
                 }}
               />
               {!adminData.isValidEmail && (
-                <div style={{ color: "red", fontSize: "12px" }}>
+                <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
                   Invalid email format.
                 </div>
               )}
@@ -586,7 +586,7 @@ const TopHeader = ({ onSignOut }) => {
                 }}
               />
               {!adminData.isValidContactNo && (
-                <div style={{ color: "red", fontSize: "12px" }}>
+                <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
                   Contact number must be 10 digits.
                 </div>
               )}
@@ -628,7 +628,7 @@ const TopHeader = ({ onSignOut }) => {
                 }}
               />
               {!adminData.isValidPassword && (
-                <div style={{ color: "red", fontSize: "12px" }}>
+                <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
                   Password must be at least 6 characters long.
                 </div>
               )}
@@ -654,7 +654,7 @@ const TopHeader = ({ onSignOut }) => {
                 }}
               />
               {!adminData.passwordMatch && (
-                <div style={{ color: "red", fontSize: "12px" }}>
+                <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
                   Passwords do not match.
                 </div>
               )}

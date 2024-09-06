@@ -152,9 +152,9 @@
 }
 
 .input-container {
-  flex: 1;
+  /* flex: 1; */
   margin-bottom: 20px;
-  margin-right: 10px;
+  /* margin-right: 10px; */
 }
 
 .input-container:last-child {

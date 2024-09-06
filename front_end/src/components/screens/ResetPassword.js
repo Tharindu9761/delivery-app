@@ -204,7 +204,7 @@ const ResetPassword = () => {
             }}
           />
           {!data.isValidUser && (
-            <div style={{ color: "red", fontSize: "12px" }}>
+            <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
               Invalid email address.
             </div>
           )}
@@ -237,7 +237,7 @@ const ResetPassword = () => {
             }}
           />
           {!data.isPasswordValid && (
-            <div style={{ color: "red", fontSize: "12px" }}>
+            <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
               Password must be at least 6 characters long.
             </div>
           )}
@@ -263,7 +263,7 @@ const ResetPassword = () => {
             }}
           />
           {!data.passwordMatch && (
-            <div style={{ color: "red", fontSize: "12px" }}>
+            <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
               Passwords do not match.
             </div>
           )}

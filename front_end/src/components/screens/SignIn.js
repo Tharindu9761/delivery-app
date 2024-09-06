@@ -96,7 +96,7 @@ const SignIn = ({ onSignIn }) => {
     if (!isPasswordValid) {
       setSnackbar({
         open: true,
-        message: "Password must be at least 6 characters long.",
+        message: "Please entre a valid password",
         severity: "error",
       });
       return;
@@ -184,7 +184,7 @@ const SignIn = ({ onSignIn }) => {
           />
 
           {!data.isValidUser && (
-            <div style={{ color: "red", fontSize: "12px" }}>
+            <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
               Invalid email address.
             </div>
           )}
@@ -217,8 +217,8 @@ const SignIn = ({ onSignIn }) => {
             }}
           />
           {!data.isValidPassword && (
-            <div style={{ color: "red", fontSize: "12px" }}>
-              Password must be at least 6 characters long.
+            <div className="helpertext" style={{ color: "red", fontSize: "12px" }}>
+              Invalid password
             </div>
           )}
         </div>

@@ -123,7 +123,7 @@ const ForgotPassword = () => {
             }}
           />
           {!data.isValidUser && (
-            <div style={{ color: "red", fontSize: "12px" }}>
+            <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
               Invalid email address.
             </div>
           )}
