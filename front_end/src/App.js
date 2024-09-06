@@ -48,7 +48,7 @@ const App = () => {
 
     checkTokenExpiration();
 
-    const intervalId = setInterval(checkTokenExpiration, 300000);
+    const intervalId = setInterval(checkTokenExpiration, 60000);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -74,7 +74,10 @@ const App = () => {
         <Routes>
           <Route path="/signin" element={<SignIn onSignIn={handleSignIn} />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route
+            path="/reset-password"
+            element={<ResetPassword onSignOut={handleSignOut} />}
+          />
           {isSignedIn ? (
             <>
               <Route path="/" element={<Navigate to="/home" />} />

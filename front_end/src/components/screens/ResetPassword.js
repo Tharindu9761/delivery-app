@@ -9,8 +9,9 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import "../styles/frogotPassword.css";
 import { resetPasswordByEmail } from "../../services/userService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const ResetPassword = () => {
+const ResetPassword = ({ onSignOut }) => {
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -32,13 +33,25 @@ const ResetPassword = () => {
   const location = useLocation();
 
   // Use Effect to decode the token
-  useEffect(() => {
+  useEffect( () => {
+    const cleanUpAsyncStorage = async () => {
+      await AsyncStorage.removeItem("Token");
+      await AsyncStorage.removeItem("Key");
+      await AsyncStorage.removeItem("sessionTimestamp");
+
+      if (onSignOut) {
+        onSignOut();
+      }
+    };
+
+    cleanUpAsyncStorage();
+
     const queryParams = new URLSearchParams(location.search);
     const token = queryParams.get("token");
 
     if (token) {
       try {
-        const decoded = jwtDecode(token); // Decode the JWT
+        const decoded = jwtDecode(token);
         const { email, exp } = decoded;
 
         // Check if token is expired
@@ -49,6 +62,9 @@ const ResetPassword = () => {
             message: "The reset token has expired. Please request a new one.",
             severity: "error",
           });
+          setTimeout(() => {
+            navigate("/forgot-password");
+          }, 2500);
           return;
         }
 
@@ -99,6 +115,7 @@ const ResetPassword = () => {
 
   // Handle Password Reset
   const handlePasswordReset = async () => {
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email);
     const isPasswordValid = data.password.length >= 6;
     const matchPassword = data.password === data.confirmPassword;
 
@@ -107,7 +124,17 @@ const ResetPassword = () => {
       ...data,
       isPasswordValid: isPasswordValid,
       passwordMatch: matchPassword,
+      isValidUser: isEmailValid,
     });
+
+    if (!isEmailValid) {
+      setSnackbar({
+        open: true,
+        message: "Please enter a valid email address",
+        severity: "error",
+      });
+      return;
+    }
 
     // Check if password is valid
     if (!isPasswordValid) {
@@ -204,7 +231,10 @@ const ResetPassword = () => {
             }}
           />
           {!data.isValidUser && (
-            <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
+            <div
+              className="helpertext"
+              style={{ color: "red", fontSize: "12px" }}
+            >
               Invalid email address.
             </div>
           )}
@@ -237,7 +267,10 @@ const ResetPassword = () => {
             }}
           />
           {!data.isPasswordValid && (
-            <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
+            <div
+              className="helpertext"
+              style={{ color: "red", fontSize: "12px" }}
+            >
               Password must be at least 6 characters long.
             </div>
           )}
@@ -263,7 +296,10 @@ const ResetPassword = () => {
             }}
           />
           {!data.passwordMatch && (
-            <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
+            <div
+              className="helpertext"
+              style={{ color: "red", fontSize: "12px" }}
+            >
               Passwords do not match.
             </div>
           )}
