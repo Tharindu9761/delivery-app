@@ -32,6 +32,7 @@
   background: none; /* Remove gradient background */
   height: auto; /* Adjust height to fit content */
   display: block; /* Change display to block for content flow */
+  height: calc(100vh - 240px); 
 }
 
 .helpertext {
