@@ -15,7 +15,12 @@ import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 
-import { get_name, get_pic, resetPassword } from "../../services/userService";
+import {
+  get_name,
+  get_pic,
+  resetPassword,
+  createUser,
+} from "../../services/userService";
 import "../styles/topHeader.css";
 
 const TopHeader = ({ onSignOut }) => {
@@ -41,12 +46,13 @@ const TopHeader = ({ onSignOut }) => {
   });
 
   const [adminData, setAdminData] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
-    contactNo: "",
+    contact_no: "",
     newPassword: "",
     confirmPassword: "",
+    user_type: "Admin",
     showPassword: false,
     isValidFirstName: true,
     isValidLastName: true,
@@ -208,12 +214,13 @@ const TopHeader = ({ onSignOut }) => {
   // Add Admin Modal Logic
   const handleAddAdminModalOpen = () => {
     setAdminData({
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       email: "",
-      contactNo: "",
+      contact_no: "",
       newPassword: "",
       confirmPassword: "",
+      user_type: "Admin",
       showPassword: false,
       isValidFirstName: true,
       isValidLastName: true,
@@ -229,16 +236,16 @@ const TopHeader = ({ onSignOut }) => {
     let update = { [field]: value };
 
     switch (field) {
-      case "firstName":
+      case "first_name":
         update.isValidFirstName = /^[a-zA-Z]+$/.test(value);
         break;
-      case "lastName":
+      case "last_name":
         update.isValidLastName = /^[a-zA-Z]+$/.test(value);
         break;
       case "email":
         update.isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
         break;
-      case "contactNo":
+      case "contact_no":
         update.isValidContactNo = /^\d{10}$/.test(value);
         break;
       case "newPassword":
@@ -255,13 +262,14 @@ const TopHeader = ({ onSignOut }) => {
     setAdminData({ ...adminData, ...update });
   };
 
-  const handleAdminFormSubmit = () => {
+  const handleAdminFormSubmit = async () => {
     const isFirstNameValid =
-      /^[a-zA-Z]+$/.test(adminData.firstName) && adminData.firstName.length > 0;
+      /^[a-zA-Z]+$/.test(adminData.first_name) &&
+      adminData.first_name.length > 0;
     const isLastNameValid =
-      /^[a-zA-Z]+$/.test(adminData.lastName) && adminData.lastName.length > 0;
+      /^[a-zA-Z]+$/.test(adminData.last_name) && adminData.last_name.length > 0;
     const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adminData.email);
-    const isContactNoValid = /^\d{10}$/.test(adminData.contactNo);
+    const isContactNoValid = /^\d{10}$/.test(adminData.contact_no);
     const isPasswordValid = adminData.newPassword.length >= 6;
     const matchPassword = adminData.newPassword === adminData.confirmPassword;
 
@@ -274,6 +282,7 @@ const TopHeader = ({ onSignOut }) => {
       isValidContactNo: isContactNoValid,
       isValidPassword: isPasswordValid,
       passwordMatch: matchPassword,
+      user_type: "Admin",
     });
 
     if (
@@ -349,13 +358,23 @@ const TopHeader = ({ onSignOut }) => {
 
     // Proceed with admin creation if all validations pass
     try {
-      // Simulating API call or further logic
-      setSnackbar({
-        open: true,
-        message: "Admin added successfully!",
-        severity: "success",
-      });
-      setShowAddAdminModal(false);
+      const result = await createUser(adminData);
+      if (result.success) {
+        setSnackbar({
+          open: true,
+          message: "Admin account created successfully!",
+          severity: "success",
+        });
+        setShowAddAdminModal(false);
+      } else {
+        setSnackbar({
+          open: true,
+          message:
+            result.message ||
+            "Failed to create admin account. Please try again.",
+          severity: "error",
+        });
+      }
     } catch (error) {
       setSnackbar({
         open: true,
@@ -502,8 +521,10 @@ const TopHeader = ({ onSignOut }) => {
             <div className="input-container modal-input">
               <TextField
                 label="First Name"
-                value={adminData.firstName}
-                onChange={(e) => handleAdminChange("firstName", e.target.value)}
+                value={adminData.first_name}
+                onChange={(e) =>
+                  handleAdminChange("first_name", e.target.value)
+                }
                 fullWidth
                 margin="normal"
                 variant="outlined"
@@ -528,8 +549,8 @@ const TopHeader = ({ onSignOut }) => {
             <div className="input-container modal-input">
               <TextField
                 label="Last Name"
-                value={adminData.lastName}
-                onChange={(e) => handleAdminChange("lastName", e.target.value)}
+                value={adminData.last_name}
+                onChange={(e) => handleAdminChange("last_name", e.target.value)}
                 fullWidth
                 margin="normal"
                 variant="outlined"
@@ -587,8 +608,10 @@ const TopHeader = ({ onSignOut }) => {
             <div className="input-container modal-input">
               <TextField
                 label="Contact No."
-                value={adminData.contactNo}
-                onChange={(e) => handleAdminChange("contactNo", e.target.value)}
+                value={adminData.contact_no}
+                onChange={(e) =>
+                  handleAdminChange("contact_no", e.target.value)
+                }
                 fullWidth
                 margin="normal"
                 variant="outlined"

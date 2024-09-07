@@ -2,6 +2,7 @@ const pool = require("../config/database");
 const emailService = require("./emailService");
 const jwt = require("jsonwebtoken");
 const constants = require("../config/const");
+require("dotenv").config();
 
 // Helper function to exclude the password from the user object
 const excludePassword = (user) => {
@@ -12,17 +13,25 @@ const excludePassword = (user) => {
 
 // Create a new user
 const createUser = async (user) => {
-  const { first_name, last_name, email, password, user_type } = user;
+  const { first_name, last_name, email, password, user_type, contact_no } =
+    user;
   const query = `
-    INSERT INTO users (first_name, last_name, email, password, user_type)
-    VALUES ($1, $2, $3, $4, $5)
+    INSERT INTO users (first_name, last_name, email, password, user_type, contact_no)
+    VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *;
   `;
-  const values = [first_name, last_name, email, password, user_type];
+  const values = [
+    first_name,
+    last_name,
+    email,
+    password,
+    user_type,
+    contact_no,
+  ];
 
   try {
     const result = await pool.query(query, values);
-    return excludePassword(result.rows[0]);
+    return result.rows[0];
   } catch (err) {
     throw new Error("Error creating user: " + err.message);
   }
@@ -167,8 +176,8 @@ const sendPasswordResetLink = async (email, type) => {
     // Adjusted link for React web app running on localhost
     const resetLink =
       type === "App"
-        ? `http://localhost:4200/reset-password?token=${token}` // Updated for web app
-        : `http://localhost:4200/reset-password?token=${token}`; // Replace with actual mobile app link
+        ? `${process.env.RESET_LINK_WEB}?token=${token}` // for web app
+        : `${process.env.RESET_LINK_MOBILE}?token=${token}`; // mobile app link
 
     const emailData = {
       email: user.email,

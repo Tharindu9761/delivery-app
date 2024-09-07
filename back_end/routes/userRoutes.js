@@ -1,17 +1,66 @@
 const express = require("express");
 const userService = require("../services/userService");
+const emailService = require("../services/emailService");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const constants = require("../config/const");
 const router = express.Router();
+const { pool } = require("../config/database");
+require("dotenv").config();
 
 // Create a new user
 router.post("/", async (req, res) => {
+  const client = await pool.connect(); // Get a client from the pool
   try {
-    const newUser = await userService.createUser(req.body);
-    res.status(201).json(newUser);
+    await client.query("BEGIN"); // Start a transaction
+
+    // Create a new user and insert into the database
+    const newUser = await userService.createUser(req.body, client); // Pass the client to `createUser`
+
+    // Prepare the email data
+    const emailData = {
+      email: newUser.email,
+      subject: "Welcome to Quick Drop - Your Account Details",
+      text: `Dear ${newUser.first_name},\n\nYour account has been successfully created. Here are your account details:\n\nEmail: ${newUser.email}\nPassword: ${newUser.password}\n\nPlease keep this information safe.\n\nYou can sign in here: ${process.env.SIGNIN_LINK_WEB}\n\nThank you for choosing Quick Drop!`,
+      html: `<p>Dear ${newUser.first_name},</p>
+             <p>Your account has been successfully created. Here are your account details:</p>
+             <p><strong>Email:</strong> ${newUser.email}</p>
+             <p><strong>Password:</strong> ${newUser.password}</p>
+             <p>Please keep this information safe.</p>
+             <p>You can <a href="${process.env.SIGNIN_LINK_WEB}">sign in here</a>.</p>
+             <p>Thank you for choosing Quick Drop!</p>`,
+    };
+
+    // Send the email
+    const emailResponse = await emailService.sendEmail(emailData);
+
+    // Check if email was sent successfully
+    if (!emailResponse.success) {
+      throw {
+        status: 500,
+        message: "Email sending failed: " + emailResponse.message,
+      };
+    }
+
+    // If both user creation and email sending succeed, commit the transaction
+    await client.query("COMMIT");
+
+    // Send a success response
+    res.status(200).json({
+      success: true,
+      message: "User created successfully, email sent",
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    // If an error occurs, rollback the transaction
+    await client.query("ROLLBACK");
+
+    // Send structured error response
+    res.status(err.status || 500).json({
+      success: false,
+      message: err.message || "An unexpected error occurred",
+    });
+  } finally {
+    client.release(); // Release the client back to the pool
   }
 });
 

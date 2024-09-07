@@ -1,17 +1,18 @@
 const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "infor.quickdrop@gmail.com",
-    pass: "rbjz fwvv iiyx qxer",
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS,
   },
 });
 
 const sendEmail = (data) => {
   return new Promise((resolve, reject) => {
     const mailOptions = {
-      from: "infor.quickdrop@gmail.com",
+      from: process.env.GMAIL_USER,
       to: data.email,
       subject: data.subject,
       text: data.text,

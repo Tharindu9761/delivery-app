@@ -93,7 +93,6 @@ export async function get_user_role() {
 
     if (userToken) {
       const user = jwtDecode(userToken);
-      console.log(user);
       return user.user_type;
     }
     return null;
@@ -232,7 +231,6 @@ export async function resetPasswordByEmail(email, newPassword) {
   }
 }
 
-
 export async function sendResetLink(email) {
   try {
     const response = await fetch(AppConst.SEND_RESET_LINK, {
@@ -264,8 +262,49 @@ export async function sendResetLink(email) {
     console.error("Password reset error:", error);
     return {
       success: false,
-      message: "An unexpected error occurred during the password reset process.",
+      message:
+        "An unexpected error occurred during the password reset process.",
     };
   }
 }
 
+export async function createUser(data) {
+  try {
+    const response = await fetch(AppConst.CREATE_USER, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        first_name: data.first_name,
+        last_name: data.last_name,
+        email: data.email,
+        password: data.newPassword,
+        user_type: data.user_type,
+        contact_no: data.contact_no,
+      }),
+    });
+
+    const res = await response.json();
+
+    if (response.ok && res.success) {
+      return {
+        success: true,
+        message: res.message || "Account created successfully",
+      };
+    } else {
+      return {
+        success: false,
+        message: res.message || "Failed to create account",
+      };
+    }
+  } catch (error) {
+    console.error("Account creation error:", error);
+    return {
+      success: false,
+      message:
+        "An unexpected error occurred during the account creation process.",
+    };
+  }
+}

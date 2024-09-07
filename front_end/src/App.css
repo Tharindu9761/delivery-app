@@ -38,6 +38,10 @@
   display: flex;
   margin-left: 5px;
 }
+.input-container {
+  margin-bottom: 10px;
+}
+
 /* Responsive Design Adjustments */
 @media screen and (max-width: 768px) {
   .mainBody {
