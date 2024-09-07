@@ -283,6 +283,11 @@ export async function createUser(data) {
         password: data.newPassword,
         user_type: data.user_type,
         contact_no: data.contact_no,
+        no: data.no ? data.no : null,
+        suburb: data.suburb ? data.suburb : null,
+        postal_code: data.postal_code ? data.postal_code : null,
+        state: data.state ? data.state : null,
+        status: data.status,
       }),
     });
 

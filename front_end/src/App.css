@@ -18,7 +18,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   overflow: hidden;
 }
 
@@ -29,10 +29,10 @@
   margin-bottom: 70px;
   padding: 50px;
   overflow-y: auto;
-  background: none; /* Remove gradient background */
-  height: auto; /* Adjust height to fit content */
-  display: block; /* Change display to block for content flow */
-  height: calc(100vh - 240px); 
+  background: none;
+  height: auto;
+  display: block;
+  min-height: calc(100vh - 240px);
 }
 
 .helpertext {

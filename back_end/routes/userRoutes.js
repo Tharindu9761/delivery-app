@@ -144,6 +144,12 @@ router.post("/mobile_login", async (req, res) => {
         .json({ error: "Only Drivers or Customers can log in" });
     }
 
+    if (user.status !== "Approved") {
+      return res.status(403).json({
+        error: "Account is not approved yet. Please contact support.",
+      });
+    }
+
     const token = jwt.sign(user, constants.SECRET_KEY);
 
     res.status(200).json({ token, key: constants.SECRET_KEY });
@@ -178,6 +184,11 @@ router.post("/web_login", async (req, res) => {
         .json({ error: "Only Admins or Merchants can log in" });
     }
 
+    if (user.status !== "Approved") {
+      return res.status(403).json({
+        error: "Account is not approved yet. Please contact support.",
+      });
+    }
     const token = jwt.sign(user, constants.SECRET_KEY);
 
     res.status(200).json({ token, key: constants.SECRET_KEY });

@@ -53,6 +53,7 @@ const TopHeader = ({ onSignOut }) => {
     newPassword: "",
     confirmPassword: "",
     user_type: "Admin",
+    status:"Approved",
     showPassword: false,
     isValidFirstName: true,
     isValidLastName: true,
@@ -155,20 +156,10 @@ const TopHeader = ({ onSignOut }) => {
       passwordMatch: matchPassword,
     });
 
-    if (!isPasswordValid) {
+    if (!isPasswordValid || !matchPassword) {
       setSnackbar({
         open: true,
-        message: "Password must be at least 6 characters long.",
-        severity: "error",
-      });
-      return;
-    }
-
-    if (!matchPassword) {
-      setSnackbar({
-        open: true,
-        message:
-          "Passwords do not match. Please ensure both passwords are identical.",
+        message: "Please fill in all the fields with valid information.",
         severity: "error",
       });
       return;
@@ -221,6 +212,7 @@ const TopHeader = ({ onSignOut }) => {
       newPassword: "",
       confirmPassword: "",
       user_type: "Admin",
+      status:"Approved",
       showPassword: false,
       isValidFirstName: true,
       isValidLastName: true,
@@ -283,74 +275,20 @@ const TopHeader = ({ onSignOut }) => {
       isValidPassword: isPasswordValid,
       passwordMatch: matchPassword,
       user_type: "Admin",
+      status:"Approved",
     });
 
     if (
-      !isFirstNameValid &&
-      !isLastNameValid &&
-      !isEmailValid &&
-      !isContactNoValid &&
-      !isPasswordValid
+      !isFirstNameValid ||
+      !isLastNameValid ||
+      !isEmailValid ||
+      !isContactNoValid ||
+      !isPasswordValid ||
+      !matchPassword
     ) {
       setSnackbar({
         open: true,
         message: "Please fill in all the fields with valid information.",
-        severity: "error",
-      });
-      return;
-    }
-
-    // Detailed validation error messages
-    if (!isFirstNameValid) {
-      setSnackbar({
-        open: true,
-        message: "First name must contain only letters and cannot be empty.",
-        severity: "error",
-      });
-      return;
-    }
-
-    if (!isLastNameValid) {
-      setSnackbar({
-        open: true,
-        message: "Last name must contain only letters and cannot be empty.",
-        severity: "error",
-      });
-      return;
-    }
-
-    if (!isEmailValid) {
-      setSnackbar({
-        open: true,
-        message: "Please enter a valid email address.",
-        severity: "error",
-      });
-      return;
-    }
-
-    if (!isContactNoValid) {
-      setSnackbar({
-        open: true,
-        message: "Contact number must be 10 digits long.",
-        severity: "error",
-      });
-      return;
-    }
-
-    if (!isPasswordValid) {
-      setSnackbar({
-        open: true,
-        message: "Password must be at least 6 characters long.",
-        severity: "error",
-      });
-      return;
-    }
-
-    if (!matchPassword) {
-      setSnackbar({
-        open: true,
-        message:
-          "Passwords do not match. Please ensure both passwords are identical.",
         severity: "error",
       });
       return;
@@ -440,6 +378,13 @@ const TopHeader = ({ onSignOut }) => {
               fullWidth
               margin="normal"
               variant="outlined"
+              error={!resetData.isValidPassword}
+              helperText={
+                !resetData.isValidPassword
+                  ? "Password must be at least 6 characters long."
+                  : ""
+              }
+              required
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -455,14 +400,6 @@ const TopHeader = ({ onSignOut }) => {
                 ),
               }}
             />
-            {!resetData.isValidPassword && (
-              <div
-                className="helpertext"
-                style={{ color: "red", fontSize: "12px" }}
-              >
-                Password must be at least 6 characters long.
-              </div>
-            )}
           </div>
 
           <div className="input-container">
@@ -474,6 +411,11 @@ const TopHeader = ({ onSignOut }) => {
               fullWidth
               margin="normal"
               variant="outlined"
+              error={!resetData.passwordMatch}
+              required
+              helperText={
+                !resetData.passwordMatch ? "Passwords do not match." : ""
+              }
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -482,14 +424,6 @@ const TopHeader = ({ onSignOut }) => {
                 ),
               }}
             />
-            {!resetData.passwordMatch && (
-              <div
-                className="helpertext"
-                style={{ color: "red", fontSize: "12px" }}
-              >
-                Passwords do not match.
-              </div>
-            )}
           </div>
 
           <div className="button-group">
@@ -517,7 +451,7 @@ const TopHeader = ({ onSignOut }) => {
       <Modal open={showAddAdminModal}>
         <div className="add-admin-modal">
           <h2 className="modal-title">Add New Admin</h2>
-          <div className="input_row_column">
+          <div className="form-row">
             <div className="input-container modal-input">
               <TextField
                 label="First Name"
@@ -528,6 +462,13 @@ const TopHeader = ({ onSignOut }) => {
                 fullWidth
                 margin="normal"
                 variant="outlined"
+                error={!adminData.isValidFirstName}
+                helperText={
+                  !adminData.isValidFirstName
+                    ? "First name is required and must contain only letters."
+                    : ""
+                }
+                required
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -536,14 +477,6 @@ const TopHeader = ({ onSignOut }) => {
                   ),
                 }}
               />
-              {!adminData.isValidFirstName && (
-                <div
-                  className="helpertext"
-                  style={{ color: "red", fontSize: "12px" }}
-                >
-                  First name must contain only letters.
-                </div>
-              )}
             </div>
 
             <div className="input-container modal-input">
@@ -554,6 +487,13 @@ const TopHeader = ({ onSignOut }) => {
                 fullWidth
                 margin="normal"
                 variant="outlined"
+                error={!adminData.isValidLastName}
+                helperText={
+                  !adminData.isValidLastName
+                    ? "Last name is required and must contain only letters."
+                    : ""
+                }
+                required
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -562,18 +502,10 @@ const TopHeader = ({ onSignOut }) => {
                   ),
                 }}
               />
-              {!adminData.isValidLastName && (
-                <div
-                  className="helpertext"
-                  style={{ color: "red", fontSize: "12px" }}
-                >
-                  Last name must contain only letters.
-                </div>
-              )}
             </div>
           </div>
 
-          <div className="input_row_column">
+          <div className="form-row">
             <div className="input-container modal-input">
               <TextField
                 label="Email"
@@ -582,6 +514,13 @@ const TopHeader = ({ onSignOut }) => {
                 fullWidth
                 margin="normal"
                 variant="outlined"
+                error={!adminData.isValidEmail}
+                required
+                helperText={
+                  !adminData.isValidEmail
+                    ? "A valid email address is required."
+                    : ""
+                }
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -595,14 +534,6 @@ const TopHeader = ({ onSignOut }) => {
                   // ) : null,
                 }}
               />
-              {!adminData.isValidEmail && (
-                <div
-                  className="helpertext"
-                  style={{ color: "red", fontSize: "12px" }}
-                >
-                  Invalid email format.
-                </div>
-              )}
             </div>
 
             <div className="input-container modal-input">
@@ -615,6 +546,13 @@ const TopHeader = ({ onSignOut }) => {
                 fullWidth
                 margin="normal"
                 variant="outlined"
+                error={!adminData.isValidContactNo}
+                helperText={
+                  !adminData.isValidContactNo
+                    ? "Contact number must be 10 digits."
+                    : ""
+                }
+                required
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -623,18 +561,10 @@ const TopHeader = ({ onSignOut }) => {
                   ),
                 }}
               />
-              {!adminData.isValidContactNo && (
-                <div
-                  className="helpertext"
-                  style={{ color: "red", fontSize: "12px" }}
-                >
-                  Contact number must be 10 digits.
-                </div>
-              )}
             </div>
           </div>
 
-          <div className="input_row_column">
+          <div className="form-row">
             <div className="input-container modal-input">
               <TextField
                 label="New Password"
@@ -646,6 +576,13 @@ const TopHeader = ({ onSignOut }) => {
                 fullWidth
                 margin="normal"
                 variant="outlined"
+                error={!adminData.isValidPassword}
+                helperText={
+                  !adminData.isValidPassword
+                    ? "Password must be at least 6 characters long."
+                    : ""
+                }
+                required
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -668,14 +605,6 @@ const TopHeader = ({ onSignOut }) => {
                   ),
                 }}
               />
-              {!adminData.isValidPassword && (
-                <div
-                  className="helpertext"
-                  style={{ color: "red", fontSize: "12px" }}
-                >
-                  Password must be at least 6 characters long.
-                </div>
-              )}
             </div>
             <div className="input-container modal-input">
               <TextField
@@ -689,6 +618,11 @@ const TopHeader = ({ onSignOut }) => {
                 fullWidth
                 margin="normal"
                 variant="outlined"
+                error={!adminData.passwordMatch}
+                helperText={
+                  !adminData.passwordMatch ? "Passwords do not match." : ""
+                }
+                required
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -697,14 +631,6 @@ const TopHeader = ({ onSignOut }) => {
                   ),
                 }}
               />
-              {!adminData.passwordMatch && (
-                <div
-                  className="helpertext"
-                  style={{ color: "red", fontSize: "12px" }}
-                >
-                  Passwords do not match.
-                </div>
-              )}
             </div>
           </div>
           <div className="button-group">

@@ -1,27 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { get_user_role } from "../../services/userService"; 
-import MerchantDashboard from "./MerchantDashboard"; 
-import AdminDashboard from "./AdminDashboard"; 
+import { get_user_role } from "../../services/userService";
+import MerchantDashboard from "./MerchantDashboard";
+import AdminDashboard from "./AdminDashboard";
 
 const Dashboard = () => {
-  const [userRole, setUserRole] = useState(null); 
+  const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
 
   // UseEffect to fetch the user's role when the component mounts
   useEffect(() => {
     const fetchUserRole = async () => {
       try {
-        const role = await get_user_role(); 
+        const role = await get_user_role();
         if (role) {
-          setUserRole(role); 
+          setUserRole(role);
         } else {
           setError("Unable to determine user role.");
         }
       } catch (error) {
         setError("Error fetching user role.");
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
@@ -30,7 +30,7 @@ const Dashboard = () => {
 
   // Show loading spinner while fetching the role
   if (loading) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   // Handle error state
@@ -40,10 +40,10 @@ const Dashboard = () => {
 
   // Conditionally render the dashboard based on the user role
   if (userRole === "Admin") {
-  //   return <AdminDashboard />;
-  // }
+    return <AdminDashboard />;
+  }
 
-  // if (userRole === "Merchant") {
+  if (userRole === "Merchant") {
     return <MerchantDashboard />;
   }
 

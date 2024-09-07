@@ -13,13 +13,28 @@ const excludePassword = (user) => {
 
 // Create a new user
 const createUser = async (user) => {
-  const { first_name, last_name, email, password, user_type, contact_no } =
-    user;
+  const {
+    first_name,
+    last_name,
+    email,
+    password,
+    user_type,
+    contact_no,
+    no,
+    suburb,
+    postal_code,
+    state,
+    status,
+  } = user;
+
   const query = `
-    INSERT INTO users (first_name, last_name, email, password, user_type, contact_no)
-    VALUES ($1, $2, $3, $4, $5, $6)
+    INSERT INTO users (
+      first_name, last_name, email, password, user_type, contact_no, no, suburb, postal_code, state, status
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
     RETURNING *;
   `;
+
   const values = [
     first_name,
     last_name,
@@ -27,6 +42,11 @@ const createUser = async (user) => {
     password,
     user_type,
     contact_no,
+    no,
+    suburb,
+    postal_code,
+    state,
+    status
   ];
 
   try {

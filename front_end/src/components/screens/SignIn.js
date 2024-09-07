@@ -72,7 +72,7 @@ const SignIn = ({ onSignIn }) => {
       isValidPassword: isPasswordValid,
     });
 
-    if (!isEmailValid && !isPasswordValid) {
+    if (!isEmailValid || !isPasswordValid) {
       setSnackbar({
         open: true,
         message: "Please enter a valid email address and password",
@@ -81,26 +81,6 @@ const SignIn = ({ onSignIn }) => {
       return;
     }
 
-    // Check if email is valid
-    if (!isEmailValid) {
-      setSnackbar({
-        open: true,
-        message:
-          "Please enter a valid email address in the format: example@domain.com",
-        severity: "error",
-      });
-      return;
-    }
-
-    // Check if password is valid
-    if (!isPasswordValid) {
-      setSnackbar({
-        open: true,
-        message: "Please entre a valid password",
-        severity: "error",
-      });
-      return;
-    }
 
     // Proceed to login if both email and password are valid
     try {
@@ -169,6 +149,8 @@ const SignIn = ({ onSignIn }) => {
             margin="normal"
             variant="outlined"
             className="custom-textfield"
+            error={!data.isValidUser}
+            helperText={!data.isValidUser ? "Invalid email address." : ""}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -182,12 +164,6 @@ const SignIn = ({ onSignIn }) => {
               ) : null,
             }}
           />
-
-          {!data.isValidUser && (
-            <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
-              Invalid email address.
-            </div>
-          )}
         </div>
 
         <div className="input-container">
@@ -201,6 +177,8 @@ const SignIn = ({ onSignIn }) => {
             margin="normal"
             variant="outlined"
             className="custom-textfield"
+            error={!data.isValidPassword}
+            helperText={!data.isValidPassword ? "Invalid password." : ""}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -216,16 +194,13 @@ const SignIn = ({ onSignIn }) => {
               ),
             }}
           />
-          {!data.isValidPassword && (
-            <div className="helpertext" style={{ color: "red", fontSize: "12px" }}>
-              Invalid password
-            </div>
-          )}
         </div>
 
-        <button onClick={handleSignIn} className="signin-button">
-          Sign In
-        </button>
+        <div className="button-group">
+          <button onClick={handleSignIn} className="signin-button">
+            Sign In
+          </button>
+        </div>
         <p className="forgot-password-link">
           Forgot your password? <Link to="/forgot-password">Reset it</Link>
         </p>

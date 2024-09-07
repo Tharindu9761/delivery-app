@@ -109,6 +109,9 @@ const ForgotPassword = () => {
             margin="normal"
             variant="outlined"
             className="custom-textfield"
+            error={!data.isValidUser}
+            helperText={!data.isValidUser ? "Invalid email address.." : ""}
+            required
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -122,20 +125,17 @@ const ForgotPassword = () => {
               ) : null,
             }}
           />
-          {!data.isValidUser && (
-            <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
-              Invalid email address.
-            </div>
-          )}
         </div>
 
         {/* Reset Button */}
-        <button
-          className="forgot-password-button"
-          onClick={handlePasswordReset}
-        >
-          Send Reset Link
-        </button>
+        <div className="button-group">
+          <button
+            className="forgot-password-button"
+            onClick={handlePasswordReset}
+          >
+            Send Reset Link
+          </button>
+        </div>
 
         {/* Sign In Link */}
         <p className="signin-link">

@@ -17,6 +17,7 @@ import SignIn from "./components/screens/SignIn";
 import ForgotPassword from "./components/screens/ForgotPassword";
 import ResetPassword from "./components/screens/ResetPassword";
 import AllMessages from "./components/screens/AllMessages";
+import SignUp from "./components/screens/SignUp";
 
 import "./App.css";
 
@@ -87,6 +88,7 @@ const App = () => {
         <Routes>
           <Route path="/signin" element={<SignIn onSignIn={handleSignIn} />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route
             path="/reset-password"
             element={<ResetPassword onSignOut={handleSignOut} />}

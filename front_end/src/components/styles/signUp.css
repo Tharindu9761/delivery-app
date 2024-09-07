@@ -1,0 +1,132 @@
+/* General Styling for Sign-Up Screen */
+
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  margin: 50px;
+}
+
+.signup-box {
+  width: 100%;
+  text-align: center;
+}
+
+.signup-box h2 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  color: #333;
+  font-weight: bold;
+}
+
+.input-container {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.input-container input,
+.input-container .MuiInputBase-root {
+  width: 100%;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #5a9efb;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-sizing: border-box;
+}
+
+.submit-button:hover {
+  background-color: #4a8ae6;
+  transform: translateY(-2px);
+}
+
+.submit-button:active {
+  background-color: #4a8ae6;
+  transform: translateY(0);
+}
+
+.signin-link {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #333;
+}
+
+.signin-link a {
+  color: #5a9efb;
+  text-decoration: none;
+}
+
+.signin-link a:hover {
+  text-decoration: underline;
+}
+
+/* Form Layout Adjustments */
+.form-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.form-row .input-container {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.form-row .input-container:last-child {
+  margin-right: 0;
+}
+
+.button-group {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Snackbar (if used) */
+.snackbar {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 9999;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .signup-container {
+    padding: 20px;
+    margin: 0 10px;
+    max-width: 100%;
+  }
+
+  .signup-box h2 {
+    font-size: 24px;
+  }
+
+  .submit-button {
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-row .input-container {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+}

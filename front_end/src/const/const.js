@@ -22,3 +22,14 @@ export const GET_MESSAGES = (page, limit, type) =>
   generateUrl(`messages?page=${page}&limit=${limit}&type=${type}`);
 export const UPDATE_MESSAGE = (id) => generateUrl(`messages/${id}`);
 export const READ = (id) => generateUrl(`messages/read/${id}`);
+
+export const STATES = [
+  { label: "VIC", value: "Victoria" },
+  { label: "NSW", value: "New South Wales" },
+  { label: "QLD", value: "Queensland" },
+  { label: "SA", value: "South Australia" },
+  { label: "WA", value: "Western Australia" },
+  { label: "TAS", value: "Tasmania" },
+  { label: "NT", value: "Northern Territory" },
+  { label: "ACT", value: "Australian Capital Territory" },
+];

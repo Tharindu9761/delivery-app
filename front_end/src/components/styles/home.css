@@ -6,6 +6,7 @@
   align-items: center;
   flex-direction: column;
   min-height: calc(100vh - 240px);
+  height:calc(100vh - 240px); ;
 }
 
 /* Home banner styling */
@@ -16,7 +17,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 40px;
+  margin: 40px;
   max-width: 1200px;
   width: 100%;
   transition: box-shadow 0.3s ease;
@@ -27,6 +28,7 @@
 }
 
 .content-container {
+  padding: 30px;
   display: flex;
   align-items: center;
   justify-content: space-between;

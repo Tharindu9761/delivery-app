@@ -33,7 +33,7 @@ const ResetPassword = ({ onSignOut }) => {
   const location = useLocation();
 
   // Use Effect to decode the token
-  useEffect( () => {
+  useEffect(() => {
     const cleanUpAsyncStorage = async () => {
       await AsyncStorage.removeItem("Token");
       await AsyncStorage.removeItem("Key");
@@ -127,31 +127,10 @@ const ResetPassword = ({ onSignOut }) => {
       isValidUser: isEmailValid,
     });
 
-    if (!isEmailValid) {
+    if (!isEmailValid || !isPasswordValid || !matchPassword) {
       setSnackbar({
         open: true,
-        message: "Please enter a valid email address",
-        severity: "error",
-      });
-      return;
-    }
-
-    // Check if password is valid
-    if (!isPasswordValid) {
-      setSnackbar({
-        open: true,
-        message: "Password must be at least 6 characters long.",
-        severity: "error",
-      });
-      return;
-    }
-
-    // Check if passwords match
-    if (!matchPassword) {
-      setSnackbar({
-        open: true,
-        message:
-          "Passwords do not match. Please ensure both passwords are identical.",
+        message: "Please fill in all the required fields correctly.",
         severity: "error",
       });
       return;
@@ -217,6 +196,9 @@ const ResetPassword = ({ onSignOut }) => {
             margin="normal"
             variant="outlined"
             className="custom-textfield"
+            error={!data.isValidUser}
+            helperText={!data.isValidUser ? "Invalid email address." : ""}
+            required
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -230,14 +212,6 @@ const ResetPassword = ({ onSignOut }) => {
               ) : null,
             }}
           />
-          {!data.isValidUser && (
-            <div
-              className="helpertext"
-              style={{ color: "red", fontSize: "12px" }}
-            >
-              Invalid email address.
-            </div>
-          )}
         </div>
 
         {/* New Password Input */}
@@ -251,6 +225,13 @@ const ResetPassword = ({ onSignOut }) => {
             margin="normal"
             variant="outlined"
             className="custom-textfield"
+            error={!data.isPasswordValid}
+            required
+            helperText={
+              !data.isPasswordValid
+                ? "Password must be at least 6 characters long."
+                : ""
+            }
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -266,14 +247,6 @@ const ResetPassword = ({ onSignOut }) => {
               ),
             }}
           />
-          {!data.isPasswordValid && (
-            <div
-              className="helpertext"
-              style={{ color: "red", fontSize: "12px" }}
-            >
-              Password must be at least 6 characters long.
-            </div>
-          )}
         </div>
 
         {/* Confirm Password Input */}
@@ -287,6 +260,9 @@ const ResetPassword = ({ onSignOut }) => {
             margin="normal"
             variant="outlined"
             className="custom-textfield"
+            error={!data.passwordMatch}
+            helperText={!data.passwordMatch ? "Passwords do not match." : ""}
+            required
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -295,23 +271,17 @@ const ResetPassword = ({ onSignOut }) => {
               ),
             }}
           />
-          {!data.passwordMatch && (
-            <div
-              className="helpertext"
-              style={{ color: "red", fontSize: "12px" }}
-            >
-              Passwords do not match.
-            </div>
-          )}
         </div>
 
-        {/* Reset Button */}
-        <button
-          className="forgot-password-button"
-          onClick={handlePasswordReset}
-        >
-          Reset
-        </button>
+        <div className="button-group">
+          {/* Reset Button */}
+          <button
+            className="forgot-password-button"
+            onClick={handlePasswordReset}
+          >
+            Reset
+          </button>
+        </div>
 
         {/* Sign In Link */}
         <p className="signin-link">
