@@ -437,7 +437,10 @@ const TopHeader = ({ onSignOut }) => {
               }}
             />
             {!resetData.isValidPassword && (
-              <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
+              <div
+                className="helpertext"
+                style={{ color: "red", fontSize: "12px" }}
+              >
                 Password must be at least 6 characters long.
               </div>
             )}
@@ -461,7 +464,10 @@ const TopHeader = ({ onSignOut }) => {
               }}
             />
             {!resetData.passwordMatch && (
-              <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
+              <div
+                className="helpertext"
+                style={{ color: "red", fontSize: "12px" }}
+              >
                 Passwords do not match.
               </div>
             )}
@@ -492,8 +498,8 @@ const TopHeader = ({ onSignOut }) => {
       <Modal open={showAddAdminModal}>
         <div className="add-admin-modal">
           <h2 className="modal-title">Add New Admin</h2>
-          <div className="input_raw_cloumn">
-            <div className="input-container">
+          <div className="input_row_column">
+            <div className="input-container modal-input">
               <TextField
                 label="First Name"
                 value={adminData.firstName}
@@ -510,13 +516,16 @@ const TopHeader = ({ onSignOut }) => {
                 }}
               />
               {!adminData.isValidFirstName && (
-                <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
+                <div
+                  className="helpertext"
+                  style={{ color: "red", fontSize: "12px" }}
+                >
                   First name must contain only letters.
                 </div>
               )}
             </div>
 
-            <div className="input-container">
+            <div className="input-container modal-input">
               <TextField
                 label="Last Name"
                 value={adminData.lastName}
@@ -533,15 +542,18 @@ const TopHeader = ({ onSignOut }) => {
                 }}
               />
               {!adminData.isValidLastName && (
-                <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
+                <div
+                  className="helpertext"
+                  style={{ color: "red", fontSize: "12px" }}
+                >
                   Last name must contain only letters.
                 </div>
               )}
             </div>
           </div>
 
-          <div className="input_raw_cloumn">
-            <div className="input-container">
+          <div className="input_row_column">
+            <div className="input-container modal-input">
               <TextField
                 label="Email"
                 value={adminData.email}
@@ -563,13 +575,16 @@ const TopHeader = ({ onSignOut }) => {
                 }}
               />
               {!adminData.isValidEmail && (
-                <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
+                <div
+                  className="helpertext"
+                  style={{ color: "red", fontSize: "12px" }}
+                >
                   Invalid email format.
                 </div>
               )}
             </div>
 
-            <div className="input-container">
+            <div className="input-container modal-input">
               <TextField
                 label="Contact No."
                 value={adminData.contactNo}
@@ -586,15 +601,18 @@ const TopHeader = ({ onSignOut }) => {
                 }}
               />
               {!adminData.isValidContactNo && (
-                <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
+                <div
+                  className="helpertext"
+                  style={{ color: "red", fontSize: "12px" }}
+                >
                   Contact number must be 10 digits.
                 </div>
               )}
             </div>
           </div>
 
-          <div className="input_raw_cloumn">
-            <div className="input-container">
+          <div className="input_row_column">
+            <div className="input-container modal-input">
               <TextField
                 label="New Password"
                 type={adminData.showPassword ? "text" : "password"}
@@ -628,14 +646,17 @@ const TopHeader = ({ onSignOut }) => {
                 }}
               />
               {!adminData.isValidPassword && (
-                <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
+                <div
+                  className="helpertext"
+                  style={{ color: "red", fontSize: "12px" }}
+                >
                   Password must be at least 6 characters long.
                 </div>
               )}
             </div>
-
-            <div className="input-container">
+            <div className="input-container modal-input">
               <TextField
+                className="modal-input"
                 label="Confirm Password"
                 type={adminData.showPassword ? "text" : "password"}
                 value={adminData.confirmPassword}
@@ -654,7 +675,10 @@ const TopHeader = ({ onSignOut }) => {
                 }}
               />
               {!adminData.passwordMatch && (
-                <div className="helpertext" style={{ color: "red",fontSize: "12px" }}>
+                <div
+                  className="helpertext"
+                  style={{ color: "red", fontSize: "12px" }}
+                >
                   Passwords do not match.
                 </div>
               )}

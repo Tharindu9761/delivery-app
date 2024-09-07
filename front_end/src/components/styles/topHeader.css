@@ -136,29 +136,28 @@
   flex: 1;
 }
 
+.modal-input{
+  flex: 1;
+}
+
 .modal-button + .modal-button {
+  margin-left: 20px;
+}
+
+.modal-input + .modal-input {
   margin-left: 20px;
 }
 
 .button-group {
   display: flex;
   justify-content: flex-end;
+  margin-top: 20px;
 }
 
-.input_raw_cloumn {
+.input_row_column {
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-
-.input-container {
-  flex: 1;
-  margin-bottom: 20px;
-  margin-right: 20px;
-}
-
-.input-container:last-child {
-  margin-right: 0;
+  flex-direction: row;
+  justify-content: flex-end;
 }
 
 /* Media Query for Smaller Screens */
@@ -166,55 +165,40 @@
   .header {
     left: 0px !important;
   }
-
   .header-left {
     display: none;
   }
-
-  .header-title {
-    font-size: 18px;
-  }
-
   .header-name {
     display: none;
   }
-
   .notification-icon,
   .profile-icon {
     font-size: 30px !important;
   }
-
   .dropdown-menu {
     top: 40px;
   }
-
   .reset-password-modal,
   .add-admin-modal {
     width: 90%;
-    padding: 30px 20px 20px 20px;
+    padding: 30px 30px;
   }
-
   .modal-title {
     font-size: 20px;
   }
-
   .button-group {
     flex-direction: column;
     align-items: stretch;
   }
-
-  .input_raw_cloumn {
+  .input_row_column {
     flex-direction: column;
     align-items: stretch;
   }
-
   .modal-button + .modal-button {
     margin-left: 0;
     margin-top: 10px;
   }
-
-  
-  .input-container {
-    margin-right: 0;
+  .modal-input + .modal-input {
+    margin-left: 0;
   }
 }
