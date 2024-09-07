@@ -40,10 +40,10 @@ const Dashboard = () => {
 
   // Conditionally render the dashboard based on the user role
   if (userRole === "Admin") {
-    return <AdminDashboard />;
-  }
+  //   return <AdminDashboard />;
+  // }
 
-  if (userRole === "Merchant") {
+  // if (userRole === "Merchant") {
     return <MerchantDashboard />;
   }
 
