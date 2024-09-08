@@ -20,6 +20,7 @@ import {
   get_pic,
   resetPassword,
   createUser,
+  get_user_role,
 } from "../../services/userService";
 import "../styles/topHeader.css";
 
@@ -32,6 +33,8 @@ const TopHeader = ({ onSignOut }) => {
 
   const [userName, setUserName] = useState("");
   const [userAvatar, setUserAvatar] = useState("");
+  const [userRole, setUserRole] = useState();
+
   const [showDropdown, setShowDropdown] = useState(false);
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -53,7 +56,7 @@ const TopHeader = ({ onSignOut }) => {
     newPassword: "",
     confirmPassword: "",
     user_type: "Admin",
-    status:"Approved",
+    status: "Approved",
     showPassword: false,
     isValidFirstName: true,
     isValidLastName: true,
@@ -67,9 +70,11 @@ const TopHeader = ({ onSignOut }) => {
     const fetchUserData = async () => {
       const name = await get_name();
       const avatarUrl = await get_pic("thumb");
+      const userRole = await get_user_role();
 
       setUserName(name || "User");
       setUserAvatar(avatarUrl || "");
+      setUserRole(userRole || null);
     };
 
     fetchUserData();
@@ -212,7 +217,7 @@ const TopHeader = ({ onSignOut }) => {
       newPassword: "",
       confirmPassword: "",
       user_type: "Admin",
-      status:"Approved",
+      status: "Approved",
       showPassword: false,
       isValidFirstName: true,
       isValidLastName: true,
@@ -275,7 +280,7 @@ const TopHeader = ({ onSignOut }) => {
       isValidPassword: isPasswordValid,
       passwordMatch: matchPassword,
       user_type: "Admin",
-      status:"Approved",
+      status: "Approved",
     });
 
     if (
@@ -333,33 +338,53 @@ const TopHeader = ({ onSignOut }) => {
             <span className="header-name">Hi {userName}!</span>
             <Avatar src={userAvatar} className="profile-avatar" />
             {showDropdown && (
-              <div className="dropdown-menu">
-                <div
-                  className="dropdown-item"
-                  onClick={() => alert("Profile clicked")}
-                >
-                  <AccountCircleIcon className="dropdown-icon" />
-                  <span>Profile</span>
-                </div>
-                <div
-                  className="dropdown-item"
-                  onClick={handlePasswordModalOpen}
-                >
-                  <LockResetIcon className="dropdown-icon" />
-                  <span>Reset password</span>
-                </div>
-                <div
-                  className="dropdown-item"
-                  onClick={handleAddAdminModalOpen}
-                >
-                  <PersonAddIcon className="dropdown-icon" />
-                  <span>Add Admin</span>
-                </div>
-                <div className="dropdown-item" onClick={handleLogout}>
-                  <ExitToAppIcon className="dropdown-icon" />
-                  <span>Logout</span>
-                </div>
-              </div>
+              <>
+                {userRole === "Admin" ? (
+                  <div className="dropdown-menu">
+                    <div
+                      className="dropdown-item"
+                      onClick={handleAddAdminModalOpen}
+                    >
+                      <PersonAddIcon className="dropdown-icon" />
+                      <span>Add Admin</span>
+                    </div>
+
+                    <div
+                      className="dropdown-item"
+                      onClick={handlePasswordModalOpen}
+                    >
+                      <LockResetIcon className="dropdown-icon" />
+                      <span>Change Password</span>
+                    </div>
+
+                    <div className="dropdown-item" onClick={handleLogout}>
+                      <ExitToAppIcon className="dropdown-icon" />
+                      <span>Logout</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="dropdown-menu">
+                    <div
+                      className="dropdown-item"
+                      onClick={() => alert("Profile clicked")}
+                    >
+                      <AccountCircleIcon className="dropdown-icon" />
+                      <span>Profile</span>
+                    </div>
+                    <div
+                      className="dropdown-item"
+                      onClick={handlePasswordModalOpen}
+                    >
+                      <LockResetIcon className="dropdown-icon" />
+                      <span>Change password</span>
+                    </div>
+                    <div className="dropdown-item" onClick={handleLogout}>
+                      <ExitToAppIcon className="dropdown-icon" />
+                      <span>Logout</span>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

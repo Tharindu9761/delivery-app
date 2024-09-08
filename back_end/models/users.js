@@ -17,6 +17,7 @@ const createUserTable = async () => {
       password VARCHAR(255) NOT NULL,
       contact_no VARCHAR(15),
       no VARCHAR(50),
+      street_name VARCHAR(50),
       suburb VARCHAR(10),
       postal_code VARCHAR(10), 
       state VARCHAR(10),

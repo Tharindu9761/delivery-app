@@ -11,6 +11,7 @@ import SideNavBar from "./components/screens/SideNavBar";
 import Footer from "./components/screens/Footer";
 import Home from "./components/screens/Home";
 import Dashboard from "./components/screens/Dashboard";
+import AllCustomers from "./components/screens/AllCustomers";
 import AllDrivers from "./components/screens/AllDrivers";
 import AllMerchants from "./components/screens/AllMerchants";
 import SignIn from "./components/screens/SignIn";
@@ -44,7 +45,7 @@ const App = () => {
           setIsSignedIn(true);
         }
       }
-      setIsLoading(false); 
+      setIsLoading(false);
     };
 
     checkTokenExpiration();
@@ -57,13 +58,13 @@ const App = () => {
   useEffect(() => {
     const handleStorageChange = (event) => {
       if (event.key === "logout") {
-        window.location.reload(); 
+        window.location.reload();
       }
     };
 
     window.addEventListener("storage", handleStorageChange);
 
-    return () => window.removeEventListener("storage", handleStorageChange); 
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   const handleSignIn = async () => {
@@ -98,6 +99,7 @@ const App = () => {
               <Route path="/" element={<Navigate to="/home" />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/home" element={<Home />} />
+              <Route path="/customers" element={<AllCustomers />} />
               <Route path="/drivers" element={<AllDrivers />} />
               <Route path="/merchants" element={<AllMerchants />} />
               <Route path="/messages" element={<AllMessages />} />

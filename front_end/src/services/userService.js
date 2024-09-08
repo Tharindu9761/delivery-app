@@ -284,6 +284,7 @@ export async function createUser(data) {
         user_type: data.user_type,
         contact_no: data.contact_no,
         no: data.no ? data.no : null,
+        street_name: data.street_name ? data.street_name : null,
         suburb: data.suburb ? data.suburb : null,
         postal_code: data.postal_code ? data.postal_code : null,
         state: data.state ? data.state : null,
@@ -311,5 +312,30 @@ export async function createUser(data) {
       message:
         "An unexpected error occurred during the account creation process.",
     };
+  }
+}
+
+export async function getUsers({ page, limit, status, user_type }) {
+  try {
+    const url = AppConst.GET_ALL_USERS(page, limit, status, user_type);
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const res = await response.json();
+
+    if (response.ok) {
+      return res;
+    } else {
+      console.error("Failed to fetch users:", res.message);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return null;
   }
 }

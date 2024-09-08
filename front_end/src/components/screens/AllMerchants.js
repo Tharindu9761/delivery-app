@@ -12,9 +12,10 @@ import {
   TablePagination,
   Typography,
   Box,
+  Snackbar,
+  Alert,
 } from "@mui/material";
-import "../styles/allMerchants.css";
-
+import { getUsers } from "../../services/userService"; // Import your user service
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -40,68 +41,118 @@ const AllMerchants = () => {
   // State for Tabs
   const [tabIndex, setTabIndex] = useState(0);
 
-  // State for Merchants Pagination
+  // Pagination state for Pending, Accepted, and Rejected merchants
   const [pagePending, setPagePending] = useState(0);
   const [rowsPerPagePending, setRowsPerPagePending] = useState(5);
+
   const [pageAccepted, setPageAccepted] = useState(0);
   const [rowsPerPageAccepted, setRowsPerPageAccepted] = useState(5);
+
   const [pageRejected, setPageRejected] = useState(0);
   const [rowsPerPageRejected, setRowsPerPageRejected] = useState(5);
 
-  // State for Merchants Data
+  // Merchants data state
   const [pendingMerchants, setPendingMerchants] = useState([]);
   const [acceptedMerchants, setAcceptedMerchants] = useState([]);
   const [rejectedMerchants, setRejectedMerchants] = useState([]);
+  const [totalPendingMerchants, setTotalPendingMerchants] = useState(0);
+  const [totalAcceptedMerchants, setTotalAcceptedMerchants] = useState(0);
+  const [totalRejectedMerchants, setTotalRejectedMerchants] = useState(0);
 
-  // Sample data for demonstration
-  const sampleMerchants = [
-    { name: "Merchant 1", businessName: "ABC Corp", location: "New York", status: "Pending" },
-    { name: "Merchant 2", businessName: "XYZ LLC", location: "Los Angeles", status: "Accepted" },
-    { name: "Merchant 3", businessName: "123 Industries", location: "Chicago", status: "Pending" },
-    { name: "Merchant 4", businessName: "456 Enterprises", location: "San Francisco", status: "Rejected" },
-   
-  ];
+  // Snackbar notification state
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
-  useEffect(() => {
-    // Filtering merchants based on their status
-    setPendingMerchants(sampleMerchants.filter((merchant) => merchant.status === "Pending"));
-    setAcceptedMerchants(sampleMerchants.filter((merchant) => merchant.status === "Accepted"));
-    setRejectedMerchants(sampleMerchants.filter((merchant) => merchant.status === "Rejected"));
-  }, []);
-
-  // Handle Tab Change
-  const handleTabChange = (event, newValue) => {
-    setTabIndex(newValue);
+  // Fetch Merchants from backend
+  const fetchMerchants = async (page, limit, status) => {
+    try {
+      const response = await getUsers({
+        page: page,
+        limit: limit,
+        status: status,
+        user_type: "Merchant",
+      });
+      return response;
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: "Error fetching merchants",
+        severity: "error",
+      });
+      console.error("Error fetching merchants:", error);
+    }
   };
 
-  // Handle Pagination Changes for Pending Merchants
+  // Fetch functions for different merchant statuses
+  const fetchPendingMerchants = async () => {
+    const response = await fetchMerchants(pagePending + 1, rowsPerPagePending, "Pending");
+    setPendingMerchants(response.data || []);
+    setTotalPendingMerchants(response.total || 0);
+  };
+
+  const fetchAcceptedMerchants = async () => {
+    const response = await fetchMerchants(pageAccepted + 1, rowsPerPageAccepted, "Approved");
+    setAcceptedMerchants(response.data || []);
+    setTotalAcceptedMerchants(response.total || 0);
+  };
+
+  const fetchRejectedMerchants = async () => {
+    const response = await fetchMerchants(pageRejected + 1, rowsPerPageRejected, "Rejected");
+    setRejectedMerchants(response.data || []);
+    setTotalRejectedMerchants(response.total || 0);
+  };
+
+  // useEffect to fetch merchants on page/limit change or tab switch
+  useEffect(() => {
+    if (tabIndex === 0) {
+      fetchPendingMerchants();
+    } else if (tabIndex === 1) {
+      fetchAcceptedMerchants();
+    } else if (tabIndex === 2) {
+      fetchRejectedMerchants();
+    }
+  }, [tabIndex, pagePending, rowsPerPagePending, pageAccepted, rowsPerPageAccepted, pageRejected, rowsPerPageRejected]);
+
+  // Handle pagination changes for Pending merchants
   const handleChangePagePending = (event, newPage) => {
     setPagePending(newPage);
   };
 
   const handleChangeRowsPerPagePending = (event) => {
-    setRowsPerPagePending(parseInt(event.target.value, 10));
-    setPagePending(0);
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPagePending(newRowsPerPage);
+    setPagePending(0); // Reset to the first page when rows per page changes
   };
 
-  // Handle Pagination Changes for Accepted Merchants
+  // Handle pagination changes for Accepted merchants
   const handleChangePageAccepted = (event, newPage) => {
     setPageAccepted(newPage);
   };
 
   const handleChangeRowsPerPageAccepted = (event) => {
-    setRowsPerPageAccepted(parseInt(event.target.value, 10));
-    setPageAccepted(0);
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPageAccepted(newRowsPerPage);
+    setPageAccepted(0); // Reset to the first page when rows per page changes
   };
 
-  // Handle Pagination Changes for Rejected Merchants
+  // Handle pagination changes for Rejected merchants
   const handleChangePageRejected = (event, newPage) => {
     setPageRejected(newPage);
   };
 
   const handleChangeRowsPerPageRejected = (event) => {
-    setRowsPerPageRejected(parseInt(event.target.value, 10));
-    setPageRejected(0);
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPageRejected(newRowsPerPage);
+    setPageRejected(0); // Reset to the first page when rows per page changes
+  };
+
+  // Handle Snackbar Close
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") return;
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -109,42 +160,48 @@ const AllMerchants = () => {
       <h1>All Merchants</h1>
       <Tabs
         value={tabIndex}
-        onChange={handleTabChange}
+        onChange={(event, newValue) => setTabIndex(newValue)}
         aria-label="merchant tabs"
         indicatorColor="primary"
         textColor="primary"
         variant="fullWidth"
       >
         <Tab label="Pending Approvals" />
-        <Tab label="Accepted" />
-        <Tab label="Rejected" />
+        <Tab label="Accepted Merchants" />
+        <Tab label="Rejected Merchants" />
       </Tabs>
 
-      {/* Pending Approvals Tab */}
+      {/* Pending Merchants Tab */}
       <TabPanel value={tabIndex} index={0}>
         <Paper>
           <TableContainer>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>Merchant Name</strong></TableCell>
-                  <TableCell><strong>Business Name</strong></TableCell>
-                  <TableCell><strong>Location</strong></TableCell>
+                  <TableCell>
+                    <strong>Business Name</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Address</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Contact No</strong>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {pendingMerchants.length > 0 ? (
                   pendingMerchants.map((merchant, index) => (
                     <TableRow key={index}>
-                      <TableCell>{merchant.name}</TableCell>
-                      <TableCell>{merchant.businessName}</TableCell>
-                      <TableCell>{merchant.location}</TableCell>
+                      <TableCell>{merchant.first_name}</TableCell>
+                      <TableCell>{`${merchant.no}, ${merchant.street_name}, ${merchant.suburb}, ${merchant.postal_code}, ${merchant.state}`}</TableCell>
+                      <TableCell>{merchant.contact_no}</TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
                     <TableCell colSpan={3} align="center">
-                      No pending approvals.
+                      No pending merchants.
                     </TableCell>
                   </TableRow>
                 )}
@@ -154,7 +211,7 @@ const AllMerchants = () => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={pendingMerchants.length}
+            count={totalPendingMerchants}
             rowsPerPage={rowsPerPagePending}
             page={pagePending}
             onPageChange={handleChangePagePending}
@@ -163,25 +220,31 @@ const AllMerchants = () => {
         </Paper>
       </TabPanel>
 
-      {/* Accepted Tab */}
+      {/* Accepted Merchants Tab */}
       <TabPanel value={tabIndex} index={1}>
         <Paper>
           <TableContainer>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>Merchant Name</strong></TableCell>
-                  <TableCell><strong>Business Name</strong></TableCell>
-                  <TableCell><strong>Location</strong></TableCell>
+                  <TableCell>
+                    <strong>Business Name</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Address</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Contact No</strong>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {acceptedMerchants.length > 0 ? (
                   acceptedMerchants.map((merchant, index) => (
                     <TableRow key={index}>
-                      <TableCell>{merchant.name}</TableCell>
-                      <TableCell>{merchant.businessName}</TableCell>
-                      <TableCell>{merchant.location}</TableCell>
+                      <TableCell>{merchant.first_name}</TableCell>
+                      <TableCell>{`${merchant.no}, ${merchant.street_name}, ${merchant.suburb}, ${merchant.postal_code}, ${merchant.state}`}</TableCell>
+                      <TableCell>{merchant.contact_no}</TableCell>
                     </TableRow>
                   ))
                 ) : (
@@ -197,7 +260,7 @@ const AllMerchants = () => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={acceptedMerchants.length}
+            count={totalAcceptedMerchants}
             rowsPerPage={rowsPerPageAccepted}
             page={pageAccepted}
             onPageChange={handleChangePageAccepted}
@@ -206,25 +269,31 @@ const AllMerchants = () => {
         </Paper>
       </TabPanel>
 
-      {/* Rejected Tab */}
+      {/* Rejected Merchants Tab */}
       <TabPanel value={tabIndex} index={2}>
         <Paper>
           <TableContainer>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>Merchant Name</strong></TableCell>
-                  <TableCell><strong>Business Name</strong></TableCell>
-                  <TableCell><strong>Location</strong></TableCell>
+                  <TableCell>
+                    <strong>Business Name</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Address</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Contact No</strong>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {rejectedMerchants.length > 0 ? (
                   rejectedMerchants.map((merchant, index) => (
                     <TableRow key={index}>
-                      <TableCell>{merchant.name}</TableCell>
-                      <TableCell>{merchant.businessName}</TableCell>
-                      <TableCell>{merchant.location}</TableCell>
+                      <TableCell>{merchant.first_name}</TableCell>
+                      <TableCell>{`${merchant.no}, ${merchant.street_name}, ${merchant.suburb}, ${merchant.postal_code}, ${merchant.state}`}</TableCell>
+                      <TableCell>{merchant.contact_no}</TableCell>
                     </TableRow>
                   ))
                 ) : (
@@ -240,7 +309,7 @@ const AllMerchants = () => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={rejectedMerchants.length}
+            count={totalRejectedMerchants}
             rowsPerPage={rowsPerPageRejected}
             page={pageRejected}
             onPageChange={handleChangePageRejected}
@@ -248,6 +317,23 @@ const AllMerchants = () => {
           />
         </Paper>
       </TabPanel>
+
+      {/* Snackbar for Notifications */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+          variant="filled"
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

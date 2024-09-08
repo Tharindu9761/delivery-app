@@ -76,9 +76,9 @@ const AllMessages = () => {
   });
 
   // Fetch Messages Function
-  const fetchMessages = async (type, page, limit) => {
+  const fetchMessages = async (status, page, limit) => {
     try {
-      const messages = await getMessages({ type, page, limit });
+      const messages = await getMessages({ status, page, limit });
       return messages;
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -142,7 +142,7 @@ const AllMessages = () => {
 
   // Handle Closing the Dialog and Marking as Read
   const handleCloseDialog = async () => {
-    if (selectedMessage && selectedMessage.type === "Unread") {
+    if (selectedMessage && selectedMessage.status === "Unread") {
       const response = await read(selectedMessage.id);
 
       if (response.success) {

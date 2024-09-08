@@ -12,12 +12,12 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Get all messages with pagination and optional search by type
+// Get all messages with pagination and optional search by status
 router.get("/", async (req, res) => {
-  const { page = 1, limit = 10, type } = req.query;
+  const { page = 1, limit = 10, status } = req.query;
 
   try {
-    const messages = await messageService.getMessages({ page, limit, type });
+    const messages = await messageService.getMessages({ page, limit, status });
     res.status(200).json(messages);
   } catch (err) {
     res.status(500).json({ error: err.message });

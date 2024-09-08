@@ -1,8 +1,8 @@
 import * as AppConst from "../const/const";
 
-export async function getMessages({ page, limit, type }) {
+export async function getMessages({ page, limit, status }) {
   try {
-    const url = AppConst.GET_MESSAGES(page, limit, type);
+    const url = AppConst.GET_MESSAGES(page, limit, status);
 
     const response = await fetch(url, {
       method: "GET",
@@ -34,7 +34,7 @@ export async function read(id) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        type: "Read",
+        status: "Read",
       }),
     });
 

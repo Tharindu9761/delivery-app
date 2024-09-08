@@ -15,7 +15,7 @@ const createMessageTable = async () => {
         email VARCHAR(100) NOT NULL,
         subject VARCHAR(255) NOT NULL,
         message TEXT NOT NULL,
-        type VARCHAR(10) NOT NULL DEFAULT 'Unread' CHECK (type IN ('Read', 'Unread')),
+        status VARCHAR(10) NOT NULL DEFAULT 'Unread' CHECK (status IN ('Read', 'Unread')),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
   `;

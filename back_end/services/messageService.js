@@ -5,7 +5,7 @@ const createMessage = async (messageData) => {
   const { name, email, subject, message } = messageData;
 
   const query = `
-    INSERT INTO messages (name, email, subject, message, type)
+    INSERT INTO messages (name, email, subject, message, status)
     VALUES ($1, $2, $3, $4, 'Unread')
     RETURNING *;
   `;
@@ -16,8 +16,8 @@ const createMessage = async (messageData) => {
   return res.rows[0];
 };
 
-// Get all messages with pagination and optional filtering by type
-const getMessages = async ({ page, limit, type }) => {
+// Get all messages with pagination and optional filtering by status
+const getMessages = async ({ page, limit, status }) => {
   const offset = (page - 1) * limit;
   let query = `
       SELECT * FROM messages
@@ -29,10 +29,10 @@ const getMessages = async ({ page, limit, type }) => {
 
   const values = [];
 
-  if (type) {
-    query += ` WHERE type = $1`;
-    countQuery += ` WHERE type = $1`;
-    values.push(type);
+  if (status) {
+    query += ` WHERE status = $1`;
+    countQuery += ` WHERE status = $1`;
+    values.push(status);
   }
 
   query += ` ORDER BY created_at ASC LIMIT $${values.length + 1} OFFSET $${
@@ -103,7 +103,7 @@ const deleteMessageById = async (id) => {
 const markMessageAsRead = async (id) => {
   const query = `
       UPDATE messages
-      SET type = 'Read'
+      SET status = 'Read'
       WHERE id = $1
       RETURNING *;
     `;

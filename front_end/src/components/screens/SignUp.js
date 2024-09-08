@@ -22,6 +22,7 @@ const SignUp = () => {
     newPassword: "",
     confirmPassword: "",
     no: "",
+    street_name: "",
     suburb: "",
     postal_code: "",
     state: "",
@@ -30,6 +31,7 @@ const SignUp = () => {
     isValidEmail: true,
     isValidContactNo: true,
     isValidNo: true,
+    isValidStreetName: true,
     isValidSuburb: true,
     isValidPostalCode: true,
     isValidState: true,
@@ -80,6 +82,15 @@ const SignUp = () => {
       ...merchantData,
       no: val,
       isValidNo,
+    });
+  };
+
+  const handleStreetNameChange = (val) => {
+    const isValidStreetName = val.trim() !== "";
+    setMerchantData({
+      ...merchantData,
+      street_name: val,
+      isValidStreetName,
     });
   };
 
@@ -150,6 +161,7 @@ const SignUp = () => {
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(merchantData.email);
     const isValidContactNo = /^\d{10}$/.test(merchantData.contact_no);
     const isValidNo = merchantData.no.trim() !== "";
+    const isValidStreetName = merchantData.street_name.trim() !== "";
     const isValidSuburb = merchantData.suburb.trim() !== "";
     const isValidPostalCode = /^\d{4}$/.test(merchantData.postal_code);
     const isValidState = merchantData.state !== "";
@@ -164,6 +176,7 @@ const SignUp = () => {
       isValidEmail,
       isValidContactNo,
       isValidNo,
+      isValidStreetName,
       isValidSuburb,
       isValidPostalCode,
       isValidState,
@@ -179,6 +192,7 @@ const SignUp = () => {
       !isValidEmail ||
       !isValidContactNo ||
       !isValidNo ||
+      !isValidStreetName ||
       !isValidSuburb ||
       !isValidPostalCode ||
       !isValidState ||
@@ -193,7 +207,7 @@ const SignUp = () => {
       return;
     }
 
-    // Proceed with admin creation if all validations pass
+    // Proceed with merchant creation if all validations pass
     try {
       const result = await createUser(merchantData);
       if (result.success) {
@@ -209,7 +223,7 @@ const SignUp = () => {
         setSnackbar({
           open: true,
           message:
-            result.message || "Failed to create  account. Please try again.",
+            result.message || "Failed to create account. Please try again.",
           severity: "error",
         });
       }
@@ -285,7 +299,7 @@ const SignUp = () => {
               helperText={
                 !merchantData.isValidContactNo
                   ? "Contact number must be 10 digits."
-                  : "012-3456789"
+                  : "0123456789"
               }
             />
           </div>
@@ -296,7 +310,7 @@ const SignUp = () => {
           <div className="input-container">
             <TextField
               label="No"
-              placeholder="Enter Unit/House/Apartment Number With Street Name"
+              placeholder="Enter Unit/House/Apartment Number"
               value={merchantData.no}
               onChange={(e) => handleNoChange(e.target.value)}
               fullWidth
@@ -307,7 +321,26 @@ const SignUp = () => {
               helperText={
                 !merchantData.isValidNo
                   ? "Address is required"
-                  : "Unit 4/93 Melbourne Ave"
+                  : "Unit 4/93"
+              }
+            />
+          </div>
+
+          <div className="input-container">
+            <TextField
+              label="Street Name"
+              placeholder="Enter street name"
+              value={merchantData.street_name}
+              onChange={(e) => handleStreetNameChange(e.target.value)}
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              required
+              error={!merchantData.isValidStreetName}
+              helperText={
+                !merchantData.isValidStreetName
+                  ? "Street name is required"
+                  : "Melbourne Ave"
               }
             />
           </div>

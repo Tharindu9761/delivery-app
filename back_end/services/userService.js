@@ -21,6 +21,7 @@ const createUser = async (user) => {
     user_type,
     contact_no,
     no,
+    street_name,
     suburb,
     postal_code,
     state,
@@ -29,9 +30,9 @@ const createUser = async (user) => {
 
   const query = `
     INSERT INTO users (
-      first_name, last_name, email, password, user_type, contact_no, no, suburb, postal_code, state, status
+      first_name, last_name, email, password, user_type, contact_no, no, street_name, suburb, postal_code, state, status
     )
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
     RETURNING *;
   `;
 
@@ -43,10 +44,11 @@ const createUser = async (user) => {
     user_type,
     contact_no,
     no,
+    street_name,
     suburb,
     postal_code,
     state,
-    status
+    status,
   ];
 
   try {
@@ -58,14 +60,51 @@ const createUser = async (user) => {
 };
 
 // Get all users
-const getAllUsers = async () => {
-  const query = "SELECT * FROM users;";
+const getAllUsers = async ({ page = 1, limit = 10, user_type, status }) => {
+  const offset = (page - 1) * limit;
+  let query = `SELECT * FROM users`;
+  let countQuery = `SELECT COUNT(*) FROM users`;
+
+  const values = [];
+  let conditions = [];
+
+  // Add conditions based on the presence of status and user_type
+  if (status) {
+    conditions.push(`status = $${conditions.length + 1}`);
+    values.push(status);
+  }
+
+  if (user_type) {
+    conditions.push(`user_type = $${conditions.length + 1}`);
+    values.push(user_type);
+  }
+
+  if (conditions.length > 0) {
+    const conditionString = conditions.join(" AND ");
+    query += ` WHERE ${conditionString}`;
+    countQuery += ` WHERE ${conditionString}`;
+  }
+
+  query += ` ORDER BY created_at ASC LIMIT $${values.length + 1} OFFSET $${
+    values.length + 2
+  }`;
+
+  values.push(limit, offset);
 
   try {
-    const result = await pool.query(query);
-    return result.rows.map(excludePassword);
+    // Perform the queries concurrently
+    const [userResult, countResult] = await Promise.all([
+      pool.query(query, values),
+      pool.query(countQuery, values.slice(0, conditions.length)),
+    ]);
+
+    const data = userResult.rows.map(excludePassword);
+    const total = parseInt(countResult.rows[0].count, 10);
+
+    return { data, total };
   } catch (err) {
-    throw new Error("Error retrieving users: " + err.message);
+    console.error("Error fetching users:", err);
+    return { data: [], total: 0 };
   }
 };
 

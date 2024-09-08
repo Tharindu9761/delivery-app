@@ -66,8 +66,16 @@ router.post("/", async (req, res) => {
 
 // Get all users
 router.get("/", async (req, res) => {
+  const { page = 1, limit = 10, status, user_type } = req.query;
+
   try {
-    const users = await userService.getAllUsers();
+    // Pass user_type and status to the service function
+    const users = await userService.getAllUsers({
+      page,
+      limit,
+      user_type,
+      status,
+    });
     res.status(200).json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -144,7 +152,7 @@ router.post("/mobile_login", async (req, res) => {
         .json({ error: "Only Drivers or Customers can log in" });
     }
 
-    if (user.status !== "Approved") {
+    if (user.user_type == "Driver" && user.status !== "Approved") {
       return res.status(403).json({
         error: "Account is not approved yet. Please contact support.",
       });
@@ -184,7 +192,7 @@ router.post("/web_login", async (req, res) => {
         .json({ error: "Only Admins or Merchants can log in" });
     }
 
-    if (user.status !== "Approved") {
+    if (user.user_type == "Merchant" && user.status !== "Approved") {
       return res.status(403).json({
         error: "Account is not approved yet. Please contact support.",
       });

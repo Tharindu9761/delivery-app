@@ -12,7 +12,10 @@ import {
   TablePagination,
   Typography,
   Box,
+  Snackbar,
+  Alert,
 } from "@mui/material";
+import { getUsers } from "../../services/userService"; // Import the user service
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -38,73 +41,119 @@ const AllDrivers = () => {
   // State for Tabs
   const [tabIndex, setTabIndex] = useState(0);
 
-  // State for Drivers Pagination
+  // Pagination state for Pending, Accepted, and Rejected drivers
   const [pagePending, setPagePending] = useState(0);
   const [rowsPerPagePending, setRowsPerPagePending] = useState(5);
+
   const [pageAccepted, setPageAccepted] = useState(0);
   const [rowsPerPageAccepted, setRowsPerPageAccepted] = useState(5);
+
   const [pageRejected, setPageRejected] = useState(0);
   const [rowsPerPageRejected, setRowsPerPageRejected] = useState(5);
 
-  // State for Drivers Data
+  // Drivers data state
   const [pendingDrivers, setPendingDrivers] = useState([]);
   const [acceptedDrivers, setAcceptedDrivers] = useState([]);
   const [rejectedDrivers, setRejectedDrivers] = useState([]);
 
-  // Sample data for demonstration
-  const sampleDrivers = [
-    { name: "John Doe", location: "New York", status: "Pending" },
-    { name: "Jane Smith", location: "Los Angeles", status: "Accepted" },
-    { name: "Michael Johnson", location: "Chicago", status: "Pending" },
-    { name: "Emily Davis", location: "San Francisco", status: "Rejected" },
-  ];
+  const [totalPendingDrivers, setTotalPendingDrivers] = useState(0);
+  const [totalAcceptedDrivers, setTotalAcceptedDrivers] = useState(0);
+  const [totalRejectedDrivers, setTotalRejectedDrivers] = useState(0);
 
-  useEffect(() => {
-    // Filtering drivers based on their status
-    setPendingDrivers(
-      sampleDrivers.filter((driver) => driver.status === "Pending")
-    );
-    setAcceptedDrivers(
-      sampleDrivers.filter((driver) => driver.status === "Accepted")
-    );
-    setRejectedDrivers(
-      sampleDrivers.filter((driver) => driver.status === "Rejected")
-    );
-  }, []);
+  // Snackbar notification state
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
-  // Handle Tab Change
-  const handleTabChange = (event, newValue) => {
-    setTabIndex(newValue);
+  // Fetch Drivers from backend
+  const fetchDrivers = async (page, limit, status) => {
+    try {
+      const response = await getUsers({
+        page: page,
+        limit: limit,
+        status: status,
+        user_type: "Driver",
+      });
+      return response;
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: "Error fetching drivers",
+        severity: "error",
+      });
+      console.error("Error fetching drivers:", error);
+    }
   };
 
-  // Handle Pagination Changes for Pending Drivers
+  // Fetch functions for different driver statuses
+  const fetchPendingDrivers = async () => {
+    const response = await fetchDrivers(pagePending + 1, rowsPerPagePending, "Pending");
+    setPendingDrivers(response.data || []);
+    setTotalPendingDrivers(response.total || 0);
+  };
+
+  const fetchAcceptedDrivers = async () => {
+    const response = await fetchDrivers(pageAccepted + 1, rowsPerPageAccepted, "Approved");
+    setAcceptedDrivers(response.data || []);
+    setTotalAcceptedDrivers(response.total || 0);
+  };
+
+  const fetchRejectedDrivers = async () => {
+    const response = await fetchDrivers(pageRejected + 1, rowsPerPageRejected, "Rejected");
+    setRejectedDrivers(response.data || []);
+    setTotalRejectedDrivers(response.total || 0);
+  };
+
+  // useEffect to fetch drivers on page/limit change or tab switch
+  useEffect(() => {
+    if (tabIndex === 0) {
+      fetchPendingDrivers();
+    } else if (tabIndex === 1) {
+      fetchAcceptedDrivers();
+    } else if (tabIndex === 2) {
+      fetchRejectedDrivers();
+    }
+  }, [tabIndex, pagePending, rowsPerPagePending, pageAccepted, rowsPerPageAccepted, pageRejected, rowsPerPageRejected]);
+
+  // Handle pagination changes for Pending drivers
   const handleChangePagePending = (event, newPage) => {
     setPagePending(newPage);
   };
 
   const handleChangeRowsPerPagePending = (event) => {
-    setRowsPerPagePending(parseInt(event.target.value, 10));
-    setPagePending(0);
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPagePending(newRowsPerPage);
+    setPagePending(0); 
   };
 
-  // Handle Pagination Changes for Accepted Drivers
+  // Handle pagination changes for Accepted drivers
   const handleChangePageAccepted = (event, newPage) => {
     setPageAccepted(newPage);
   };
 
   const handleChangeRowsPerPageAccepted = (event) => {
-    setRowsPerPageAccepted(parseInt(event.target.value, 10));
-    setPageAccepted(0);
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPageAccepted(newRowsPerPage);
+    setPageAccepted(0); 
   };
 
-  // Handle Pagination Changes for Rejected Drivers
+  // Handle pagination changes for Rejected drivers
   const handleChangePageRejected = (event, newPage) => {
     setPageRejected(newPage);
   };
 
   const handleChangeRowsPerPageRejected = (event) => {
-    setRowsPerPageRejected(parseInt(event.target.value, 10));
-    setPageRejected(0);
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPageRejected(newRowsPerPage);
+    setPageRejected(0); 
+  };
+
+  // Handle Snackbar Close
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") return;
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -112,18 +161,18 @@ const AllDrivers = () => {
       <h1>All Drivers</h1>
       <Tabs
         value={tabIndex}
-        onChange={handleTabChange}
+        onChange={(event, newValue) => setTabIndex(newValue)}
         aria-label="driver tabs"
         indicatorColor="primary"
         textColor="primary"
         variant="fullWidth"
       >
-        <Tab label="Pending Approvals" />
-        <Tab label="Accepted" />
-        <Tab label="Rejected" />
+        <Tab label="Pending Drivers" />
+        <Tab label="Accepted Drivers" />
+        <Tab label="Rejected Drivers" />
       </Tabs>
 
-      {/* Pending Approvals Tab */}
+      {/* Pending Drivers Tab */}
       <TabPanel value={tabIndex} index={0}>
         <Paper>
           <TableContainer>
@@ -131,13 +180,16 @@ const AllDrivers = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>
-                    <strong>Driver Name</strong>
+                    <strong>First Name</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>Location</strong>
+                    <strong>Last Name</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>Status</strong>
+                    <strong>Address</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Contact No</strong>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -145,15 +197,16 @@ const AllDrivers = () => {
                 {pendingDrivers.length > 0 ? (
                   pendingDrivers.map((driver, index) => (
                     <TableRow key={index}>
-                      <TableCell>{driver.name}</TableCell>
-                      <TableCell>{driver.location}</TableCell>
-                      <TableCell>{driver.status}</TableCell>
+                      <TableCell>{driver.first_name}</TableCell>
+                      <TableCell>{driver.last_name}</TableCell>
+                      <TableCell>{`${driver.no}, ${driver.street_name}, ${driver.suburb}, ${driver.postal_code}, ${driver.state}`}</TableCell>
+                      <TableCell>{driver.contact_no}</TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={3} align="center">
-                      No pending approvals.
+                    <TableCell colSpan={4} align="center">
+                      No pending drivers.
                     </TableCell>
                   </TableRow>
                 )}
@@ -163,7 +216,7 @@ const AllDrivers = () => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={pendingDrivers.length}
+            count={totalPendingDrivers}
             rowsPerPage={rowsPerPagePending}
             page={pagePending}
             onPageChange={handleChangePagePending}
@@ -172,7 +225,7 @@ const AllDrivers = () => {
         </Paper>
       </TabPanel>
 
-      {/* Accepted Tab */}
+      {/* Accepted Drivers Tab */}
       <TabPanel value={tabIndex} index={1}>
         <Paper>
           <TableContainer>
@@ -180,13 +233,16 @@ const AllDrivers = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>
-                    <strong>Driver Name</strong>
+                    <strong>First Name</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>Location</strong>
+                    <strong>Last Name</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>Status</strong>
+                    <strong>Address</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Contact No</strong>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -194,14 +250,15 @@ const AllDrivers = () => {
                 {acceptedDrivers.length > 0 ? (
                   acceptedDrivers.map((driver, index) => (
                     <TableRow key={index}>
-                      <TableCell>{driver.name}</TableCell>
-                      <TableCell>{driver.location}</TableCell>
-                      <TableCell>{driver.status}</TableCell>
+                      <TableCell>{driver.first_name}</TableCell>
+                      <TableCell>{driver.last_name}</TableCell>
+                      <TableCell>{`${driver.no}, ${driver.street_name}, ${driver.suburb}, ${driver.postal_code}, ${driver.state}`}</TableCell>
+                      <TableCell>{driver.contact_no}</TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={3} align="center">
+                    <TableCell colSpan={4} align="center">
                       No accepted drivers.
                     </TableCell>
                   </TableRow>
@@ -212,7 +269,7 @@ const AllDrivers = () => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={acceptedDrivers.length}
+            count={totalAcceptedDrivers}
             rowsPerPage={rowsPerPageAccepted}
             page={pageAccepted}
             onPageChange={handleChangePageAccepted}
@@ -221,7 +278,7 @@ const AllDrivers = () => {
         </Paper>
       </TabPanel>
 
-      {/* Rejected Tab */}
+      {/* Rejected Drivers Tab */}
       <TabPanel value={tabIndex} index={2}>
         <Paper>
           <TableContainer>
@@ -229,13 +286,16 @@ const AllDrivers = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>
-                    <strong>Driver Name</strong>
+                    <strong>First Name</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>Location</strong>
+                    <strong>Last Name</strong>
                   </TableCell>
                   <TableCell>
-                    <strong>Status</strong>
+                    <strong>Address</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Contact No</strong>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -243,14 +303,15 @@ const AllDrivers = () => {
                 {rejectedDrivers.length > 0 ? (
                   rejectedDrivers.map((driver, index) => (
                     <TableRow key={index}>
-                      <TableCell>{driver.name}</TableCell>
-                      <TableCell>{driver.location}</TableCell>
-                      <TableCell>{driver.status}</TableCell>
+                      <TableCell>{driver.first_name}</TableCell>
+                      <TableCell>{driver.last_name}</TableCell>
+                      <TableCell>{`${driver.no}, ${driver.street_name}, ${driver.suburb}, ${driver.postal_code}, ${driver.state}`}</TableCell>
+                      <TableCell>{driver.contact_no}</TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={3} align="center">
+                    <TableCell colSpan={4} align="center">
                       No rejected drivers.
                     </TableCell>
                   </TableRow>
@@ -261,7 +322,7 @@ const AllDrivers = () => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={rejectedDrivers.length}
+            count={totalRejectedDrivers}
             rowsPerPage={rowsPerPageRejected}
             page={pageRejected}
             onPageChange={handleChangePageRejected}
@@ -269,6 +330,23 @@ const AllDrivers = () => {
           />
         </Paper>
       </TabPanel>
+
+      {/* Snackbar for Notifications */}
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+          variant="filled"
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
