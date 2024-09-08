@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Paper, Button } from "@mui/material";
+import { Button } from "@mui/material";
 import { get_user_role } from "../../services/userService";
 import "../styles/home.css";
 

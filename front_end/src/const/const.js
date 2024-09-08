@@ -17,6 +17,10 @@ export const GET_ALL_USERS = (page, limit, status, user_type) =>
   generateUrl(
     `users?page=${page}&limit=${limit}&status=${status}&user_type=${user_type}`
   );
+export const GET_USER_COUNT_FOR_TILES = () => generateUrl(`users/counts`);
+
+export const GET_USER_COUNT_FOR_CHART = (month) =>
+  generateUrl(`users/counts_month?months=${month}`);
 
 export const PIC_THUMB = (id) => generateUrl(`users/thumb/${id}`);
 export const PIC_FULL = (id) => generateUrl(`users/full/${id}`);

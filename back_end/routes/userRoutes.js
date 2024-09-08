@@ -82,20 +82,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get a user by ID
-router.get("/:id", async (req, res) => {
-  try {
-    const user = await userService.getUserById(req.params.id);
-    if (user) {
-      res.status(200).json(user);
-    } else {
-      res.status(404).json({ error: "User not found" });
-    }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // Update a user by ID
 router.put("/:id", async (req, res) => {
   try {
@@ -316,6 +302,53 @@ router.post("/send_reset_link", async (req, res) => {
       message: "An error occurred",
       error: error.message,
     });
+  }
+});
+
+// Route to get total approved counts
+router.get("/counts", async (req, res) => {
+  try {
+    const counts = await userService.getTotalApprovedCounts();
+    res.status(200).json(counts);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching total approved counts" });
+  }
+});
+
+// Route to get approved counts in the last 6 months
+router.get("/counts_month", async (req, res) => {
+  const { months } = req.query;
+
+  if (!months || isNaN(months)) {
+    return res
+      .status(400)
+      .json({ message: "Invalid or missing months parameter" });
+  }
+
+  try {
+    const counts = await userService.getApprovedCountWithMonths(
+      parseInt(months)
+    );
+    res.status(200).json(counts);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ message: "Error fetching approved counts for months" });
+  }
+});
+
+// Get a user by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const user = await userService.getUserById(req.params.id);
+    if (user) {
+      res.status(200).json(user);
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

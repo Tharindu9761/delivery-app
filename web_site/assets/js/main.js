@@ -3,7 +3,42 @@
 
   const API_URL = "http://localhost:3000/api/";
   const SEND_MESSAGE = API_URL + "messages/";
+  const GET_USER_COUNT = API_URL + "users/counts";
 
+  // Fetch stats data from the backend
+  async function fetchStats() {
+    try {
+      const response = await fetch(GET_USER_COUNT);
+      const data = await response.json();
+
+      // Loop through the response data and update the appropriate counters
+      data.forEach((item) => {
+        if (item.user_type === "Customer") {
+          updateCounter("satisfied-customers", item.count);
+        } else if (item.user_type === "Merchant") {
+          updateCounter("active-retail-partners", item.count);
+        } else if (item.user_type === "Driver") {
+          updateCounter("active-delivery-partners", item.count);
+        }
+      });
+
+      // Reset and reinitialize PureCounter after setting new values
+      PureCounter.reset();
+      new PureCounter();
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    }
+  }
+
+  // Function to update a counter value dynamically
+  function updateCounter(elementId, endValue) {
+    const element = document.getElementById(elementId);
+    element.setAttribute("data-purecounter-end", endValue);
+  }
+
+  // Call the fetch function when the page loads
+  window.onload = fetchStats;
+  
   /**
    * Toggle the 'scrolled' class on the body element when the page is scrolled past 100px.
    * This can be used to change styles based on scroll position.

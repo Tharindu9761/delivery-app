@@ -339,3 +339,53 @@ export async function getUsers({ page, limit, status, user_type }) {
     return null;
   }
 }
+
+export async function getUserCountForTiles() {
+  try {
+    const url = AppConst.GET_USER_COUNT_FOR_TILES();
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const res = await response.json();
+
+    if (response.ok) {
+      return res;
+    } else {
+      console.error("Failed to fetch count:", res.message);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching count:", error);
+    return null;
+  }
+}
+
+export async function getUserCountForChart({month}) {
+  try {
+    const url = AppConst.GET_USER_COUNT_FOR_CHART(month);
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const res = await response.json();
+
+    if (response.ok) {
+      return res;
+    } else {
+      console.error("Failed to fetch count:", res.message);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching count:", error);
+    return null;
+  }
+}

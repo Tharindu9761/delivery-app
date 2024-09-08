@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Tabs,
   Tab,
@@ -15,7 +15,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import { getUsers } from "../../services/userService"; // Import your user service
+import { getUsers } from "../../services/userService"; // Import the user service
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -66,7 +66,7 @@ const AllMerchants = () => {
     severity: "success",
   });
 
-  // Fetch Merchants from backend
+  // Fetch Merchants from backend (wrapped in useCallback to prevent re-renders)
   const fetchMerchants = async (page, limit, status) => {
     try {
       const response = await getUsers({
@@ -86,24 +86,23 @@ const AllMerchants = () => {
     }
   };
 
-  // Fetch functions for different merchant statuses
-  const fetchPendingMerchants = async () => {
+  const fetchPendingMerchants = useCallback(async () => {
     const response = await fetchMerchants(pagePending + 1, rowsPerPagePending, "Pending");
     setPendingMerchants(response.data || []);
     setTotalPendingMerchants(response.total || 0);
-  };
+  }, [pagePending, rowsPerPagePending]);
 
-  const fetchAcceptedMerchants = async () => {
+  const fetchAcceptedMerchants = useCallback(async () => {
     const response = await fetchMerchants(pageAccepted + 1, rowsPerPageAccepted, "Approved");
     setAcceptedMerchants(response.data || []);
     setTotalAcceptedMerchants(response.total || 0);
-  };
+  }, [pageAccepted, rowsPerPageAccepted]);
 
-  const fetchRejectedMerchants = async () => {
+  const fetchRejectedMerchants = useCallback(async () => {
     const response = await fetchMerchants(pageRejected + 1, rowsPerPageRejected, "Rejected");
     setRejectedMerchants(response.data || []);
     setTotalRejectedMerchants(response.total || 0);
-  };
+  }, [pageRejected, rowsPerPageRejected]);
 
   // useEffect to fetch merchants on page/limit change or tab switch
   useEffect(() => {
@@ -114,7 +113,7 @@ const AllMerchants = () => {
     } else if (tabIndex === 2) {
       fetchRejectedMerchants();
     }
-  }, [tabIndex, pagePending, rowsPerPagePending, pageAccepted, rowsPerPageAccepted, pageRejected, rowsPerPageRejected]);
+  }, [tabIndex, fetchPendingMerchants, fetchAcceptedMerchants, fetchRejectedMerchants]);
 
   // Handle pagination changes for Pending merchants
   const handleChangePagePending = (event, newPage) => {

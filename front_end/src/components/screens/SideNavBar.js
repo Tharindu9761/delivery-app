@@ -57,7 +57,7 @@ const SideNavBar = () => {
               <span>Dashboard</span>
             </Link>
           </li>
-          {userRole == "Admin" && (
+          {userRole === "Admin" && (
             <>
              <li
                 className={location.pathname === "/customers" ? "active" : ""}

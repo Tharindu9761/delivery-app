@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Tabs,
   Tab,
@@ -87,24 +87,24 @@ const AllDrivers = () => {
     }
   };
 
-  // Fetch functions for different driver statuses
-  const fetchPendingDrivers = async () => {
+  // Fetch functions for different driver statuses, wrapped in useCallback
+  const fetchPendingDrivers = useCallback(async () => {
     const response = await fetchDrivers(pagePending + 1, rowsPerPagePending, "Pending");
     setPendingDrivers(response.data || []);
     setTotalPendingDrivers(response.total || 0);
-  };
+  }, [pagePending, rowsPerPagePending]);
 
-  const fetchAcceptedDrivers = async () => {
+  const fetchAcceptedDrivers = useCallback(async () => {
     const response = await fetchDrivers(pageAccepted + 1, rowsPerPageAccepted, "Approved");
     setAcceptedDrivers(response.data || []);
     setTotalAcceptedDrivers(response.total || 0);
-  };
+  }, [pageAccepted, rowsPerPageAccepted]);
 
-  const fetchRejectedDrivers = async () => {
+  const fetchRejectedDrivers = useCallback(async () => {
     const response = await fetchDrivers(pageRejected + 1, rowsPerPageRejected, "Rejected");
     setRejectedDrivers(response.data || []);
     setTotalRejectedDrivers(response.total || 0);
-  };
+  }, [pageRejected, rowsPerPageRejected]);
 
   // useEffect to fetch drivers on page/limit change or tab switch
   useEffect(() => {
@@ -115,7 +115,7 @@ const AllDrivers = () => {
     } else if (tabIndex === 2) {
       fetchRejectedDrivers();
     }
-  }, [tabIndex, pagePending, rowsPerPagePending, pageAccepted, rowsPerPageAccepted, pageRejected, rowsPerPageRejected]);
+  }, [tabIndex, fetchPendingDrivers, fetchAcceptedDrivers, fetchRejectedDrivers]);
 
   // Handle pagination changes for Pending drivers
   const handleChangePagePending = (event, newPage) => {

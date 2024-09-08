@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Tabs,
   Tab,
@@ -76,20 +76,17 @@ const AllCustomers = () => {
     }
   };
 
-  // Extracted Fetch Functions for customers
-  const fetchApprovedCustomers = async () => {
-    const response = await fetchCustomers(
-      pageApproved + 1,
-      rowsPerPageApproved
-    );
+  // Fetch Approved Customers (wrapped in useCallback to prevent unnecessary re-renders)
+  const fetchApprovedCustomers = useCallback(async () => {
+    const response = await fetchCustomers(pageApproved + 1, rowsPerPageApproved);
     setApprovedCustomers(response.data || []);
     setTotalApprovedCustomers(response.total || 0);
-  };
+  }, [pageApproved, rowsPerPageApproved]);
 
-  // useEffect to fetch customers on page/limit change
+  // useEffect to fetch approved customers on page/limit change
   useEffect(() => {
     fetchApprovedCustomers();
-  }, [pageApproved, rowsPerPageApproved]);
+  }, [fetchApprovedCustomers]);
 
   // Handle pagination changes for Approved customers
   const handleChangePageApproved = (event, newPage) => {

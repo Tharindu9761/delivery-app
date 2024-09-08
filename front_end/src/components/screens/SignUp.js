@@ -319,9 +319,7 @@ const SignUp = () => {
               required
               error={!merchantData.isValidNo}
               helperText={
-                !merchantData.isValidNo
-                  ? "Address is required"
-                  : "Unit 4/93"
+                !merchantData.isValidNo ? "Address is required" : "Unit 4/93"
               }
             />
           </div>
@@ -491,8 +489,7 @@ const SignUp = () => {
 
 export default SignUp;
 
-{
-  /* <div className="form-row">
+/* <div className="form-row">
           <div
             className="input-container"
             style={{
@@ -549,4 +546,3 @@ export default SignUp;
             />
           </div>
         </div> */
-}

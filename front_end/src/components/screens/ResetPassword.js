@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
@@ -32,6 +32,13 @@ const ResetPassword = ({ onSignOut }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Wrap onSignOut in useCallback to prevent unnecessary re-renders
+  const stableOnSignOut = useCallback(() => {
+    if (onSignOut) {
+      onSignOut();
+    }
+  }, [onSignOut]);
+
   // Use Effect to decode the token
   useEffect(() => {
     const cleanUpAsyncStorage = async () => {
@@ -39,9 +46,7 @@ const ResetPassword = ({ onSignOut }) => {
       await AsyncStorage.removeItem("Key");
       await AsyncStorage.removeItem("sessionTimestamp");
 
-      if (onSignOut) {
-        onSignOut();
-      }
+      stableOnSignOut();
     };
 
     cleanUpAsyncStorage();
@@ -83,7 +88,7 @@ const ResetPassword = ({ onSignOut }) => {
         });
       }
     }
-  }, [location.search]);
+  }, [location.search, navigate, stableOnSignOut]);
 
   // Handle New Password Input Change
   const handleNewPasswordChange = (val) => {

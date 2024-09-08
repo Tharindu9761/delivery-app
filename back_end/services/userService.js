@@ -3,6 +3,8 @@ const emailService = require("./emailService");
 const jwt = require("jsonwebtoken");
 const constants = require("../config/const");
 require("dotenv").config();
+const moment = require('moment');
+
 
 // Helper function to exclude the password from the user object
 const excludePassword = (user) => {
@@ -263,6 +265,80 @@ const sendPasswordResetLink = async (email, type) => {
   }
 };
 
+// Get total approved counts for Customers, Drivers, and Merchants
+const getTotalApprovedCounts = async () => {
+  const query = `
+    SELECT user_type, COUNT(*) AS count
+    FROM users
+    WHERE status = 'Approved'
+    GROUP BY user_type;
+  `;
+
+  try {
+    const result = await pool.query(query);
+    return result.rows;
+  } catch (error) {
+    console.error("Error fetching total approved counts:", error);
+    throw error;
+  }
+};
+
+// Get approved counts by month for a dynamic number of months
+const getApprovedCountWithMonths = async (months) => {
+  // First, create an array of the last X months
+  const lastXMonths = [];
+  for (let i = months - 1; i >= 0; i--) {
+    const month = moment().subtract(i, "months").format("MMMM");
+    lastXMonths.push(month);
+  }
+
+  const query = `
+    SELECT
+      TO_CHAR(DATE_TRUNC('month', created_at), 'FMMonth') AS month,
+      user_type,
+      COUNT(*) AS count
+    FROM users
+    WHERE status = 'Approved'
+    AND created_at >= CURRENT_DATE - INTERVAL '${months} months'
+    GROUP BY month, user_type
+    ORDER BY MIN(created_at) DESC;
+  `;
+
+  try {
+    // Execute the query
+    const result = await pool.query(query);
+
+    // Format the result into the desired structure
+    const formattedResult = {};
+
+    result.rows.forEach((row) => {
+      const month = row.month.trim(); // Remove any trailing spaces from month names
+      if (!formattedResult[month]) {
+        formattedResult[month] = [];
+      }
+      formattedResult[month].push({
+        user_type: row.user_type,
+        count: row.count,
+      });
+    });
+
+    // Now ensure that we include all months, even if no data exists for that month
+    const finalResult = lastXMonths.map((month) => ({
+      month,
+      users: formattedResult[month] || [], // If no data, return empty array for users
+    }));
+
+    return finalResult;
+  } catch (error) {
+    console.error(
+      `Error fetching approved counts for the last ${months} months:`,
+      error
+    );
+    throw error;
+  }
+};
+
+
 module.exports = {
   createUser,
   getAllUsers,
@@ -273,4 +349,6 @@ module.exports = {
   resetPasswordById,
   resetPasswordByEmail,
   sendPasswordResetLink,
+  getTotalApprovedCounts,
+  getApprovedCountWithMonths,
 };

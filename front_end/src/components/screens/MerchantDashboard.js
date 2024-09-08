@@ -76,9 +76,9 @@ const MerchantDashboard = () => {
             <ShoppingCartIcon className="card-icon" />
           </div>
           <h3>Total Orders</h3>
-          <p>
+          <strong>
             <CountUp end={1200} duration={2.5} />
-          </p>
+          </strong>
         </div>
 
         {/* Active Products Card */}
@@ -87,9 +87,9 @@ const MerchantDashboard = () => {
             <CategoryIcon className="card-icon" />
           </div>
           <h3>Active Products</h3>
-          <p>
+          <strong>
             <CountUp end={150} duration={2.5} />
-          </p>
+          </strong>
         </div>
       </div>
 
