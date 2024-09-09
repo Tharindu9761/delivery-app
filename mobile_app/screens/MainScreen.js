@@ -19,7 +19,6 @@ function MyDrawer() {
     const loadRole = async () => {
       try {
         const userRole = await get_user_role();
-        console.log(userRole);
         setRole(userRole);
       } catch (error) {
         console.error('Failed to load user role:', error);

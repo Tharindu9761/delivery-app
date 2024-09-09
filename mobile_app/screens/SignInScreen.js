@@ -106,9 +106,7 @@ const SignInScreen = ({navigation}) => {
 
     try {
       const result = await mobile_login(data.username, data.password);
-      console.log("result",result)
       if (result.success) {
-        console.log(result)
         signIn(result.token, result.key);
       } else {
         showAlert('Login Failed', result.message);

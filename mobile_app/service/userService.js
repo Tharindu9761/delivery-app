@@ -37,7 +37,7 @@ export async function mobile_login(email, password) {
       };
     }
   } catch (error) {
-    console.error('Login error: aaaa', error);
+    console.error('Login error:', error);
     return {
       success: false,
       message: 'An error occurred during login',
@@ -94,7 +94,6 @@ export async function get_user_role() {
 
     if (userToken) {
       const user = jwtDecode(userToken);
-      console.log(user);
       return user.user_type;
     }
     return null;
