@@ -176,14 +176,13 @@ const AllCustomers = () => {
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={snackbar.open}
-        autoHideDuration={3000}
+        autoHideDuration={2500}
         onClose={handleSnackbarClose}
       >
         <Alert
           onClose={handleSnackbarClose}
           severity={snackbar.severity}
-          sx={{ width: "100%" }}
-          variant="filled"
+         
         >
           {snackbar.message}
         </Alert>

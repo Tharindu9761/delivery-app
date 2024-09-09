@@ -24,7 +24,7 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
-import { getMessages, read } from "../../services/messagesService"; 
+import { getMessages, read } from "../../services/messagesService";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -379,15 +379,10 @@ const AllMessages = () => {
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={snackbar.open}
-        autoHideDuration={3000}
+        autoHideDuration={2500}
         onClose={handleSnackbarClose}
       >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-          variant="filled"
-        >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
           {snackbar.message}
         </Alert>
       </Snackbar>

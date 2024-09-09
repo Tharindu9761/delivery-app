@@ -1,5 +1,5 @@
-// Utility function to generate full URLs
-const generateUrl = path => `http://192.168.0.51:3000/api/${path}`;
+// Utility function to generate full URLs using the new ngrok link
+const generateUrl = (path) => `https://04ee-110-142-110-151.ngrok-free.app/api/${path}`;
 
 // Users URL
 export const CREATE_USER = generateUrl('users');

@@ -1,6 +1,6 @@
 const express = require("express");
 require("dotenv").config();
-const cors = require("cors");
+const cors = require('cors');
 const userRoutes = require("./routes/userRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 
@@ -13,7 +13,13 @@ const { createMessageTable } = require("./models/messages");
 
 // Middleware to handle JSON and CORS
 app.use(express.json());
-app.use(cors());
+
+// Use the built-in CORS middleware to allow cross-origin requests
+app.use(cors({
+  origin: '*', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+}));
 
 // Ensure the database is created before setting up the `users` table
 createDatabase()

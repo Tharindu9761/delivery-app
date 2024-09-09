@@ -37,7 +37,7 @@ export async function mobile_login(email, password) {
       };
     }
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Login error: aaaa', error);
     return {
       success: false,
       message: 'An error occurred during login',
