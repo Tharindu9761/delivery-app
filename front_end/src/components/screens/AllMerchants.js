@@ -12,10 +12,9 @@ import {
   TablePagination,
   Typography,
   Box,
-  Snackbar,
-  Alert,
 } from "@mui/material";
 import { getUsers } from "../../services/userService"; // Import the user service
+import CustomSnackbar from "./CustomSnackbar";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -66,6 +65,10 @@ const AllMerchants = () => {
     severity: "success",
   });
 
+  const handleClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   // Fetch Merchants from backend (wrapped in useCallback to prevent re-renders)
   const fetchMerchants = async (page, limit, status) => {
     try {
@@ -87,19 +90,31 @@ const AllMerchants = () => {
   };
 
   const fetchPendingMerchants = useCallback(async () => {
-    const response = await fetchMerchants(pagePending + 1, rowsPerPagePending, "Pending");
+    const response = await fetchMerchants(
+      pagePending + 1,
+      rowsPerPagePending,
+      "Pending"
+    );
     setPendingMerchants(response.data || []);
     setTotalPendingMerchants(response.total || 0);
   }, [pagePending, rowsPerPagePending]);
 
   const fetchAcceptedMerchants = useCallback(async () => {
-    const response = await fetchMerchants(pageAccepted + 1, rowsPerPageAccepted, "Approved");
+    const response = await fetchMerchants(
+      pageAccepted + 1,
+      rowsPerPageAccepted,
+      "Approved"
+    );
     setAcceptedMerchants(response.data || []);
     setTotalAcceptedMerchants(response.total || 0);
   }, [pageAccepted, rowsPerPageAccepted]);
 
   const fetchRejectedMerchants = useCallback(async () => {
-    const response = await fetchMerchants(pageRejected + 1, rowsPerPageRejected, "Rejected");
+    const response = await fetchMerchants(
+      pageRejected + 1,
+      rowsPerPageRejected,
+      "Rejected"
+    );
     setRejectedMerchants(response.data || []);
     setTotalRejectedMerchants(response.total || 0);
   }, [pageRejected, rowsPerPageRejected]);
@@ -113,7 +128,12 @@ const AllMerchants = () => {
     } else if (tabIndex === 2) {
       fetchRejectedMerchants();
     }
-  }, [tabIndex, fetchPendingMerchants, fetchAcceptedMerchants, fetchRejectedMerchants]);
+  }, [
+    tabIndex,
+    fetchPendingMerchants,
+    fetchAcceptedMerchants,
+    fetchRejectedMerchants,
+  ]);
 
   // Handle pagination changes for Pending merchants
   const handleChangePagePending = (event, newPage) => {
@@ -148,11 +168,7 @@ const AllMerchants = () => {
     setPageRejected(0); // Reset to the first page when rows per page changes
   };
 
-  // Handle Snackbar Close
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") return;
-    setSnackbar({ ...snackbar, open: false });
-  };
+
 
   return (
     <div className="all-merchants">
@@ -318,20 +334,12 @@ const AllMerchants = () => {
       </TabPanel>
 
       {/* Snackbar for Notifications */}
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      <CustomSnackbar
         open={snackbar.open}
-        autoHideDuration={2500}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbar.severity}
-         
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+        severity={snackbar.severity}
+        message={snackbar.message}
+        onClose={handleClose}
+      />
     </div>
   );
 };

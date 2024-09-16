@@ -18,13 +18,12 @@ import {
   DialogContentText,
   DialogTitle,
   Button,
-  Snackbar,
-  Alert,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
 import { getMessages, read } from "../../services/messagesService";
+import CustomSnackbar from "./CustomSnackbar";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -74,6 +73,10 @@ const AllMessages = () => {
     message: "",
     severity: "success",
   });
+
+  const handleClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   // Fetch Messages Function
   const fetchMessages = async (status, page, limit) => {
@@ -168,13 +171,7 @@ const AllMessages = () => {
     setSelectedMessage(null);
   };
 
-  // Handle Snackbar Close
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSnackbar({ ...snackbar, open: false });
-  };
+
 
   return (
     <div className="all-messages">
@@ -376,16 +373,12 @@ const AllMessages = () => {
       </Dialog>
 
       {/* Snackbar for Notifications */}
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      <CustomSnackbar
         open={snackbar.open}
-        autoHideDuration={2500}
-        onClose={handleSnackbarClose}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+        severity={snackbar.severity}
+        message={snackbar.message}
+        onClose={handleClose}
+      />
     </div>
   );
 };

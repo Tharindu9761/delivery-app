@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { FaEnvelope } from "react-icons/fa";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/frogotPassword.css";
 import { sendResetLink } from "../../services/userService";
 import LoadingSpinner from "./LoadingSpinner";
+import CustomSnackbar from "./CustomSnackbar";
 
 const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
@@ -94,10 +93,7 @@ const ForgotPassword = () => {
   };
 
   // Handle Snackbar Close
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
+  const handleClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
@@ -151,16 +147,12 @@ const ForgotPassword = () => {
       </div>
 
       {/* Snackbar */}
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      <CustomSnackbar
         open={snackbar.open}
-        autoHideDuration={2500}
+        severity={snackbar.severity}
+        message={snackbar.message}
         onClose={handleClose}
-      >
-        <Alert onClose={handleClose} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
       <LoadingSpinner open={loading} />
     </div>
   );
