@@ -14,6 +14,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import {AuthContext} from '../components/context';
 import styles from '../styles/signinStyles';
 import {mobile_login} from '../service/userService';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import CustomSnackbar from './CustomSnackbar';
 
 const SignInScreen = ({navigation}) => {
   const [data, setData] = React.useState({
@@ -25,12 +27,29 @@ const SignInScreen = ({navigation}) => {
     isValidPassword: true,
   });
 
+  const [snackbar, setSnackbar] = React.useState({
+    visible: false,
+    message: '',
+    type: 'success',
+  });
+
   const {signIn} = React.useContext(AuthContext);
   const loginImage = require('../assets/login.png');
 
   // Reusable alert function
-  const showAlert = (title, message) => {
-    Alert.alert(title, message, [{text: 'OK'}], {cancelable: true});
+  const showSnackbar = (title, message, type) => {
+    setSnackbar({
+      visible: true,
+      message: message,
+      type: type,
+    });
+  };
+
+  const hideSnackbar = () => {
+    setSnackbar({
+      ...snackbar,
+      visible: false,
+    });
   };
 
   const textInputChange = val => {
@@ -92,14 +111,19 @@ const SignInScreen = ({navigation}) => {
 
   const handleSignIn = async () => {
     if (!data.isValidUser) {
-      showAlert('Invalid Email', 'Please enter a valid email address.');
+      showSnackbar(
+        'Invalid Email',
+        'Please enter a valid email address.',
+        'error',
+      );
       return;
     }
 
     if (!data.isValidPassword) {
-      showAlert(
+      showSnackbar(
         'Invalid Password',
         'Password must be at least 8 characters long.',
+        'error',
       );
       return;
     }
@@ -107,13 +131,20 @@ const SignInScreen = ({navigation}) => {
     try {
       const result = await mobile_login(data.username, data.password);
       if (result.success) {
-        signIn(result.token, result.key);
+        showSnackbar(
+          'Login Succes',
+          'Login successful! Welcome back.',
+          'success',
+        );
+        setTimeout(() => {
+          signIn(result.token, result.key);
+        }, 2500);
       } else {
-        showAlert('Login Failed', result.message);
+        showSnackbar('Login Failed', result.message, 'error');
       }
     } catch (error) {
       console.error(error);
-      showAlert('Login Failed', 'An error occurred during login.');
+      showSnackbar('Login Failed', 'An error occurred during login.', 'error');
     }
   };
 
@@ -143,7 +174,12 @@ const SignInScreen = ({navigation}) => {
               />
               {data.check_textInputChange ? (
                 <Animatable.View animation="bounceIn">
-                  <Text style={{marginRight: 10, color: 'green'}}>✔</Text>
+                  <Icon
+                    name="check"
+                    size={25}
+                    color="green"
+                    style={{marginRight: 10}}
+                  />
                 </Animatable.View>
               ) : null}
             </View>
@@ -164,9 +200,12 @@ const SignInScreen = ({navigation}) => {
                 onChangeText={handlePasswordChange}
               />
               <TouchableOpacity onPress={updateSecureTextEntry}>
-                <Text style={{marginRight: 10, color: 'gray', fontSize: 20}}>
-                  {data.secureTextEntry ? '🙈' : '👀'}
-                </Text>
+                <Icon
+                  style={{marginRight: 10}}
+                  name={data.secureTextEntry ? 'visibility-off' : 'visibility'}
+                  size={25}
+                  color="gray"
+                />
               </TouchableOpacity>
             </View>
             {!data.isValidPassword && (
@@ -178,7 +217,10 @@ const SignInScreen = ({navigation}) => {
             )}
 
             <View style={styles.button}>
-              <TouchableOpacity style={styles.signIn} onPress={handleSignIn}>
+              <TouchableOpacity
+                style={styles.signIn}
+                onPress={handleSignIn}
+                disabled={snackbar.visible}>
                 <LinearGradient
                   colors={['#FFC533', '#FFC533']}
                   style={styles.signIn}>
@@ -189,6 +231,7 @@ const SignInScreen = ({navigation}) => {
               </TouchableOpacity>
 
               <TouchableOpacity
+                disabled={snackbar.visible}
                 onPress={() => navigation.navigate('ForgotPasswordScreen')}
                 style={{marginTop: 15}}>
                 <Text style={{color: '#FF6B46', fontSize: 16}}>
@@ -197,6 +240,7 @@ const SignInScreen = ({navigation}) => {
               </TouchableOpacity>
 
               <TouchableOpacity
+                disabled={snackbar.visible}
                 onPress={() => navigation.navigate('SignUpScreen')}
                 style={{marginTop: 15}}>
                 <Text style={{color: '#1E90FF', fontSize: 16}}>
@@ -205,6 +249,15 @@ const SignInScreen = ({navigation}) => {
               </TouchableOpacity>
             </View>
           </Animatable.View>
+
+          {/* Snackbar */}
+          {/* Using the custom Snackbar component */}
+          <CustomSnackbar
+            visible={snackbar.visible}
+            message={snackbar.message}
+            type={snackbar.type}
+            onDismiss={hideSnackbar}
+          />
         </View>
       </ImageBackground>
     </ScrollView>

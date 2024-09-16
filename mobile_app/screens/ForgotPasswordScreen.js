@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -11,9 +11,11 @@ import {
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import styles from '../styles/frogotpasswordStyles';
+import CustomSnackbar from './CustomSnackbar';
 
-const ForgotPassword = ({ navigation }) => {
+const ForgotPassword = ({navigation}) => {
   const [data, setData] = useState({
     email: '',
     password: '',
@@ -23,30 +25,47 @@ const ForgotPassword = ({ navigation }) => {
     isValidPassword: true,
     passwordsMatch: true,
     secureTextEntry: true,
-    confirmSecureTextEntry: true,
   });
+
+  const [snackbar, setSnackbar] = useState({
+    visible: false,
+    message: '',
+    type: 'success',
+  });
+
+  // Reusable alert function
+  const showSnackbar = (title, message, type) => {
+    setSnackbar({
+      visible: true,
+      message: message,
+      type: type,
+    });
+  };
+
+  const hideSnackbar = () => {
+    setSnackbar({
+      ...snackbar,
+      visible: false,
+    });
+  };
 
   const handlePasswordReset = () => {
     if (!data.email || !data.password || !data.confirmPassword) {
-      Alert.alert('Error', 'Please fill all fields.', [{ text: 'OK' }]);
+      showSnackbar('Error', 'Please fill all fields.', 'error');
       return;
     }
 
     if (!data.isValidUser || !data.isValidPassword || !data.passwordsMatch) {
-      Alert.alert('Error', 'Please correct the errors before proceeding.', [
-        { text: 'OK' },
-      ]);
+      showSnackbar(
+        'Error',
+        'Please correct the errors before proceeding.',
+        'error',
+      );
       return;
     }
-
-    Alert.alert(
-      'Password Reset',
-      'Your password has been reset successfully.',
-      [{ text: 'OK', onPress: () => navigation.navigate('SignInScreen') }]
-    );
   };
 
-  const textInputChange = (val) => {
+  const textInputChange = val => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     setData({
       ...data,
@@ -56,7 +75,7 @@ const ForgotPassword = ({ navigation }) => {
     });
   };
 
-  const handlePasswordChange = (val) => {
+  const handlePasswordChange = val => {
     setData({
       ...data,
       password: val,
@@ -65,7 +84,7 @@ const ForgotPassword = ({ navigation }) => {
     });
   };
 
-  const handleConfirmPasswordChange = (val) => {
+  const handleConfirmPasswordChange = val => {
     setData({
       ...data,
       confirmPassword: val,
@@ -80,15 +99,8 @@ const ForgotPassword = ({ navigation }) => {
     });
   };
 
-  const updateConfirmSecureTextEntry = () => {
-    setData({
-      ...data,
-      confirmSecureTextEntry: !data.confirmSecureTextEntry,
-    });
-  };
-
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }} scrollEnabled>
+    <ScrollView contentContainerStyle={{flexGrow: 1}} scrollEnabled>
       <ImageBackground
         source={require('../assets/login.png')}
         style={styles.image}>
@@ -104,13 +116,13 @@ const ForgotPassword = ({ navigation }) => {
                 placeholder="Your email"
                 keyboardType="email-address"
                 placeholderTextColor="#666666"
-                style={[styles.textInput, { color: 'gray' }]}
+                style={[styles.textInput, {color: 'gray'}]}
                 autoCapitalize="none"
                 onChangeText={textInputChange}
               />
               {data.check_textInputChange ? (
                 <Animatable.View animation="bounceIn">
-                  <Text style={{ marginRight: 10, color: 'green' }}>✔</Text>
+                  <Icon name="check-circle" size={25} color="green" />
                 </Animatable.View>
               ) : null}
             </View>
@@ -120,7 +132,7 @@ const ForgotPassword = ({ navigation }) => {
               </Animatable.View>
             )}
 
-            <Text style={[styles.text_footer, { marginTop: 20 }]}>
+            <Text style={[styles.text_footer, {marginTop: 20}]}>
               New Password
             </Text>
             <View style={styles.action}>
@@ -128,14 +140,16 @@ const ForgotPassword = ({ navigation }) => {
                 placeholder="New Password"
                 secureTextEntry={data.secureTextEntry}
                 placeholderTextColor="#666666"
-                style={[styles.textInput, { color: 'gray' }]}
+                style={[styles.textInput, {color: 'gray'}]}
                 autoCapitalize="none"
                 onChangeText={handlePasswordChange}
               />
               <TouchableOpacity onPress={updateSecureTextEntry}>
-                <Text style={{ marginRight: 10, color: 'gray', fontSize: 20 }}>
-                  {data.secureTextEntry ? '🙈' : '👀'}
-                </Text>
+                <Icon
+                  name={data.secureTextEntry ? 'visibility-off' : 'visibility'}
+                  size={25}
+                  color="gray"
+                />
               </TouchableOpacity>
             </View>
             {!data.isValidPassword && (
@@ -146,23 +160,18 @@ const ForgotPassword = ({ navigation }) => {
               </Animatable.View>
             )}
 
-            <Text style={[styles.text_footer, { marginTop: 20 }]}>
+            <Text style={[styles.text_footer, {marginTop: 20}]}>
               Confirm Password
             </Text>
             <View style={styles.action}>
               <TextInput
                 placeholder="Confirm Password"
-                secureTextEntry={data.confirmSecureTextEntry}
+                secureTextEntry={data.secureTextEntry}
                 placeholderTextColor="#666666"
-                style={[styles.textInput, { color: 'gray' }]}
+                style={[styles.textInput, {color: 'gray'}]}
                 autoCapitalize="none"
                 onChangeText={handleConfirmPasswordChange}
               />
-              <TouchableOpacity onPress={updateConfirmSecureTextEntry}>
-                <Text style={{ marginRight: 10, color: 'gray', fontSize: 20 }}>
-                  {data.confirmSecureTextEntry ? '🙈' : '👀'}
-                </Text>
-              </TouchableOpacity>
             </View>
             {!data.passwordsMatch && (
               <Animatable.View animation="fadeInLeft" duration={500}>
@@ -177,7 +186,7 @@ const ForgotPassword = ({ navigation }) => {
                 <LinearGradient
                   colors={['#FFC533', '#FFC533']}
                   style={styles.reset}>
-                  <Text style={[styles.textSign, { color: '#fff' }]}>
+                  <Text style={[styles.textSign, {color: '#fff'}]}>
                     Reset Password
                   </Text>
                 </LinearGradient>
@@ -185,13 +194,21 @@ const ForgotPassword = ({ navigation }) => {
 
               <TouchableOpacity
                 onPress={() => navigation.goBack()}
-                style={{ marginTop: 15 }}>
-                <Text style={{ color: '#FF6B46', fontSize: 16 }}>
+                style={{marginTop: 15}}>
+                <Text style={{color: '#FF6B46', fontSize: 16}}>
                   Back to Sign In
                 </Text>
               </TouchableOpacity>
             </View>
           </Animatable.View>
+          {/* Snackbar */}
+          {/* Using the custom Snackbar component */}
+          <CustomSnackbar
+            visible={snackbar.visible}
+            message={snackbar.message}
+            type={snackbar.type}
+            onDismiss={hideSnackbar}
+          />
         </View>
       </ImageBackground>
     </ScrollView>
