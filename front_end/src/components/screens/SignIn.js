@@ -10,8 +10,10 @@ import IconButton from "@mui/material/IconButton";
 
 import { web_login } from "../../services/userService";
 import "../styles/signIn.css";
+import LoadingSpinner from "./LoadingSpinner";
 
 const SignIn = ({ onSignIn }) => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [data, setData] = useState({
     email: "",
@@ -81,7 +83,7 @@ const SignIn = ({ onSignIn }) => {
       return;
     }
 
-
+    setLoading(true);
     // Proceed to login if both email and password are valid
     try {
       const loginResponse = await web_login(data.email, data.password);
@@ -102,11 +104,13 @@ const SignIn = ({ onSignIn }) => {
 
         // Call onSignIn to update the parent state and navigate to home
         setTimeout(() => {
+          setLoading(false);
           onSignIn();
           navigate("/");
         }, 2500);
       } else {
         // Handle unsuccessful login attempt
+        setLoading(false);
         setSnackbar({
           open: true,
           message:
@@ -117,6 +121,7 @@ const SignIn = ({ onSignIn }) => {
       }
     } catch (error) {
       // Handle any errors during the login process
+      setLoading(false);
       setSnackbar({
         open: true,
         message:
@@ -218,6 +223,7 @@ const SignIn = ({ onSignIn }) => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+      <LoadingSpinner open={loading} />
     </div>
   );
 };

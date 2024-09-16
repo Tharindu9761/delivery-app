@@ -10,8 +10,10 @@ import { jwtDecode } from "jwt-decode";
 import "../styles/frogotPassword.css";
 import { resetPasswordByEmail } from "../../services/userService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import LoadingSpinner from "./LoadingSpinner";
 
 const ResetPassword = ({ onSignOut }) => {
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -67,7 +69,9 @@ const ResetPassword = ({ onSignOut }) => {
             message: "The reset token has expired. Please request a new one.",
             severity: "error",
           });
+          setLoading(true);
           setTimeout(() => {
+            setLoading(false);
             navigate("/forgot-password");
           }, 2500);
           return;
@@ -86,6 +90,11 @@ const ResetPassword = ({ onSignOut }) => {
           message: "Invalid token. Please request a new reset link.",
           severity: "error",
         });
+        setLoading(true);
+        setTimeout(() => {
+          setLoading(false);
+          navigate("/forgot-password");
+        }, 2500);
       }
     }
   }, [location.search, navigate, stableOnSignOut]);
@@ -141,6 +150,7 @@ const ResetPassword = ({ onSignOut }) => {
       return;
     }
 
+    setLoading(true);
     // Proceed to reset password if all validations are passed
     try {
       const response = await resetPasswordByEmail(data.email, data.password);
@@ -165,10 +175,12 @@ const ResetPassword = ({ onSignOut }) => {
 
         // Redirect to sign-in after successful password reset
         setTimeout(() => {
+          setLoading(false);
           navigate("/signin");
         }, 2500);
       }
     } catch (error) {
+      setLoading(false);
       setSnackbar({
         open: true,
         message: "An unexpected error occurred. Please try again.",
@@ -188,7 +200,7 @@ const ResetPassword = ({ onSignOut }) => {
   return (
     <div className="forgot-password-container">
       <div className="forgot-password-box">
-        <h2>Forgot Password</h2>
+        <h2>Reset Password</h2>
 
         {/* Email Input */}
         <div className="input-container">
@@ -305,6 +317,7 @@ const ResetPassword = ({ onSignOut }) => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+      <LoadingSpinner open={loading} />
     </div>
   );
 };

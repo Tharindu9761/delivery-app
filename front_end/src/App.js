@@ -81,35 +81,72 @@ const App = () => {
     return <div>Loading...</div>;
   }
 
+  // Protect routes that only signed-in users can access
+  const ProtectedRoute = ({ element }) => {
+    return isSignedIn ? element : <Navigate to="/signin" />;
+  };
+
+  // Protect routes that only non-signed-in users should access
+  const GuestRoute = ({ element }) => {
+    return isSignedIn ? <Navigate to="/home" /> : element;
+  };
+
   return (
     <Router>
       {isSignedIn && <SideNavBar />}
       {isSignedIn && <TopHeader onSignOut={handleSignOut} />}
       <div className={isSignedIn ? "mainBody signedIn" : "mainBody"}>
         <Routes>
-          <Route path="/signin" element={<SignIn onSignIn={handleSignIn} />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/signup" element={<SignUp />} />
+          {/* Guest routes (redirect to home if already signed in) */}
+          <Route
+            path="/signin"
+            element={
+              <GuestRoute element={<SignIn onSignIn={handleSignIn} />} />
+            }
+          />
+          <Route path="/signup" element={<GuestRoute element={<SignUp />} />} />
+          <Route
+            path="/forgot-password"
+            element={<GuestRoute element={<ForgotPassword />} />}
+          />
           <Route
             path="/reset-password"
-            element={<ResetPassword onSignOut={handleSignOut} />}
+            element={
+              <GuestRoute
+                element={<ResetPassword onSignOut={handleSignOut} />}
+              />
+            }
           />
-          {isSignedIn ? (
-            <>
-              <Route path="/" element={<Navigate to="/home" />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/customers" element={<AllCustomers />} />
-              <Route path="/drivers" element={<AllDrivers />} />
-              <Route path="/merchants" element={<AllMerchants />} />
-              <Route path="/messages" element={<AllMessages />} />
-            </>
-          ) : (
-            <>
-              <Route path="*" element={<Navigate to="/signin" />} />
-              <Route path="/" element={<Navigate to="/signin" />} />
-            </>
-          )}
+
+          {/* Protected routes (redirect to sign-in if not signed in) */}
+          <Route path="/" element={<ProtectedRoute element={<Home />} />} />
+          <Route
+            path="/dashboard"
+            element={<ProtectedRoute element={<Dashboard />} />}
+          />
+          <Route path="/home" element={<ProtectedRoute element={<Home />} />} />
+          <Route
+            path="/customers"
+            element={<ProtectedRoute element={<AllCustomers />} />}
+          />
+          <Route
+            path="/drivers"
+            element={<ProtectedRoute element={<AllDrivers />} />}
+          />
+          <Route
+            path="/merchants"
+            element={<ProtectedRoute element={<AllMerchants />} />}
+          />
+          <Route
+            path="/messages"
+            element={<ProtectedRoute element={<AllMessages />} />}
+          />
+
+          {/* Catch-all route to redirect unknown paths */}
+          <Route
+            path="*"
+            element={<Navigate to={isSignedIn ? "/home" : "/signin"} />}
+          />
         </Routes>
       </div>
       {isSignedIn && <Footer />}

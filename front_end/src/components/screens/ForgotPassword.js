@@ -7,8 +7,10 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/frogotPassword.css";
 import { sendResetLink } from "../../services/userService";
+import LoadingSpinner from "./LoadingSpinner";
 
 const ForgotPassword = () => {
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     email: "",
     isValidUser: true,
@@ -53,6 +55,7 @@ const ForgotPassword = () => {
       return;
     }
 
+    setLoading(true);
     // Proceed to send reset link if email validation is passed
     try {
       const response = await sendResetLink(data.email);
@@ -72,11 +75,15 @@ const ForgotPassword = () => {
 
         // Redirect to sign-in after successful reset link send
         setTimeout(() => {
+          setLoading(false);
           navigate("/signin");
         }, 2500);
+      } else {
+        setLoading(false);
       }
     } catch (error) {
       // Handle any errors during the process
+      setLoading(false);
       setSnackbar({
         open: true,
         message: "An unexpected error occurred. Please try again.",
@@ -154,6 +161,7 @@ const ForgotPassword = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+      <LoadingSpinner open={loading} />
     </div>
   );
 };

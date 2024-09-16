@@ -238,6 +238,55 @@ router.get("/full/:id", async (req, res) => {
 });
 
 // Reset a user's password by ID
+// Helper function to send a password reset email
+const sendPasswordResetEmail = async (user) => {
+  const emailData = {
+    email: user.email,
+    subject: "Quick Drop - Password Successfully Reset",
+    text: `Dear ${user.first_name},\n\nYour password has been successfully reset. You can now sign in using your new password.\n\nIf you did not request this change, please contact our support immediately.\n\nYou can sign in here: ${process.env.SIGNIN_LINK_WEB}\n\nThank you for choosing Quick Drop!`,
+    html: `<p>Dear ${user.first_name},</p>
+           <p>Your password has been successfully reset. You can now sign in using your new password.</p>
+           <p>If you did not request this change, please contact our support immediately.</p>
+           <p>You can <a href="${process.env.SIGNIN_LINK_WEB}">sign in here</a>.</p>
+           <p>Thank you for choosing Quick Drop!</p>`,
+  };
+
+  const emailResponse = await emailService.sendEmail(emailData);
+  if (!emailResponse.success) {
+    throw {
+      status: 500,
+      message: "Email sending failed: " + emailResponse.message,
+    };
+  }
+};
+
+// Helper function to handle password reset
+const resetPassword = async (
+  userIdOrEmail,
+  newPassword,
+  client,
+  resetByEmail
+) => {
+  const user = resetByEmail
+    ? await userService.getUserByEmail(userIdOrEmail, client)
+    : await userService.getUserById(userIdOrEmail, client);
+
+  if (!user) {
+    throw { status: 404, message: "User not found" };
+  }
+
+  const updatedUser = resetByEmail
+    ? await userService.resetPasswordByEmail(userIdOrEmail, newPassword, client)
+    : await userService.resetPasswordById(userIdOrEmail, newPassword, client);
+
+  if (!updatedUser) {
+    throw { status: 404, message: "User not found" };
+  }
+
+  await sendPasswordResetEmail(user);
+};
+
+// Route to reset password by user ID
 router.put("/reset_password_id/:id", async (req, res) => {
   const { id } = req.params;
   const { newPassword } = req.body;
@@ -248,18 +297,28 @@ router.put("/reset_password_id/:id", async (req, res) => {
       .json({ error: "Password must be at least 6 characters long" });
   }
 
+  const client = await pool.connect(); // Ensure you are using a connection from the pool
+
   try {
-    const updatedUser = await userService.resetPasswordById(id, newPassword);
-    if (updatedUser) {
-      res.status(200).json({ message: "Password reset successfully" });
-    } else {
-      res.status(404).json({ error: "User not found" });
-    }
+    await client.query("BEGIN"); // Begin transaction
+
+    // Reset the user's password and send the email
+    await resetPassword(id, newPassword, client, false);
+
+    await client.query("COMMIT"); // Commit transaction if all operations succeed
+    res.status(200).json({ message: "Password reset successfully" });
   } catch (err) {
-    res.status(500).json({ error: "Error resetting password: " + err.message });
+    await client.query("ROLLBACK"); // Rollback transaction on error
+    const statusCode = err.status || 500;
+    res
+      .status(statusCode)
+      .json({ error: "Error resetting password: " + err.message });
+  } finally {
+    client.release(); // Release the client back to the pool
   }
 });
 
+// Route to reset password by email
 router.put("/reset_password_email/:email", async (req, res) => {
   const { email } = req.params;
   const { newPassword } = req.body;
@@ -270,18 +329,24 @@ router.put("/reset_password_email/:email", async (req, res) => {
       .json({ error: "Password must be at least 6 characters long" });
   }
 
+  const client = await pool.connect(); // Get a client connection from the pool
+
   try {
-    const updatedUser = await userService.resetPasswordByEmail(
-      email,
-      newPassword
-    );
-    if (updatedUser) {
-      res.status(200).json({ message: "Password reset successfully" });
-    } else {
-      res.status(404).json({ error: "User not found" });
-    }
+    await client.query("BEGIN"); // Start transaction
+
+    // Reset the user's password and send the email (using email instead of ID)
+    await resetPassword(email, newPassword, client, true);
+
+    await client.query("COMMIT"); // Commit transaction if all operations succeed
+    res.status(200).json({ message: "Password reset successfully" });
   } catch (err) {
-    res.status(500).json({ error: "Error resetting password: " + err.message });
+    await client.query("ROLLBACK"); // Rollback transaction on error
+    const statusCode = err.status || 500;
+    res
+      .status(statusCode)
+      .json({ error: "Error resetting password: " + err.message });
+  } finally {
+    client.release(); // Release the client back to the pool
   }
 });
 

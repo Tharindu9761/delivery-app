@@ -10,10 +10,11 @@ import InputAdornment from "@mui/material/InputAdornment";
 import "../styles/signUp.css";
 import * as AppConst from "../../const/const";
 import { createUser } from "../../services/userService";
+import LoadingSpinner from "./LoadingSpinner";
 
 const SignUp = () => {
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(false);
   const [merchantData, setMerchantData] = useState({
     first_name: "",
     last_name: "",
@@ -206,6 +207,7 @@ const SignUp = () => {
       });
       return;
     }
+    setLoading(true);
 
     // Proceed with merchant creation if all validations pass
     try {
@@ -217,9 +219,11 @@ const SignUp = () => {
           severity: "success",
         });
         setTimeout(() => {
+          setLoading(false);
           navigate("/signin");
         }, 2500);
       } else {
+        setLoading(false);
         setSnackbar({
           open: true,
           message:
@@ -228,6 +232,7 @@ const SignUp = () => {
         });
       }
     } catch (error) {
+      setLoading(false);
       setSnackbar({
         open: true,
         message:
@@ -483,6 +488,7 @@ const SignUp = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+      <LoadingSpinner open={loading} />
     </div>
   );
 };

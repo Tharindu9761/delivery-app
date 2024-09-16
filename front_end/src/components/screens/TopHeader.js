@@ -24,7 +24,10 @@ import {
 } from "../../services/userService";
 import "../styles/topHeader.css";
 
+import LoadingSpinner from "./LoadingSpinner";
+
 const TopHeader = ({ onSignOut }) => {
+  const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -85,7 +88,7 @@ const TopHeader = ({ onSignOut }) => {
       await AsyncStorage.removeItem("Token");
       await AsyncStorage.removeItem("Key");
       await AsyncStorage.removeItem("sessionTimestamp");
-
+      setLoading(true);
       setSnackbar({
         open: true,
         message: "You have successfully logged out.",
@@ -93,9 +96,11 @@ const TopHeader = ({ onSignOut }) => {
       });
 
       setTimeout(() => {
+        setLoading(false);
         onSignOut();
       }, 2500);
     } catch (error) {
+      setLoading(false);
       setSnackbar({
         open: true,
         message: "An error occurred during logout. Please try again.",
@@ -170,6 +175,7 @@ const TopHeader = ({ onSignOut }) => {
       return;
     }
 
+    setLoading(true);
     // Proceed with password reset if validation passes
     if (isPasswordValid && matchPassword) {
       try {
@@ -180,13 +186,14 @@ const TopHeader = ({ onSignOut }) => {
             message: "Password successfully reset!",
             severity: "success",
           });
-          setShowPasswordModal(false);
-
           // Log out the user after password reset
           setTimeout(() => {
+            setShowPasswordModal(false);
+            setLoading(false);
             handleLogout();
           }, 2500);
         } else {
+          setLoading(false);
           setSnackbar({
             open: true,
             message:
@@ -196,6 +203,7 @@ const TopHeader = ({ onSignOut }) => {
         }
       } catch (error) {
         // Handle any errors during the password reset process
+        setLoading(false);
         setSnackbar({
           open: true,
           message:
@@ -299,6 +307,8 @@ const TopHeader = ({ onSignOut }) => {
       return;
     }
 
+    setLoading(true);
+
     // Proceed with admin creation if all validations pass
     try {
       const result = await createUser(adminData);
@@ -308,8 +318,12 @@ const TopHeader = ({ onSignOut }) => {
           message: "Admin account created successfully!",
           severity: "success",
         });
-        setShowAddAdminModal(false);
+        setTimeout(() => {
+          setShowAddAdminModal(false);
+          setLoading(false);
+        }, 2500);
       } else {
+        setLoading(false);
         setSnackbar({
           open: true,
           message:
@@ -319,6 +333,7 @@ const TopHeader = ({ onSignOut }) => {
         });
       }
     } catch (error) {
+      setLoading(false);
       setSnackbar({
         open: true,
         message: "An error occurred while adding the admin. Please try again.",
@@ -689,6 +704,7 @@ const TopHeader = ({ onSignOut }) => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+      <LoadingSpinner open={loading} />
     </>
   );
 };
