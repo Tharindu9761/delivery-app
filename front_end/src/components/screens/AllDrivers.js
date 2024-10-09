@@ -12,13 +12,20 @@ import {
   TablePagination,
   Typography,
   Box,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
-import { getUsers } from "../../services/userService"; // Import the user service
+import CheckIcon from "@mui/icons-material/Check";
+import ClearIcon from "@mui/icons-material/Clear";
+import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
+import { getUsers } from "../../services/userService";
 import CustomSnackbar from "./CustomSnackbar";
-
+ 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
-
+ 
   return (
     <div
       role="tabpanel"
@@ -35,42 +42,37 @@ const TabPanel = (props) => {
     </div>
   );
 };
-
+ 
 const AllDrivers = () => {
-  // State for Tabs
   const [tabIndex, setTabIndex] = useState(0);
-
-  // Pagination state for Pending, Accepted, and Rejected drivers
+ 
   const [pagePending, setPagePending] = useState(0);
   const [rowsPerPagePending, setRowsPerPagePending] = useState(5);
-
+ 
   const [pageAccepted, setPageAccepted] = useState(0);
   const [rowsPerPageAccepted, setRowsPerPageAccepted] = useState(5);
-
+ 
   const [pageRejected, setPageRejected] = useState(0);
   const [rowsPerPageRejected, setRowsPerPageRejected] = useState(5);
-
-  // Drivers data state
+ 
   const [pendingDrivers, setPendingDrivers] = useState([]);
   const [acceptedDrivers, setAcceptedDrivers] = useState([]);
   const [rejectedDrivers, setRejectedDrivers] = useState([]);
-
+ 
   const [totalPendingDrivers, setTotalPendingDrivers] = useState(0);
   const [totalAcceptedDrivers, setTotalAcceptedDrivers] = useState(0);
   const [totalRejectedDrivers, setTotalRejectedDrivers] = useState(0);
-
-  // Snackbar notification state
+ 
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
-
+ 
   const handleClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
-
-  // Fetch Drivers from backend
+ 
   const fetchDrivers = async (page, limit, status) => {
     try {
       const response = await getUsers({
@@ -89,27 +91,25 @@ const AllDrivers = () => {
       console.error("Error fetching drivers:", error);
     }
   };
-
-  // Fetch functions for different driver statuses, wrapped in useCallback
+ 
   const fetchPendingDrivers = useCallback(async () => {
     const response = await fetchDrivers(pagePending + 1, rowsPerPagePending, "Pending");
     setPendingDrivers(response.data || []);
     setTotalPendingDrivers(response.total || 0);
   }, [pagePending, rowsPerPagePending]);
-
+ 
   const fetchAcceptedDrivers = useCallback(async () => {
     const response = await fetchDrivers(pageAccepted + 1, rowsPerPageAccepted, "Approved");
     setAcceptedDrivers(response.data || []);
     setTotalAcceptedDrivers(response.total || 0);
   }, [pageAccepted, rowsPerPageAccepted]);
-
+ 
   const fetchRejectedDrivers = useCallback(async () => {
     const response = await fetchDrivers(pageRejected + 1, rowsPerPageRejected, "Rejected");
     setRejectedDrivers(response.data || []);
     setTotalRejectedDrivers(response.total || 0);
   }, [pageRejected, rowsPerPageRejected]);
-
-  // useEffect to fetch drivers on page/limit change or tab switch
+ 
   useEffect(() => {
     if (tabIndex === 0) {
       fetchPendingDrivers();
@@ -119,42 +119,43 @@ const AllDrivers = () => {
       fetchRejectedDrivers();
     }
   }, [tabIndex, fetchPendingDrivers, fetchAcceptedDrivers, fetchRejectedDrivers]);
-
-  // Handle pagination changes for Pending drivers
+ 
   const handleChangePagePending = (event, newPage) => {
     setPagePending(newPage);
   };
-
+ 
   const handleChangeRowsPerPagePending = (event) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPagePending(newRowsPerPage);
-    setPagePending(0); 
+    setPagePending(0);
   };
-
-  // Handle pagination changes for Accepted drivers
+ 
   const handleChangePageAccepted = (event, newPage) => {
     setPageAccepted(newPage);
   };
-
+ 
   const handleChangeRowsPerPageAccepted = (event) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPageAccepted(newRowsPerPage);
-    setPageAccepted(0); 
+    setPageAccepted(0);
   };
-
-  // Handle pagination changes for Rejected drivers
+ 
   const handleChangePageRejected = (event, newPage) => {
     setPageRejected(newPage);
   };
-
+ 
   const handleChangeRowsPerPageRejected = (event) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPageRejected(newRowsPerPage);
-    setPageRejected(0); 
+    setPageRejected(0);
   };
-
-
-
+ 
+  const handleAccept = (id) => { /* Implement accept logic */ };
+  const handleReject = (id) => { /* Implement reject logic */ };
+  const handleDelete = (id) => { /* Implement delete logic */ };
+  const handleView = (driver) => { /* Implement view logic */ };
+  const handlePending = (id) => { /* Implement pending logic */ };
+ 
   return (
     <div className="all-drivers">
       <h1>All Drivers</h1>
@@ -170,7 +171,7 @@ const AllDrivers = () => {
         <Tab label="Accepted Drivers" />
         <Tab label="Rejected Drivers" />
       </Tabs>
-
+ 
       {/* Pending Drivers Tab */}
       <TabPanel value={tabIndex} index={0}>
         <Paper>
@@ -178,18 +179,11 @@ const AllDrivers = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>
-                    <strong>First Name</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Last Name</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Address</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Contact No</strong>
-                  </TableCell>
+                  <TableCell><strong>First Name</strong></TableCell>
+                  <TableCell><strong>Last Name</strong></TableCell>
+                  <TableCell><strong>Address</strong></TableCell>
+                  <TableCell><strong>Contact No</strong></TableCell>
+                  <TableCell><strong>Actions</strong></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -200,13 +194,25 @@ const AllDrivers = () => {
                       <TableCell>{driver.last_name}</TableCell>
                       <TableCell>{`${driver.no}, ${driver.street_name}, ${driver.suburb}, ${driver.postal_code}, ${driver.state}`}</TableCell>
                       <TableCell>{driver.contact_no}</TableCell>
+                      <TableCell>
+                        <Tooltip title="Accept">
+                          <IconButton color="success" onClick={() => handleAccept(driver.id)}><CheckIcon /></IconButton>
+                        </Tooltip>
+                        <Tooltip title="Reject">
+                          <IconButton color="secondary" onClick={() => handleReject(driver.id)}><ClearIcon /></IconButton>
+                        </Tooltip>
+                        <Tooltip title="View">
+                          <IconButton color="info" onClick={() => handleView(driver)}><VisibilityIcon /></IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete">
+                          <IconButton color="error" onClick={() => handleDelete(driver.id)}><DeleteIcon /></IconButton>
+                        </Tooltip>
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} align="center">
-                      No pending drivers.
-                    </TableCell>
+                    <TableCell colSpan={5} align="center">No pending drivers.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -223,7 +229,7 @@ const AllDrivers = () => {
           />
         </Paper>
       </TabPanel>
-
+ 
       {/* Accepted Drivers Tab */}
       <TabPanel value={tabIndex} index={1}>
         <Paper>
@@ -231,18 +237,11 @@ const AllDrivers = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>
-                    <strong>First Name</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Last Name</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Address</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Contact No</strong>
-                  </TableCell>
+                  <TableCell><strong>First Name</strong></TableCell>
+                  <TableCell><strong>Last Name</strong></TableCell>
+                  <TableCell><strong>Address</strong></TableCell>
+                  <TableCell><strong>Contact No</strong></TableCell>
+                  <TableCell><strong>Actions</strong></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -253,13 +252,25 @@ const AllDrivers = () => {
                       <TableCell>{driver.last_name}</TableCell>
                       <TableCell>{`${driver.no}, ${driver.street_name}, ${driver.suburb}, ${driver.postal_code}, ${driver.state}`}</TableCell>
                       <TableCell>{driver.contact_no}</TableCell>
+                      <TableCell>
+                        <Tooltip title="Set Pending">
+                          <IconButton color="warning" onClick={() => handlePending(driver.id)}><HourglassEmptyIcon /></IconButton>
+                        </Tooltip>
+                        <Tooltip title="Reject">
+                          <IconButton color="secondary" onClick={() => handleReject(driver.id)}><ClearIcon /></IconButton>
+                        </Tooltip>
+                        <Tooltip title="View">
+                          <IconButton color="info" onClick={() => handleView(driver)}><VisibilityIcon /></IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete">
+                          <IconButton color="error" onClick={() => handleDelete(driver.id)}><DeleteIcon /></IconButton>
+                        </Tooltip>
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} align="center">
-                      No accepted drivers.
-                    </TableCell>
+                    <TableCell colSpan={5} align="center">No accepted drivers.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -276,7 +287,7 @@ const AllDrivers = () => {
           />
         </Paper>
       </TabPanel>
-
+ 
       {/* Rejected Drivers Tab */}
       <TabPanel value={tabIndex} index={2}>
         <Paper>
@@ -284,18 +295,11 @@ const AllDrivers = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>
-                    <strong>First Name</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Last Name</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Address</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Contact No</strong>
-                  </TableCell>
+                  <TableCell><strong>First Name</strong></TableCell>
+                  <TableCell><strong>Last Name</strong></TableCell>
+                  <TableCell><strong>Address</strong></TableCell>
+                  <TableCell><strong>Contact No</strong></TableCell>
+                  <TableCell><strong>Actions</strong></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -306,13 +310,25 @@ const AllDrivers = () => {
                       <TableCell>{driver.last_name}</TableCell>
                       <TableCell>{`${driver.no}, ${driver.street_name}, ${driver.suburb}, ${driver.postal_code}, ${driver.state}`}</TableCell>
                       <TableCell>{driver.contact_no}</TableCell>
+                      <TableCell>
+                        <Tooltip title="Set Pending">
+                          <IconButton color="warning" onClick={() => handlePending(driver.id)}><HourglassEmptyIcon /></IconButton>
+                        </Tooltip>
+                        <Tooltip title="Approve">
+                          <IconButton color="success" onClick={() => handleAccept(driver.id)}><CheckIcon /></IconButton>
+                        </Tooltip>
+                        <Tooltip title="View">
+                          <IconButton color="info" onClick={() => handleView(driver)}><VisibilityIcon /></IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete">
+                          <IconButton color="error" onClick={() => handleDelete(driver.id)}><DeleteIcon /></IconButton>
+                        </Tooltip>
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} align="center">
-                      No rejected drivers.
-                    </TableCell>
+                    <TableCell colSpan={5} align="center">No rejected drivers.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -329,7 +345,7 @@ const AllDrivers = () => {
           />
         </Paper>
       </TabPanel>
-
+ 
       {/* Snackbar for Notifications */}
       <CustomSnackbar
         open={snackbar.open}
@@ -340,5 +356,5 @@ const AllDrivers = () => {
     </div>
   );
 };
-
+ 
 export default AllDrivers;
