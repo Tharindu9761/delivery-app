@@ -349,5 +349,6 @@ const AllMerchants = () => {
     </div>
   );
 };
+
  
 export default AllMerchants;
