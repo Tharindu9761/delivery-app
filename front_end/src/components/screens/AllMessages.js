@@ -17,7 +17,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Button,
+  Tooltip,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloseIcon from "@mui/icons-material/Close";
@@ -46,28 +46,22 @@ const TabPanel = (props) => {
 };
 
 const AllMessages = () => {
-  // State for Tabs
   const [tabIndex, setTabIndex] = useState(0);
 
-  // State for New Messages Pagination
   const [pageNew, setPageNew] = useState(0);
   const [rowsPerPageNew, setRowsPerPageNew] = useState(5);
 
-  // State for Old Messages Pagination
   const [pageOld, setPageOld] = useState(0);
   const [rowsPerPageOld, setRowsPerPageOld] = useState(5);
 
-  // State for Messages Data
   const [newMessages, setNewMessages] = useState([]);
   const [oldMessages, setOldMessages] = useState([]);
   const [totalNewMessages, setTotalNewMessages] = useState(0);
   const [totalOldMessages, setTotalOldMessages] = useState(0);
 
-  // State for Selected Message and Dialog
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [open, setOpen] = useState(false);
 
-  // State for Snackbar Notifications
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -78,7 +72,6 @@ const AllMessages = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  // Fetch Messages Function
   const fetchMessages = async (status, page, limit) => {
     try {
       const messages = await getMessages({ status, page, limit });
@@ -89,7 +82,6 @@ const AllMessages = () => {
     }
   };
 
-  // Extracted Fetch Functions for New and Old Messages
   const fetchNewMessages = async () => {
     const response = await fetchMessages("Unread", pageNew + 1, rowsPerPageNew);
     setNewMessages(response.data || []);
@@ -102,22 +94,18 @@ const AllMessages = () => {
     setTotalOldMessages(response.total || 0);
   };
 
-  // useEffect to Fetch Messages on Dependency Changes
   useEffect(() => {
     if (tabIndex === 0) {
       fetchNewMessages();
     } else {
       fetchOldMessages();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageNew, rowsPerPageNew, pageOld, rowsPerPageOld, tabIndex]);
 
-  // Handle Tab Change
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
   };
 
-  // Handle Pagination Changes for New Messages
   const handleChangePageNew = (event, newPage) => {
     setPageNew(newPage);
   };
@@ -127,7 +115,6 @@ const AllMessages = () => {
     setPageNew(0);
   };
 
-  // Handle Pagination Changes for Old Messages
   const handleChangePageOld = (event, newPage) => {
     setPageOld(newPage);
   };
@@ -137,13 +124,11 @@ const AllMessages = () => {
     setPageOld(0);
   };
 
-  // Handle Opening the Dialog
   const handleOpenDialog = (message) => {
     setSelectedMessage(message);
     setOpen(true);
   };
 
-  // Handle Closing the Dialog and Marking as Read
   const handleCloseDialog = async () => {
     if (selectedMessage && selectedMessage.status === "Unread") {
       const response = await read(selectedMessage.id);
@@ -155,7 +140,6 @@ const AllMessages = () => {
           severity: "success",
         });
 
-        // Reload both message lists
         fetchNewMessages();
         fetchOldMessages();
       } else {
@@ -170,8 +154,6 @@ const AllMessages = () => {
     setOpen(false);
     setSelectedMessage(null);
   };
-
-
 
   return (
     <div className="all-messages">
@@ -223,13 +205,14 @@ const AllMessages = () => {
                         {moment(message.created_at).format("MM/DD/YYYY")}
                       </TableCell>
                       <TableCell>
-                        <Button
-                          onClick={() => handleOpenDialog(message)}
-                          variant="outlined"
-                          startIcon={<VisibilityIcon />}
-                        >
-                          Read Message
-                        </Button>
+                        <Tooltip title="Read Message">
+                          <IconButton
+                            color="primary"
+                            onClick={() => handleOpenDialog(message)}
+                          >
+                            <VisibilityIcon />
+                          </IconButton>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))
@@ -290,13 +273,14 @@ const AllMessages = () => {
                         {moment(message.created_at).format("MM/DD/YYYY")}
                       </TableCell>
                       <TableCell>
-                        <Button
-                          onClick={() => handleOpenDialog(message)}
-                          variant="outlined"
-                          startIcon={<VisibilityIcon />}
-                        >
-                          Read Message
-                        </Button>
+                        <Tooltip title="Read Message">
+                          <IconButton
+                            color="primary"
+                            onClick={() => handleOpenDialog(message)}
+                          >
+                            <VisibilityIcon />
+                          </IconButton>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))
@@ -340,6 +324,7 @@ const AllMessages = () => {
         <DialogTitle id="message-dialog-title">
           {selectedMessage ? selectedMessage.subject : "Message Details"}
           <IconButton
+            color="error"
             aria-label="close"
             onClick={handleCloseDialog}
             sx={{
@@ -352,19 +337,36 @@ const AllMessages = () => {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogContent dividers>
+        <DialogContent
+          dividers
+          sx={{ backgroundColor: "#f9f9f9", padding: "20px" }}
+        >
           {selectedMessage && (
-            <DialogContentText id="message-dialog-description">
-              <Typography gutterBottom>
-                <strong>From:</strong> {selectedMessage.name} (
-                {selectedMessage.email})
+            <DialogContentText
+              id="message-dialog-description"
+              sx={{ color: "#333" }}
+            >
+              <Typography
+                gutterBottom
+                variant="subtitle1"
+                sx={{ fontWeight: "bold" }}
+              >
+                From: {selectedMessage.name} ({selectedMessage.email})
               </Typography>
-              <Typography gutterBottom>
-                <strong>Date:</strong>{" "}
-                {moment(selectedMessage.created_at).format("MM/DD/YYYY")}
+              <Typography
+                gutterBottom
+                variant="subtitle1"
+                sx={{ fontWeight: "bold" }}
+              >
+                Date:{" "}
+                {moment(selectedMessage.created_at).format(
+                  "MMMM Do YYYY, h:mm a"
+                )}
               </Typography>
-              <Typography gutterBottom>
-                <strong>Message:</strong>
+              <Typography
+                variant="body1"
+                sx={{ marginTop: "20px", lineHeight: "1.6" }}
+              >
                 {selectedMessage.message}
               </Typography>
             </DialogContentText>
