@@ -27,6 +27,8 @@ export default StyleSheet.create({
     width: '100%', // Full width of the container
   },
   signout: {
+    display:"flex",
+    flexDirection:'row',
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',

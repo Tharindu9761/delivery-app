@@ -13,14 +13,16 @@ import {
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {Picker} from '@react-native-picker/picker';
 import {AuthContext} from '../components/context';
 import styles from '../styles/signupStyles';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import CustomSnackbar from './CustomSnackbar';
 
 const SignUpScreen = ({navigation}) => {
   const [data, setData] = useState({
     firstName: '',
     lastName: '',
+    email: '',
     birthday: '',
     unitNumber: '',
     streetName: '',
@@ -31,9 +33,9 @@ const SignUpScreen = ({navigation}) => {
     password: '',
     confirmPassword: '',
     secureTextEntry: true,
-    confirmSecureTextEntry: true,
     isValidFirstName: true,
     isValidLastName: true,
+    isValidEmail: true,
     isValidBirthday: true,
     isValidUnitNumber: true,
     isValidStreetName: true,
@@ -49,6 +51,28 @@ const SignUpScreen = ({navigation}) => {
   const [date, setDate] = useState(new Date());
 
   const {signUp} = React.useContext(AuthContext);
+
+  const [snackbar, setSnackbar] = useState({
+    visible: false,
+    message: '',
+    type: 'success',
+  });
+
+  // Reusable alert function
+  const showSnackbar = (title, message, type) => {
+    setSnackbar({
+      visible: true,
+      message: message,
+      type: type,
+    });
+  };
+
+  const hideSnackbar = () => {
+    setSnackbar({
+      ...snackbar,
+      visible: false,
+    });
+  };
 
   const handleInputChange = (field, val) => {
     let isValid = val.trim().length > 0;
@@ -75,6 +99,21 @@ const SignUpScreen = ({navigation}) => {
     });
   };
 
+  const handleValidUser = val => {
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (reg.test(val)) {
+      setData({
+        ...data,
+        isValidEmail: true,
+      });
+    } else {
+      setData({
+        ...data,
+        isValidEmail: false,
+      });
+    }
+  };
+
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(Platform.OS === 'ios');
@@ -96,15 +135,13 @@ const SignUpScreen = ({navigation}) => {
     });
   };
 
-  const updateConfirmSecureTextEntry = () => {
-    setData({
-      ...data,
-      confirmSecureTextEntry: !data.confirmSecureTextEntry,
-    });
-  };
-
   const showAlert = (title, message) => {
     Alert.alert(title, message, [{text: 'OK'}]);
+  };
+
+  const textInputChange = val => {
+    handleInputChange('email', val);
+    handleValidUser(val);
   };
 
   return (
@@ -119,6 +156,7 @@ const SignUpScreen = ({navigation}) => {
             <Text style={styles.text_header}>Sign Up</Text>
           </View>
           <Animatable.View animation="fadeInUpBig" style={styles.footer}>
+            {/* First Name */}
             <Text style={styles.text_footer}>First Name</Text>
             <View style={styles.action}>
               <TextInput
@@ -135,6 +173,7 @@ const SignUpScreen = ({navigation}) => {
               </Animatable.View>
             )}
 
+            {/* Last Name */}
             <Text style={[styles.text_footer, {marginTop: 20}]}>Last Name</Text>
             <View style={styles.action}>
               <TextInput
@@ -151,6 +190,25 @@ const SignUpScreen = ({navigation}) => {
               </Animatable.View>
             )}
 
+            {/* Email */}
+            <Text style={[styles.text_footer, {marginTop: 20}]}>Email</Text>
+            <View style={styles.action}>
+              <TextInput
+                placeholder="Your Email"
+                keyboardType="email-address"
+                placeholderTextColor="#666666"
+                style={[styles.textInput, {color: 'gray'}]}
+                autoCapitalize="none"
+                onChangeText={textInputChange}
+              />
+            </View>
+            {!data.isValidEmail && (
+              <Animatable.View animation="fadeInLeft">
+                <Text style={styles.errorMsg}>Invalid email address.</Text>
+              </Animatable.View>
+            )}
+
+            {/* Birthday */}
             <Text style={[styles.text_footer, {marginTop: 20}]}>Birthday</Text>
             <View style={styles.action}>
               <TouchableOpacity
@@ -164,16 +222,14 @@ const SignUpScreen = ({navigation}) => {
                   value={data.birthday}
                   editable={false}
                 />
-                <Text style={{marginRight: 10, color: 'gray', fontSize: 20}}>
-                  📅
-                </Text>
+                <Icon
+                  name="calendar-today"
+                  size={25}
+                  color="gray"
+                  style={{marginRight: 0}}
+                />
               </TouchableOpacity>
             </View>
-            {!data.isValidBirthday && (
-              <Animatable.View animation="fadeInLeft">
-                <Text style={styles.errorMsg}>Please enter a valid date.</Text>
-              </Animatable.View>
-            )}
             {showDatePicker && (
               <DateTimePicker
                 value={date}
@@ -183,128 +239,7 @@ const SignUpScreen = ({navigation}) => {
               />
             )}
 
-            <Text style={[styles.text_footer, {marginTop: 20}]}>
-              Unit/House or Apartment No.
-            </Text>
-            <View style={styles.action}>
-              <TextInput
-                placeholder="Unit/House or Apartment No."
-                placeholderTextColor="#666666"
-                style={[styles.textInput, {color: 'gray'}]}
-                autoCapitalize="none"
-                onChangeText={val => handleInputChange('unitNumber', val)}
-              />
-            </View>
-            {!data.isValidUnitNumber && (
-              <Animatable.View animation="fadeInLeft">
-                <Text style={styles.errorMsg}>This field cannot be empty.</Text>
-              </Animatable.View>
-            )}
-
-            <Text style={[styles.text_footer, {marginTop: 20}]}>
-              Street Name
-            </Text>
-            <View style={styles.action}>
-              <TextInput
-                placeholder="Street Name"
-                placeholderTextColor="#666666"
-                style={[styles.textInput, {color: 'gray'}]}
-                autoCapitalize="none"
-                onChangeText={val => handleInputChange('streetName', val)}
-              />
-            </View>
-            {!data.isValidStreetName && (
-              <Animatable.View animation="fadeInLeft">
-                <Text style={styles.errorMsg}>
-                  Street name cannot be empty.
-                </Text>
-              </Animatable.View>
-            )}
-
-            <Text style={[styles.text_footer, {marginTop: 20}]}>Suburb</Text>
-            <View style={styles.action}>
-              <TextInput
-                placeholder="Suburb"
-                placeholderTextColor="#666666"
-                style={[styles.textInput, {color: 'gray'}]}
-                autoCapitalize="none"
-                onChangeText={val => handleInputChange('suburb', val)}
-              />
-            </View>
-            {!data.isValidSuburb && (
-              <Animatable.View animation="fadeInLeft">
-                <Text style={styles.errorMsg}>Suburb cannot be empty.</Text>
-              </Animatable.View>
-            )}
-
-            <Text style={[styles.text_footer, {marginTop: 20}]}>
-              Postal Code
-            </Text>
-            <View style={styles.action}>
-              <TextInput
-                placeholder="Postal Code"
-                keyboardType="numeric"
-                placeholderTextColor="#666666"
-                style={[styles.textInput, {color: 'gray'}]}
-                autoCapitalize="none"
-                onChangeText={val => handleInputChange('postalCode', val)}
-              />
-            </View>
-            {!data.isValidPostalCode && (
-              <Animatable.View animation="fadeInLeft">
-                <Text style={styles.errorMsg}>
-                  Postal code cannot be empty.
-                </Text>
-              </Animatable.View>
-            )}
-
-            <Text style={[styles.text_footer, {marginTop: 20}]}>State</Text>
-            <View style={styles.action}>
-              <Picker
-                selectedValue={data.state}
-                style={{height: 50, width: '100%', color: '#666666'}}
-                onValueChange={(itemValue, itemIndex) =>
-                  handleInputChange('state', itemValue)
-                }>
-                <Picker.Item label="Select State" value="" />
-                <Picker.Item label="New South Wales" value="NSW" />
-                <Picker.Item label="Victoria" value="VIC" />
-                <Picker.Item label="Queensland" value="QLD" />
-                <Picker.Item label="Western Australia" value="WA" />
-                <Picker.Item label="South Australia" value="SA" />
-                <Picker.Item label="Tasmania" value="TAS" />
-                <Picker.Item label="Northern Territory" value="NT" />
-                <Picker.Item label="Australian Capital Territory" value="ACT" />
-              </Picker>
-            </View>
-            {!data.isValidState && (
-              <Animatable.View animation="fadeInLeft">
-                <Text style={styles.errorMsg}>Please select a state.</Text>
-              </Animatable.View>
-            )}
-
-            <Text style={[styles.text_footer, {marginTop: 20}]}>
-              Mobile No.
-            </Text>
-            <View style={styles.action}>
-              <TextInput
-                placeholder="Your Mobile Number"
-                keyboardType="phone-pad"
-                placeholderTextColor="#666666"
-                style={[styles.textInput, {color: 'gray'}]}
-                autoCapitalize="none"
-                onChangeText={val => handleInputChange('mobile', val)}
-              />
-            </View>
-            {!data.isValidMobile && (
-              <Animatable.View animation="fadeInLeft">
-                <Text style={styles.errorMsg}>
-                  Mobile number cannot be empty.
-                </Text>
-              </Animatable.View>
-            )}
-
-            {/* Password Field */}
+            {/* Password */}
             <Text style={[styles.text_footer, {marginTop: 20}]}>Password</Text>
             <View style={styles.action}>
               <TextInput
@@ -316,9 +251,11 @@ const SignUpScreen = ({navigation}) => {
                 onChangeText={handlePasswordChange}
               />
               <TouchableOpacity onPress={updateSecureTextEntry}>
-                <Text style={{marginRight: 10, color: 'gray', fontSize: 20}}>
-                  {data.secureTextEntry ? '🙈' : '👀'}
-                </Text>
+                <Icon
+                  name={data.secureTextEntry ? 'visibility-off' : 'visibility'}
+                  size={25}
+                  color="gray"
+                />
               </TouchableOpacity>
             </View>
             {!data.isValidPassword && (
@@ -329,7 +266,7 @@ const SignUpScreen = ({navigation}) => {
               </Animatable.View>
             )}
 
-            {/* Confirm Password Field */}
+            {/* Confirm Password */}
             <Text style={[styles.text_footer, {marginTop: 20}]}>
               Confirm Password
             </Text>
@@ -337,16 +274,11 @@ const SignUpScreen = ({navigation}) => {
               <TextInput
                 placeholder="Confirm Your Password"
                 placeholderTextColor="#666666"
-                secureTextEntry={data.confirmSecureTextEntry}
+                secureTextEntry={data.secureTextEntry}
                 style={[styles.textInput, {color: 'gray', flex: 1}]}
                 autoCapitalize="none"
                 onChangeText={handleConfirmPasswordChange}
               />
-              <TouchableOpacity onPress={updateConfirmSecureTextEntry}>
-                <Text style={{marginRight: 10, color: 'gray', fontSize: 20}}>
-                  {data.confirmSecureTextEntry ? '🙈' : '👀'}
-                </Text>
-              </TouchableOpacity>
             </View>
             {!data.isValidConfirmPassword && (
               <Animatable.View animation="fadeInLeft">
@@ -354,6 +286,7 @@ const SignUpScreen = ({navigation}) => {
               </Animatable.View>
             )}
 
+            {/* Sign Up Buttons */}
             <View style={styles.button}>
               <TouchableOpacity
                 style={styles.signUp}
@@ -390,6 +323,13 @@ const SignUpScreen = ({navigation}) => {
               </TouchableOpacity>
             </View>
           </Animatable.View>
+
+          <CustomSnackbar
+            visible={snackbar.visible}
+            message={snackbar.message}
+            type={snackbar.type}
+            onDismiss={hideSnackbar}
+          />
         </View>
       </ImageBackground>
     </ScrollView>

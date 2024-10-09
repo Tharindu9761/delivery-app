@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
 import Avatar from "@mui/material/Avatar";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LockResetIcon from "@mui/icons-material/LockReset";
@@ -14,6 +12,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
+import CustomSnackbar from "./CustomSnackbar";
 
 import {
   get_name,
@@ -109,10 +108,7 @@ const TopHeader = ({ onSignOut }) => {
     }
   };
 
-  const handleCloseSnackbar = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
+  const handleClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
@@ -694,16 +690,12 @@ const TopHeader = ({ onSignOut }) => {
         </div>
       </Modal>
 
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      <CustomSnackbar
         open={snackbar.open}
-        autoHideDuration={2500}
-        onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+        severity={snackbar.severity}
+        message={snackbar.message}
+        onClose={handleClose}
+      />
       <LoadingSpinner open={loading} />
     </>
   );

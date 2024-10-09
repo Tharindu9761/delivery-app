@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
 import TextField from "@mui/material/TextField";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -11,6 +9,7 @@ import "../styles/signUp.css";
 import * as AppConst from "../../const/const";
 import { createUser } from "../../services/userService";
 import LoadingSpinner from "./LoadingSpinner";
+import CustomSnackbar from "./CustomSnackbar";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -47,6 +46,10 @@ const SignUp = () => {
     severity: "success",
     message: "",
   });
+
+  const handleClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const states = AppConst.STATES;
 
@@ -150,9 +153,7 @@ const SignUp = () => {
     });
   };
 
-  const handleClose = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
+
 
   const handleMerchantFormSubmit = async () => {
     // Perform validation for all fields
@@ -478,16 +479,13 @@ const SignUp = () => {
       </div>
 
       {/* Snackbar */}
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      <CustomSnackbar
         open={snackbar.open}
-        autoHideDuration={2500}
+        severity={snackbar.severity}
+        message={snackbar.message}
         onClose={handleClose}
-      >
-        <Alert onClose={handleClose} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
+
       <LoadingSpinner open={loading} />
     </div>
   );

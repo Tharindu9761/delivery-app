@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
@@ -11,6 +9,7 @@ import "../styles/frogotPassword.css";
 import { resetPasswordByEmail } from "../../services/userService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoadingSpinner from "./LoadingSpinner";
+import CustomSnackbar from "./CustomSnackbar";
 
 const ResetPassword = ({ onSignOut }) => {
   const [loading, setLoading] = useState(false);
@@ -190,10 +189,7 @@ const ResetPassword = ({ onSignOut }) => {
   };
 
   // Handle Snackbar Close
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
+  const handleClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
@@ -307,16 +303,12 @@ const ResetPassword = ({ onSignOut }) => {
       </div>
 
       {/* Snackbar */}
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      <CustomSnackbar
         open={snackbar.open}
-        autoHideDuration={2500}
+        severity={snackbar.severity}
+        message={snackbar.message}
         onClose={handleClose}
-      >
-        <Alert onClose={handleClose} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
       <LoadingSpinner open={loading} />
     </div>
   );
