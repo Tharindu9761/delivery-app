@@ -344,6 +344,7 @@ const AllDrivers = () => {
             onRowsPerPageChange={handleChangeRowsPerPageRejected}
           />
         </Paper>
+        
       </TabPanel>
  
       {/* Snackbar for Notifications */}
