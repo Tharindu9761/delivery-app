@@ -12,9 +12,10 @@ import {
   TablePagination,
   Typography,
   Box,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { getUsers } from "../../services/userService"; // Import the user service
-import CustomSnackbar from "./CustomSnackbar";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -65,10 +66,6 @@ const AllDrivers = () => {
     message: "",
     severity: "success",
   });
-
-  const handleClose = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
 
   // Fetch Drivers from backend
   const fetchDrivers = async (page, limit, status) => {
@@ -153,7 +150,11 @@ const AllDrivers = () => {
     setPageRejected(0); 
   };
 
-
+  // Handle Snackbar Close
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") return;
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   return (
     <div className="all-drivers">
@@ -331,12 +332,20 @@ const AllDrivers = () => {
       </TabPanel>
 
       {/* Snackbar for Notifications */}
-      <CustomSnackbar
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={snackbar.open}
-        severity={snackbar.severity}
-        message={snackbar.message}
-        onClose={handleClose}
-      />
+        autoHideDuration={2500}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+         
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

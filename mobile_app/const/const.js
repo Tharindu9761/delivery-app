@@ -1,6 +1,5 @@
 // Utility function to generate full URLs using the new ngrok link
-const generateUrl = (path) => `https://elegant-probably-beetle.ngrok-free.app/api/${path}`;
-//ngrok http --domain=elegant-probably-beetle.ngrok-free.app 3000
+const generateUrl = (path) => `https://5625-110-142-110-151.ngrok-free.app/api/${path}`;
 
 // Users URL
 export const CREATE_USER = generateUrl('users');

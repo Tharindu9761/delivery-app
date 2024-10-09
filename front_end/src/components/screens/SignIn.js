@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
@@ -9,7 +11,6 @@ import IconButton from "@mui/material/IconButton";
 import { web_login } from "../../services/userService";
 import "../styles/signIn.css";
 import LoadingSpinner from "./LoadingSpinner";
-import CustomSnackbar from "./CustomSnackbar";
 
 const SignIn = ({ onSignIn }) => {
   const [loading, setLoading] = useState(false);
@@ -131,7 +132,10 @@ const SignIn = ({ onSignIn }) => {
     }
   };
 
-  const handleClose = () => {
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
     setSnackbar({ ...snackbar, open: false });
   };
 
@@ -209,12 +213,16 @@ const SignIn = ({ onSignIn }) => {
           Don't have an account? <Link to="/signup">Sign Up</Link>
         </p>
       </div>
-      <CustomSnackbar
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={snackbar.open}
-        severity={snackbar.severity}
-        message={snackbar.message}
+        autoHideDuration={2500}
         onClose={handleClose}
-      />
+      >
+        <Alert onClose={handleClose} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
       <LoadingSpinner open={loading} />
     </div>
   );

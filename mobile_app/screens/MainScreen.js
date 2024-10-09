@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Import MaterialIcons
 
 import DrawerContent from '../screens/DrawerContent';
 import HomeScreenCustomer from './HomeScreenCustomer';
@@ -51,56 +50,23 @@ function MyDrawer() {
         <Drawer.Screen
           name="HomeCustomer"
           component={HomeScreenCustomer}
-          options={{
-            title: 'Home',
-            drawerIcon: ({color, size}) => (
-              <Icon name="home" color={color} size={size} />
-            ),
-          }}
+          options={{title: 'Home'}}
         />
       )}
       {role === 'Driver' && (
         <Drawer.Screen
           name="HomeDriver"
           component={HomeScreenDriver}
-          options={{
-            title: 'Home',
-            drawerIcon: ({color, size}) => (
-              <Icon name="directions-car" color={color} size={size} />
-            ),
-          }}
+          options={{title: 'Home'}}
         />
       )}
-      <Drawer.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          title: 'Profile',
-          drawerIcon: ({color, size}) => (
-            <Icon name="person" color={color} size={size} />
-          ),
-        }}
-      />
+      <Drawer.Screen name="Profile" component={ProfileScreen} />
       <Drawer.Screen
         name="OrderHistory"
         component={OrderHistoryScreen}
-        options={{
-          title: 'Order History',
-          drawerIcon: ({color, size}) => (
-            <Icon name="history" color={color} size={size} />
-          ),
-        }}
+        options={{title: 'Order History'}}
       />
-      <Drawer.Screen
-        name="Notifications"
-        component={NotificationsScreen}
-        options={{
-          title: 'Notifications',
-          drawerIcon: ({color, size}) => (
-            <Icon name="notifications" color={color} size={size} />
-          ),
-        }}
-      />
+      <Drawer.Screen name="Notifications" component={NotificationsScreen} />
     </Drawer.Navigator>
   );
 }
