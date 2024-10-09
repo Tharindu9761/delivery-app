@@ -42,7 +42,7 @@ const TabPanel = (props) => {
     </div>
   );
 };
-
+ 
 const AllDrivers = () => {
   const [tabIndex, setTabIndex] = useState(0);
  
@@ -344,7 +344,6 @@ const AllDrivers = () => {
             onRowsPerPageChange={handleChangeRowsPerPageRejected}
           />
         </Paper>
-        
       </TabPanel>
  
       {/* Snackbar for Notifications */}
