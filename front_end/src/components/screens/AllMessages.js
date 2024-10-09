@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Tabs,
   Tab,
@@ -10,7 +10,6 @@ import {
   TableRow,
   Paper,
   TablePagination,
-  Typography,
   Box,
   IconButton,
   Dialog,
@@ -18,6 +17,7 @@ import {
   DialogContentText,
   DialogTitle,
   Tooltip,
+  Typography,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CloseIcon from "@mui/icons-material/Close";
@@ -38,7 +38,7 @@ const TabPanel = (props) => {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <div>{children}</div>
         </Box>
       )}
     </div>
@@ -68,7 +68,7 @@ const AllMessages = () => {
     severity: "success",
   });
 
-  const handleClose = () => {
+  const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
@@ -82,17 +82,17 @@ const AllMessages = () => {
     }
   };
 
-  const fetchNewMessages = async () => {
+  const fetchNewMessages = useCallback(async () => {
     const response = await fetchMessages("Unread", pageNew + 1, rowsPerPageNew);
     setNewMessages(response.data || []);
     setTotalNewMessages(response.total || 0);
-  };
+  }, [pageNew, rowsPerPageNew]);
 
-  const fetchOldMessages = async () => {
+  const fetchOldMessages = useCallback(async () => {
     const response = await fetchMessages("Read", pageOld + 1, rowsPerPageOld);
     setOldMessages(response.data || []);
     setTotalOldMessages(response.total || 0);
-  };
+  }, [pageOld, rowsPerPageOld]);
 
   useEffect(() => {
     if (tabIndex === 0) {
@@ -100,24 +100,20 @@ const AllMessages = () => {
     } else {
       fetchOldMessages();
     }
-  }, [pageNew, rowsPerPageNew, pageOld, rowsPerPageOld, tabIndex]);
+  }, [tabIndex, pageNew, rowsPerPageNew, pageOld, rowsPerPageOld, fetchNewMessages, fetchOldMessages]);
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
   };
 
-  const handleChangePageNew = (event, newPage) => {
-    setPageNew(newPage);
-  };
+  const handleChangePageNew = (event, newPage) => setPageNew(newPage);
 
   const handleChangeRowsPerPageNew = (event) => {
     setRowsPerPageNew(parseInt(event.target.value, 10));
     setPageNew(0);
   };
 
-  const handleChangePageOld = (event, newPage) => {
-    setPageOld(newPage);
-  };
+  const handleChangePageOld = (event, newPage) => setPageOld(newPage);
 
   const handleChangeRowsPerPageOld = (event) => {
     setRowsPerPageOld(parseInt(event.target.value, 10));
@@ -139,7 +135,6 @@ const AllMessages = () => {
           message: response.message,
           severity: "success",
         });
-
         fetchNewMessages();
         fetchOldMessages();
       } else {
@@ -150,7 +145,6 @@ const AllMessages = () => {
         });
       }
     }
-
     setOpen(false);
     setSelectedMessage(null);
   };
@@ -170,28 +164,17 @@ const AllMessages = () => {
         <Tab label="Old Messages" />
       </Tabs>
 
-      {/* New Messages Tab */}
       <TabPanel value={tabIndex} index={0}>
         <Paper>
           <TableContainer>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>
-                    <strong>Name</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Email</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Subject</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Date</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Action</strong>
-                  </TableCell>
+                  <TableCell><strong>Name</strong></TableCell>
+                  <TableCell><strong>Email</strong></TableCell>
+                  <TableCell><strong>Subject</strong></TableCell>
+                  <TableCell><strong>Date</strong></TableCell>
+                  <TableCell><strong>Action</strong></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -201,9 +184,7 @@ const AllMessages = () => {
                       <TableCell>{message.name}</TableCell>
                       <TableCell>{message.email}</TableCell>
                       <TableCell>{message.subject}</TableCell>
-                      <TableCell>
-                        {moment(message.created_at).format("MM/DD/YYYY")}
-                      </TableCell>
+                      <TableCell>{moment(message.created_at).format("MM/DD/YYYY")}</TableCell>
                       <TableCell>
                         <Tooltip title="Read Message">
                           <IconButton
@@ -218,9 +199,7 @@ const AllMessages = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} align="center">
-                      No new messages.
-                    </TableCell>
+                    <TableCell colSpan={5} align="center">No new messages.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -238,28 +217,17 @@ const AllMessages = () => {
         </Paper>
       </TabPanel>
 
-      {/* Old Messages Tab */}
       <TabPanel value={tabIndex} index={1}>
         <Paper>
           <TableContainer>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>
-                    <strong>Name</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Email</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Subject</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Date</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Action</strong>
-                  </TableCell>
+                  <TableCell><strong>Name</strong></TableCell>
+                  <TableCell><strong>Email</strong></TableCell>
+                  <TableCell><strong>Subject</strong></TableCell>
+                  <TableCell><strong>Date</strong></TableCell>
+                  <TableCell><strong>Action</strong></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -269,9 +237,7 @@ const AllMessages = () => {
                       <TableCell>{message.name}</TableCell>
                       <TableCell>{message.email}</TableCell>
                       <TableCell>{message.subject}</TableCell>
-                      <TableCell>
-                        {moment(message.created_at).format("MM/DD/YYYY")}
-                      </TableCell>
+                      <TableCell>{moment(message.created_at).format("MM/DD/YYYY")}</TableCell>
                       <TableCell>
                         <Tooltip title="Read Message">
                           <IconButton
@@ -286,9 +252,7 @@ const AllMessages = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} align="center">
-                      No old messages.
-                    </TableCell>
+                    <TableCell colSpan={5} align="center">No old messages.</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -306,25 +270,16 @@ const AllMessages = () => {
         </Paper>
       </TabPanel>
 
-      {/* Message Details Dialog */}
       <Dialog
         open={open}
         onClose={handleCloseDialog}
         aria-labelledby="message-dialog-title"
-        aria-describedby="message-dialog-description"
         fullWidth
         maxWidth="sm"
-        sx={{
-          "& .MuiDialog-paper": {
-            width: "500px",
-            maxWidth: "90%",
-          },
-        }}
       >
         <DialogTitle id="message-dialog-title">
           {selectedMessage ? selectedMessage.subject : "Message Details"}
           <IconButton
-            color="error"
             aria-label="close"
             onClick={handleCloseDialog}
             sx={{
@@ -337,36 +292,16 @@ const AllMessages = () => {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogContent
-          dividers
-          sx={{ backgroundColor: "#f9f9f9", padding: "20px" }}
-        >
+        <DialogContent dividers>
           {selectedMessage && (
-            <DialogContentText
-              id="message-dialog-description"
-              sx={{ color: "#333" }}
-            >
-              <Typography
-                gutterBottom
-                variant="subtitle1"
-                sx={{ fontWeight: "bold" }}
-              >
+            <DialogContentText id="message-dialog-description">
+              <Typography variant="subtitle1" gutterBottom>
                 From: {selectedMessage.name} ({selectedMessage.email})
               </Typography>
-              <Typography
-                gutterBottom
-                variant="subtitle1"
-                sx={{ fontWeight: "bold" }}
-              >
-                Date:{" "}
-                {moment(selectedMessage.created_at).format(
-                  "MMMM Do YYYY, h:mm a"
-                )}
+              <Typography variant="subtitle1" gutterBottom>
+                Date: {moment(selectedMessage.created_at).format("MMMM Do YYYY, h:mm a")}
               </Typography>
-              <Typography
-                variant="body1"
-                sx={{ marginTop: "20px", lineHeight: "1.6" }}
-              >
+              <Typography variant="body1" sx={{ mt: 2 }}>
                 {selectedMessage.message}
               </Typography>
             </DialogContentText>
@@ -374,12 +309,11 @@ const AllMessages = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Snackbar for Notifications */}
       <CustomSnackbar
         open={snackbar.open}
         severity={snackbar.severity}
         message={snackbar.message}
-        onClose={handleClose}
+        onClose={handleCloseSnackbar}
       />
     </div>
   );

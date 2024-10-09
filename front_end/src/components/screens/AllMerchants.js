@@ -10,22 +10,33 @@ import {
   TableRow,
   Paper,
   TablePagination,
-  Typography,
   Box,
   IconButton,
   Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+  Button,
 } from "@mui/material";
-import CheckIcon from "@mui/icons-material/Check";
-import ClearIcon from "@mui/icons-material/Clear";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import CloseIcon from "@mui/icons-material/Close";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
-import { getUsers } from "../../services/userService";
+import {
+  getUsers,
+  updateUserStatus,
+  deleteUser,
+} from "../../services/userService";
 import CustomSnackbar from "./CustomSnackbar";
- 
+import LoadingSpinner from "./LoadingSpinner";
+
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
- 
+
   return (
     <div
       role="tabpanel"
@@ -36,42 +47,46 @@ const TabPanel = (props) => {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <div>{children}</div>
         </Box>
       )}
     </div>
   );
 };
- 
+
 const AllMerchants = () => {
+  const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
- 
+
   const [pagePending, setPagePending] = useState(0);
   const [rowsPerPagePending, setRowsPerPagePending] = useState(5);
- 
+
   const [pageAccepted, setPageAccepted] = useState(0);
   const [rowsPerPageAccepted, setRowsPerPageAccepted] = useState(5);
- 
+
   const [pageRejected, setPageRejected] = useState(0);
   const [rowsPerPageRejected, setRowsPerPageRejected] = useState(5);
- 
+
   const [pendingMerchants, setPendingMerchants] = useState([]);
   const [acceptedMerchants, setAcceptedMerchants] = useState([]);
   const [rejectedMerchants, setRejectedMerchants] = useState([]);
   const [totalPendingMerchants, setTotalPendingMerchants] = useState(0);
   const [totalAcceptedMerchants, setTotalAcceptedMerchants] = useState(0);
   const [totalRejectedMerchants, setTotalRejectedMerchants] = useState(0);
- 
+
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
- 
+
   const handleClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
- 
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [idToDelete, setIdToDelete] = useState(null);
+
   const fetchMerchants = async (page, limit, status) => {
     try {
       const response = await getUsers({
@@ -90,25 +105,37 @@ const AllMerchants = () => {
       console.error("Error fetching merchants:", error);
     }
   };
- 
+
   const fetchPendingMerchants = useCallback(async () => {
-    const response = await fetchMerchants(pagePending + 1, rowsPerPagePending, "Pending");
+    const response = await fetchMerchants(
+      pagePending + 1,
+      rowsPerPagePending,
+      "Pending"
+    );
     setPendingMerchants(response.data || []);
     setTotalPendingMerchants(response.total || 0);
   }, [pagePending, rowsPerPagePending]);
- 
+
   const fetchAcceptedMerchants = useCallback(async () => {
-    const response = await fetchMerchants(pageAccepted + 1, rowsPerPageAccepted, "Approved");
+    const response = await fetchMerchants(
+      pageAccepted + 1,
+      rowsPerPageAccepted,
+      "Approved"
+    );
     setAcceptedMerchants(response.data || []);
     setTotalAcceptedMerchants(response.total || 0);
   }, [pageAccepted, rowsPerPageAccepted]);
- 
+
   const fetchRejectedMerchants = useCallback(async () => {
-    const response = await fetchMerchants(pageRejected + 1, rowsPerPageRejected, "Rejected");
+    const response = await fetchMerchants(
+      pageRejected + 1,
+      rowsPerPageRejected,
+      "Rejected"
+    );
     setRejectedMerchants(response.data || []);
     setTotalRejectedMerchants(response.total || 0);
   }, [pageRejected, rowsPerPageRejected]);
- 
+
   useEffect(() => {
     if (tabIndex === 0) {
       fetchPendingMerchants();
@@ -117,44 +144,133 @@ const AllMerchants = () => {
     } else if (tabIndex === 2) {
       fetchRejectedMerchants();
     }
-  }, [tabIndex, fetchPendingMerchants, fetchAcceptedMerchants, fetchRejectedMerchants]);
- 
+  }, [
+    tabIndex,
+    fetchPendingMerchants,
+    fetchAcceptedMerchants,
+    fetchRejectedMerchants,
+  ]);
+
   const handleChangePagePending = (event, newPage) => {
     setPagePending(newPage);
   };
- 
+
   const handleChangeRowsPerPagePending = (event) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPagePending(newRowsPerPage);
     setPagePending(0);
   };
- 
+
   const handleChangePageAccepted = (event, newPage) => {
     setPageAccepted(newPage);
   };
- 
+
   const handleChangeRowsPerPageAccepted = (event) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPageAccepted(newRowsPerPage);
     setPageAccepted(0);
   };
- 
+
   const handleChangePageRejected = (event, newPage) => {
     setPageRejected(newPage);
   };
- 
+
   const handleChangeRowsPerPageRejected = (event) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPageRejected(newRowsPerPage);
     setPageRejected(0);
   };
- 
-  const handleAccept = (id) => { /* Implement accept logic */ };
-  const handleReject = (id) => { /* Implement reject logic */ };
-  const handleDelete = (id) => { /* Implement delete logic */ };
-  const handleView = (merchant) => { /* Implement view logic */ };
-  const handlePending = (id) => { /* Implement pending logic */ };
- 
+
+  const handleOpenDeleteDialog = (id) => {
+    setIdToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    setLoading(true);
+    const response = await deleteUser(idToDelete);
+    if (response.success) {
+      setSnackbar({
+        open: true,
+        message: response.message,
+        severity: "success",
+      });
+    } else {
+      setSnackbar({ open: true, message: response.message, severity: "error" });
+    }
+    setIdToDelete(null);
+    setDeleteDialogOpen(false);
+
+    setTimeout(() => {
+      setLoading(false);
+      handReloadTables();
+    }, 2500);
+  };
+
+  const handleView = (merchant) => {
+    /* Implement view logic */
+  };
+
+  const handleAccept = async (id) => {
+    setLoading(true);
+    const response = await updateUserStatus(id, "Approved");
+    if (response.success) {
+      setSnackbar({
+        open: true,
+        message: response.message,
+        severity: "success",
+      });
+    } else {
+      setSnackbar({ open: true, message: response.message, severity: "error" });
+    }
+    setTimeout(() => {
+      setLoading(false);
+      handReloadTables();
+    }, 2500);
+  };
+
+  const handleReject = async (id) => {
+    setLoading(true);
+    const response = await updateUserStatus(id, "Rejected");
+    if (response.success) {
+      setSnackbar({
+        open: true,
+        message: response.message,
+        severity: "success",
+      });
+    } else {
+      setSnackbar({ open: true, message: response.message, severity: "error" });
+    }
+    setTimeout(() => {
+      setLoading(false);
+      handReloadTables();
+    }, 2500);
+  };
+
+  const handlePending = async (id) => {
+    setLoading(true);
+    const response = await updateUserStatus(id, "Pending");
+    if (response.success) {
+      setSnackbar({
+        open: true,
+        message: response.message,
+        severity: "success",
+      });
+    } else {
+      setSnackbar({ open: true, message: response.message, severity: "error" });
+    }
+    setTimeout(() => {
+      setLoading(false);
+      handReloadTables();
+    }, 2500);
+  };
+
+  const handReloadTables = () => {
+    fetchAcceptedMerchants();
+    fetchRejectedMerchants();
+    fetchPendingMerchants();
+  };
+
   return (
     <div className="all-merchants">
       <h1>All Merchants</h1>
@@ -170,7 +286,7 @@ const AllMerchants = () => {
         <Tab label="Accepted Merchants" />
         <Tab label="Rejected Merchants" />
       </Tabs>
- 
+
       {/* Pending Merchants Tab */}
       <TabPanel value={tabIndex} index={0}>
         <Paper>
@@ -178,10 +294,18 @@ const AllMerchants = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>Business Name</strong></TableCell>
-                  <TableCell><strong>Address</strong></TableCell>
-                  <TableCell><strong>Contact No</strong></TableCell>
-                  <TableCell><strong>Actions</strong></TableCell>
+                  <TableCell>
+                    <strong>Business Name</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Address</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Contact No</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Actions</strong>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -193,23 +317,45 @@ const AllMerchants = () => {
                       <TableCell>{merchant.contact_no}</TableCell>
                       <TableCell>
                         <Tooltip title="Accept">
-                          <IconButton color="success" onClick={() => handleAccept(merchant.id)}><CheckIcon /></IconButton>
+                          <IconButton
+                            color="success"
+                            onClick={() => handleAccept(merchant.id)}
+                          >
+                            <ThumbUpIcon />
+                          </IconButton>
                         </Tooltip>
                         <Tooltip title="Reject">
-                          <IconButton color="secondary" onClick={() => handleReject(merchant.id)}><ClearIcon /></IconButton>
+                          <IconButton
+                            color="warning"
+                            onClick={() => handleReject(merchant.id)}
+                          >
+                            <ThumbDownIcon />
+                          </IconButton>
                         </Tooltip>
                         <Tooltip title="View">
-                          <IconButton color="info" onClick={() => handleView(merchant)}><VisibilityIcon /></IconButton>
+                          <IconButton
+                            color="info"
+                            onClick={() => handleView(merchant)}
+                          >
+                            <VisibilityIcon />
+                          </IconButton>
                         </Tooltip>
                         <Tooltip title="Delete">
-                          <IconButton color="error" onClick={() => handleDelete(merchant.id)}><DeleteIcon /></IconButton>
+                          <IconButton
+                            color="error"
+                            onClick={() => handleOpenDeleteDialog(merchant.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
                         </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} align="center">No pending merchants.</TableCell>
+                    <TableCell colSpan={4} align="center">
+                      No pending merchants.
+                    </TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -226,7 +372,7 @@ const AllMerchants = () => {
           />
         </Paper>
       </TabPanel>
- 
+
       {/* Accepted Merchants Tab */}
       <TabPanel value={tabIndex} index={1}>
         <Paper>
@@ -234,10 +380,18 @@ const AllMerchants = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>Business Name</strong></TableCell>
-                  <TableCell><strong>Address</strong></TableCell>
-                  <TableCell><strong>Contact No</strong></TableCell>
-                  <TableCell><strong>Actions</strong></TableCell>
+                  <TableCell>
+                    <strong>Business Name</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Address</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Contact No</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Actions</strong>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -249,23 +403,45 @@ const AllMerchants = () => {
                       <TableCell>{merchant.contact_no}</TableCell>
                       <TableCell>
                         <Tooltip title="Set Pending">
-                          <IconButton color="warning" onClick={() => handlePending(merchant.id)}><HourglassEmptyIcon /></IconButton>
+                          <IconButton
+                            color="secondary"
+                            onClick={() => handlePending(merchant.id)}
+                          >
+                            <HourglassEmptyIcon />
+                          </IconButton>
                         </Tooltip>
                         <Tooltip title="Reject">
-                          <IconButton color="secondary" onClick={() => handleReject(merchant.id)}><ClearIcon /></IconButton>
+                          <IconButton
+                            color="warning"
+                            onClick={() => handleReject(merchant.id)}
+                          >
+                            <ThumbDownIcon />
+                          </IconButton>
                         </Tooltip>
                         <Tooltip title="View">
-                          <IconButton color="info" onClick={() => handleView(merchant)}><VisibilityIcon /></IconButton>
+                          <IconButton
+                            color="info"
+                            onClick={() => handleView(merchant)}
+                          >
+                            <VisibilityIcon />
+                          </IconButton>
                         </Tooltip>
                         <Tooltip title="Delete">
-                          <IconButton color="error" onClick={() => handleDelete(merchant.id)}><DeleteIcon /></IconButton>
+                          <IconButton
+                            color="error"
+                            onClick={() => handleOpenDeleteDialog(merchant.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
                         </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} align="center">No accepted merchants.</TableCell>
+                    <TableCell colSpan={4} align="center">
+                      No accepted merchants.
+                    </TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -282,7 +458,7 @@ const AllMerchants = () => {
           />
         </Paper>
       </TabPanel>
- 
+
       {/* Rejected Merchants Tab */}
       <TabPanel value={tabIndex} index={2}>
         <Paper>
@@ -290,10 +466,18 @@ const AllMerchants = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>Business Name</strong></TableCell>
-                  <TableCell><strong>Address</strong></TableCell>
-                  <TableCell><strong>Contact No</strong></TableCell>
-                  <TableCell><strong>Actions</strong></TableCell>
+                  <TableCell>
+                    <strong>Business Name</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Address</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Contact No</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Actions</strong>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -305,23 +489,45 @@ const AllMerchants = () => {
                       <TableCell>{merchant.contact_no}</TableCell>
                       <TableCell>
                         <Tooltip title="Set Pending">
-                          <IconButton color="warning" onClick={() => handlePending(merchant.id)}><HourglassEmptyIcon /></IconButton>
+                          <IconButton
+                            color="secondary"
+                            onClick={() => handlePending(merchant.id)}
+                          >
+                            <HourglassEmptyIcon />
+                          </IconButton>
                         </Tooltip>
                         <Tooltip title="Approve">
-                          <IconButton color="success" onClick={() => handleAccept(merchant.id)}><CheckIcon /></IconButton>
+                          <IconButton
+                            color="success"
+                            onClick={() => handleAccept(merchant.id)}
+                          >
+                            <ThumbUpIcon />
+                          </IconButton>
                         </Tooltip>
                         <Tooltip title="View">
-                          <IconButton color="info" onClick={() => handleView(merchant)}><VisibilityIcon /></IconButton>
+                          <IconButton
+                            color="info"
+                            onClick={() => handleView(merchant)}
+                          >
+                            <VisibilityIcon />
+                          </IconButton>
                         </Tooltip>
                         <Tooltip title="Delete">
-                          <IconButton color="error" onClick={() => handleDelete(merchant.id)}><DeleteIcon /></IconButton>
+                          <IconButton
+                            color="error"
+                            onClick={() => handleOpenDeleteDialog(merchant.id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
                         </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} align="center">No rejected merchants.</TableCell>
+                    <TableCell colSpan={4} align="center">
+                      No rejected merchants.
+                    </TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -338,7 +544,7 @@ const AllMerchants = () => {
           />
         </Paper>
       </TabPanel>
- 
+
       {/* Snackbar for Notifications */}
       <CustomSnackbar
         open={snackbar.open}
@@ -346,9 +552,52 @@ const AllMerchants = () => {
         message={snackbar.message}
         onClose={handleClose}
       />
+
+      <LoadingSpinner open={loading} />
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        aria-labelledby="delete-dialog-title"
+        fullWidth
+        maxWidth="xs"
+      >
+        <DialogTitle id="delete-dialog-title">
+          Confirm Delete
+          <IconButton
+            aria-label="close"
+            onClick={() => setDeleteDialogOpen(false)}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          <DialogContentText>
+            Are you sure you want to delete this Merchant? This action cannot be
+            undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setDeleteDialogOpen(false)}
+          >
+            Cancel
+          </Button>
+          <Button variant="contained" color="error" onClick={handleDelete}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
 
- 
 export default AllMerchants;

@@ -338,6 +338,19 @@ const getApprovedCountWithMonths = async (months) => {
   }
 };
 
+// Update a user's status by ID
+const updateUserStatusById = async (id, status) => {
+  const query = "UPDATE users SET status = $1 WHERE id = $2 RETURNING *;";
+  const values = [status, id];
+
+  try {
+    const result = await pool.query(query, values);
+    return excludePassword(result.rows[0]); // Exclude password before returning the user object
+  } catch (err) {
+    throw new Error("Error updating user status: " + err.message);
+  }
+};
+
 
 module.exports = {
   createUser,
@@ -351,4 +364,5 @@ module.exports = {
   sendPasswordResetLink,
   getTotalApprovedCounts,
   getApprovedCountWithMonths,
+  updateUserStatusById
 };

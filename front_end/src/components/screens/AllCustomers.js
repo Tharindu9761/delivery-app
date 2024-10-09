@@ -10,7 +10,6 @@ import {
   TableRow,
   Paper,
   TablePagination,
-  Typography,
   Box,
 } from "@mui/material";
 import { getUsers } from "../../services/userService"; // Import the user service
@@ -29,7 +28,7 @@ const TabPanel = (props) => {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <div>{children}</div>
         </Box>
       )}
     </div>
@@ -81,7 +80,10 @@ const AllCustomers = () => {
 
   // Fetch Approved Customers (wrapped in useCallback to prevent unnecessary re-renders)
   const fetchApprovedCustomers = useCallback(async () => {
-    const response = await fetchCustomers(pageApproved + 1, rowsPerPageApproved);
+    const response = await fetchCustomers(
+      pageApproved + 1,
+      rowsPerPageApproved
+    );
     setApprovedCustomers(response.data || []);
     setTotalApprovedCustomers(response.total || 0);
   }, [pageApproved, rowsPerPageApproved]);
@@ -101,7 +103,6 @@ const AllCustomers = () => {
     setRowsPerPageApproved(newRowsPerPage);
     setPageApproved(0);
   };
-
 
   return (
     <div className="all-customers">

@@ -417,4 +417,33 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+
+// Update user status by ID
+router.put("/status/:id", async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  // List of allowed statuses
+  const allowedStatuses = ["Pending", "Approved", "Rejected", "Inactive"];
+
+  // Check if the status is valid
+  if (!allowedStatuses.includes(status)) {
+    return res.status(400).json({ error: "Invalid status" });
+  }
+
+  try {
+    // Update the user's status in the database
+    const updatedUser = await userService.updateUserStatusById(id, status);
+    if (updatedUser) {
+      res.status(200).json({ success: true, message: "Status updated successfully", user: updatedUser });
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Error updating user status: " + err.message });
+  }
+});
+
+
+
 module.exports = router;

@@ -389,3 +389,73 @@ export async function getUserCountForChart({month}) {
     return null;
   }
 }
+
+// Change user status by ID
+export async function updateUserStatus(id, status) {
+  try {
+    const url = AppConst.UPDATE_USER_STATUS(id);
+
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: status,
+      }),
+    });
+
+    const res = await response.json();
+
+    if (response.ok) {
+      return {
+        success: true,
+        message: res.message || "User status updated successfully",
+      };
+    } else {
+      return {
+        success: false,
+        message: res.error || "Failed to update user status",
+      };
+    }
+  } catch (error) {
+    console.error("Error updating user status:", error);
+    return {
+      success: false,
+      message: "An error occurred while updating user status",
+    };
+  }
+}
+
+export async function deleteUser(id) {
+  try {
+    const response = await fetch(AppConst.DELETE_USER(id), {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    const res = await response.json();
+
+    if (response.ok) {
+      return {
+        success: true,
+        message: "User deleted successfully",
+      };
+    } else {
+      return {
+        success: false,
+        message: res.error || "Failed to delete user",
+      };
+    }
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return {
+      success: false,
+      message: "An error occurred during the user deletion process",
+    };
+  }
+}
