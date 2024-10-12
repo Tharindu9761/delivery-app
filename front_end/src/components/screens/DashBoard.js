@@ -3,7 +3,7 @@ import { get_user_role } from "../../services/userService";
 import MerchantDashboard from "./MerchantDashboard";
 import AdminDashboard from "./AdminDashboard";
 
-const Dashboard = () => {
+const DashBoard = () => {
   const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -51,4 +51,4 @@ const Dashboard = () => {
   return <div>Error: Unrecognized user role</div>;
 };
 
-export default Dashboard;
+export default DashBoard;

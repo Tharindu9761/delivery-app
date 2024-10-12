@@ -10,7 +10,7 @@ import TopHeader from "./components/screens/TopHeader";
 import SideNavBar from "./components/screens/SideNavBar";
 import Footer from "./components/screens/Footer";
 import Home from "./components/screens/Home";
-import Dashboard from "./components/screens/Dashboard";
+import DashBoard from "./components/screens/DashBoard";
 import AllCustomers from "./components/screens/AllCustomers";
 import AllDrivers from "./components/screens/AllDrivers";
 import AllMerchants from "./components/screens/AllMerchants";
@@ -122,7 +122,7 @@ const App = () => {
           <Route path="/" element={<ProtectedRoute element={<Home />} />} />
           <Route
             path="/dashboard"
-            element={<ProtectedRoute element={<Dashboard />} />}
+            element={<ProtectedRoute element={<DashBoard />} />}
           />
           <Route path="/home" element={<ProtectedRoute element={<Home />} />} />
           <Route
